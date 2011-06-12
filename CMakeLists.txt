@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories(include)
 
-set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/int_util.cpp)
+set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/dummy.cpp)
 
 #--------------------------------------------------------------------
 # Create shared configuration header
