@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include <config.h>
+#include <joemath/config.hpp>
 #include <cstdint>
 
 typedef uint8_t 	u8;
