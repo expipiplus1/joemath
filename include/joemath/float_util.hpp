@@ -30,7 +30,7 @@
 
 #include <joemath/joemath.hpp>
 
-namespace joemath
+namespace NJoemath
 {
     float   step( float v, float edge );
     

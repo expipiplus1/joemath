@@ -30,34 +30,34 @@
 
 #include <cmath>    
 
-namespace joemath
+namespace NJoemath
 {
     
-inline float step( float v, float edge )
+inline float    step( float v, float edge )
 {
     return v < edge ? 0.0f : 1.0f;
 }    
 
-inline float smoothStep( float v, float edge0, float edge1 )
+inline float    smoothStep( float v, float edge0, float edge1 )
 {
     float x = clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
     return x*x * (3.0f - 2.0f * x);
 }
 
-inline float smootherStep( float v, float edge0, float edge1 )
+inline float    smootherStep( float v, float edge0, float edge1 )
 {
     float x = clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
     return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
 }
 
-inline float clamp( float v, float min, float max )
+inline float    clamp( float v, float min, float max )
 {
-    v > min ? ( v < max ? v : max ) : min;
+    return v > min ? ( v < max ? v : max ) : min;
 }
 
 inline float   saturate( float v )
 {    
-    return clamp( v, 0.0f, 1.0f );
+    return clamp( v, 0.0f, 1.0f ); 
 }
 
 inline float   length( float v )
