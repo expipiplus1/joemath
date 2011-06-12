@@ -31,6 +31,26 @@
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
+const u32 NUM_ITERATIONS = 10000;
+
+void testFloatUtil()
+{
+    NTimer::CTimer timer;
+    
+    std::cout << "float step, ";
+    
+    float v = 0.0f;
+    
+    timer.Start();
+    
+    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
+        NJoemath::step(v, 0.0f);
+    
+    timer.Stop();
+    
+    std::cout << timer.GetElapsedTime() / double(NUM_ITERATIONS) << "\n";
+}
+
 int main( int argc, char** argv )
 {
     NTimer::CTimer timer;
