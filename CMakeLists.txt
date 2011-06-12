@@ -17,8 +17,8 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/int_util.cpp)
 OPTION( JOEMATH_SIMD "Enable SIMD support" ON )
 OPTION( JOEMATH_VEC_ASSERTS "Enable vec-op asserts in debug" OFF )
 
-configure_file(${joemath_SOURCE_DIR}/include/joemath/config.h.in 
-               ${joemath_SOURCE_DIR}/include/joemath/config.h @ONLY)
+configure_file(${joemath_SOURCE_DIR}/include/joemath/config.hpp.in 
+               ${joemath_SOURCE_DIR}/include/joemath/config.hpp @ONLY)
 
 configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
@@ -59,7 +59,7 @@ install(FILES ${joemath_BINARY_DIR}/libjoemath.pc DESTINATION lib/pkgconfig)
 #--------------------------------------------------------------------
 # Add example and test programs
 #--------------------------------------------------------------------
-#add_subdirectory(samples)
+add_subdirectory(tests)
 
 #--------------------------------------------------------------------
 # Install standard files 
