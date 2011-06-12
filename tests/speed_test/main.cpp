@@ -31,7 +31,7 @@
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
-const u32 NUM_ITERATIONS = 10000;
+const u32 NUM_ITERATIONS = 100000000;
 
 void testFloatUtil()
 {
@@ -53,15 +53,7 @@ void testFloatUtil()
 
 int main( int argc, char** argv )
 {
-    NTimer::CTimer timer;
-    
-    timer.Start();
-    
-    sleep(1);
-    
-    timer.Stop();
-    
-    std::cout << timer.GetElapsedTime() << "\n";
+    testFloatUtil();
     
 	return 0;
 }
