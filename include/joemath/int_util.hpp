@@ -40,3 +40,41 @@ typedef int8_t		s8;
 typedef int16_t 	s16;
 typedef int32_t 	s32;
 typedef int64_t 	s64;
+
+namespace joemath
+{
+    //
+    // Unsigned integers
+    //
+
+    u32 min     (u32 a, u32 b);
+
+    u32 max     (u32 a, u32 b);
+
+    u32 clamp   (u32 a, u32 min, u32 max);
+
+
+    u64 min     (u64 a, u64 b);
+
+    u64 max     (u64 a, u64 b);
+
+    u64 clamp   (u64 a, u64 min, u64 max);
+
+    //
+    // signed integers
+    //
+
+    s32 min     (s32 a, s32 b);
+
+    s32 max     (s32 a, s32 b);
+
+    s32 clamp   (s32 a, s32 min, s32 max);
+
+
+    s64 min     (s64 a, s64 b);
+
+    s64 max     (s64 a, s64 b);
+
+    s64 clamp   (s64 a, s64 min, s64 max);
+};
+
