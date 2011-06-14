@@ -36,6 +36,18 @@ namespace NJoemath
     {
         return v0 + t * (v1 - v0);
     }
+    
+    inline float    SmoothLerp( float v0, float v1, float t )
+    {
+        t = t*t * (3.0f - 2.0f * x);
+        return Lerp( v0, v1, t );
+    }
+
+    inline float    SmootherLerp( float v0, float v1, float t )
+    {
+        t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
+        return Lerp( v0, v1, t );
+    }
 
     inline float    Step( float v, float edge )
     {

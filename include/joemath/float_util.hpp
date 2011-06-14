@@ -41,29 +41,33 @@ namespace NJoemath
     // Functions
     //
 
-    float   Lerp( float v0, float v1, float t );
+    float   Lerp            ( float v0, float v1, float t );
 
-    float   Step( float v, float edge );
+    float   SmoothLerp      ( float v0, float v1, float t );
+
+    float   SmootherLerp    ( float v0, float v1, float t );
+
+    float   Step            ( float v, float edge );
     
-    float   SmoothStep( float v, float edge0, float edge1 );
+    float   SmoothStep      ( float v, float edge0, float edge1 );
+  
+    float   SmootherStep    ( float v, float edge0, float edge1 );
     
-    float   SmootherStep( float v, float edge0, float edge1 );
+    float   Clamp           ( float v, float min, float max );
     
-    float   Clamp( float v, float min, float max );
+    float   Saturate        ( float v );
     
-    float   Saturate( float v );
+    float   Length          ( float v );
     
-    float   Length( float v );
+    float   Min             ( float v0, float v1 );
     
-    float   Min( float v0, float v1 );
+    float   Max             ( float v0, float v1 );
     
-    float   Max( float v0, float v1 );
+    float   Radians         ( float degrees );
     
-    float   Radians( float degrees );
+    float   Degrees         ( float radians );
     
-    float   Degrees( float radians );
-    
-    float   Distance( float v0, float v1 );
+    float   Distance        ( float v0, float v1 );
 };
 
 #include <joemath/float_util-inl.hpp>
