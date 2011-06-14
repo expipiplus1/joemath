@@ -43,11 +43,11 @@ void testFloatUtil()
     timer.Start();
     
     for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        NJoemath::Step(v, 0.0f);
+        v = NJoemath::Step(v, 0.0f);
     
     timer.Stop();
     
-    std::cout << timer.GetElapsedTime() / double(NUM_ITERATIONS) << "\n";
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v << "\n";
 }
 
 void testFloat2()
@@ -65,13 +65,32 @@ void testFloat2()
         
     timer.Stop();
 
-    std::cout << timer.GetElapsedTime() / double(NUM_ITERATIONS) << "\n";
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
+}
+
+void testFloat3()
+{
+    NTimer::CTimer timer;
+
+    std::cout << "float3 length, ";
+
+    NJoemath::float3 v(1.0f, 1.0f, 1.0f);
+
+    timer.Start();
+
+    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
+        v.x = v.Length();
+
+    timer.Stop();
+
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
 int main( int argc, char** argv )
 {
     testFloatUtil();
     testFloat2();
+    testFloat3();
     
 	return 0;
 }
