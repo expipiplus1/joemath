@@ -31,4 +31,5 @@
 #include <joemath/config.hpp>
 #include <joemath/int_util.hpp>
 #include <joemath/float_util.hpp>
+#include <joemath/float2.hpp>
 
