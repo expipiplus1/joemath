@@ -32,76 +32,76 @@
 
 namespace NJoemath
 {
-    inline float    Lerp( float v0, float v1, float t )
+    inline float    Lerp            ( const float v0, const float v1, const float t )
     {
         return v0 + t * (v1 - v0);
     }
     
-    inline float    SmoothLerp( float v0, float v1, float t )
+    inline float    SmoothLerp      ( const float v0, const float v1, float t )
     {
-        t = t*t * (3.0f - 2.0f * x);
+        t = t*t * (3.0f - 2.0f * t);
         return Lerp( v0, v1, t );
     }
 
-    inline float    SmootherLerp( float v0, float v1, float t )
+    inline float    SmootherLerp    ( const float v0, const float v1, float t )
     {
         t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
         return Lerp( v0, v1, t );
     }
 
-    inline float    Step( float v, float edge )
+    inline float    Step            ( const float v, const float edge )
     {
         return v < edge ? 0.0f : 1.0f;
     }    
 
-    inline float    SmoothStep( float v, float edge0, float edge1 )
+    inline float    SmoothStep      ( const float v, const float edge0, const float edge1 )
     {
         float x = Saturate( (v - edge0) / (edge1 - edge0) );
         return x*x * (3.0f - 2.0f * x);
     }
 
-    inline float    SmootherStep( float v, float edge0, float edge1 )
+    inline float    SmootherStep    ( const float v, const float edge0, const float edge1 )
     {
         float x = Saturate( (v - edge0) / (edge1 - edge0) );
         return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
     }
 
-    inline float    Clamp( float v, float min, float max )
+    inline float    Clamp           ( const float v, const float min, const float max )
     {
         return v > min ? ( v < max ? v : max ) : min;
     }
 
-    inline float    Saturate( float v )
+    inline float    Saturate        ( const float v )
     {    
         return Clamp( v, 0.0f, 1.0f ); 
     }
 
-    inline float    Length( float v )
+    inline float    Length          ( const float v )
     {
         return std::fabs( v );
     }    
 
-    inline float    Min( float v0, float v1 )
+    inline float    Min             ( const float v0, const float v1 )
     {
         return v0 < v1 ? v0 : v1;
     }
 
-    inline float    Max( float v0, float v1 )
+    inline float    Max             ( const float v0, const float v1 )
     {
         return v0 < v1 ? v1 : v0;
     }
 
-    inline float    Radians( float degrees )
+    inline float    Radians         ( const float degrees )
     {
         return degrees * PI / 180.0f;
     }
 
-    inline float    Degrees( float radians )
+    inline float    Degrees         ( const float radians )
     {
         return radians * 180.0f / PI;
     }
 
-    inline float    Distance( float v0, float v1 )
+    inline float    Distance        ( const float v0, const float v1 )
     {
         return Length(v1 - v0);
     }

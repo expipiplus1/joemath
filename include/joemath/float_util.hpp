@@ -41,33 +41,33 @@ namespace NJoemath
     // Functions
     //
 
-    float   Lerp            ( float v0, float v1, float t );
+    float   Lerp            ( const float v0, const float v1, const float t );
 
-    float   SmoothLerp      ( float v0, float v1, float t );
+    float   SmoothLerp      ( const float v0, const float v1, const float t );
 
-    float   SmootherLerp    ( float v0, float v1, float t );
+    float   SmootherLerp    ( const float v0, const float v1, const float t );
 
-    float   Step            ( float v, float edge );
+    float   Step            ( const float v, const float edge );
     
-    float   SmoothStep      ( float v, float edge0, float edge1 );
+    float   SmoothStep      ( const float v, const float edge0, const float edge1 );
   
-    float   SmootherStep    ( float v, float edge0, float edge1 );
+    float   SmootherStep    ( const float v, const float edge0, const float edge1 );
     
-    float   Clamp           ( float v, float min, float max );
+    float   Clamp           ( const float v, const float min, const float max );
     
-    float   Saturate        ( float v );
+    float   Saturate        ( const float v );
     
-    float   Length          ( float v );
+    float   Length          ( const float v );
     
-    float   Min             ( float v0, float v1 );
+    float   Min             ( const float v0, const float v1 );
     
-    float   Max             ( float v0, float v1 );
+    float   Max             ( const float v0, const float v1 );
     
-    float   Radians         ( float degrees );
+    float   Radians         ( const float degrees );
     
-    float   Degrees         ( float radians );
+    float   Degrees         ( const float radians );
     
-    float   Distance        ( float v0, float v1 );
+    float   Distance        ( const float v0, const float v1 );
 };
 
 #include <joemath/float_util-inl.hpp>
