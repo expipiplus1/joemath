@@ -27,7 +27,6 @@
 */
 
 #include <iostream>
-#include <unistd.h>
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
@@ -44,16 +43,35 @@ void testFloatUtil()
     timer.Start();
     
     for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        NJoemath::step(v, 0.0f);
+        NJoemath::Step(v, 0.0f);
     
     timer.Stop();
     
     std::cout << timer.GetElapsedTime() / double(NUM_ITERATIONS) << "\n";
 }
 
+void testFloat2()
+{
+    NTimer::CTimer timer;
+
+    std::cout << "float2 length, ";
+
+    NJoemath::float2 v(1.0f, 1.0f);
+
+    timer.Start();
+
+    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
+        v.x = v.Length();
+        
+    timer.Stop();
+
+    std::cout << timer.GetElapsedTime() / double(NUM_ITERATIONS) << "\n";
+}
+
 int main( int argc, char** argv )
 {
     testFloatUtil();
+    testFloat2();
     
 	return 0;
 }
