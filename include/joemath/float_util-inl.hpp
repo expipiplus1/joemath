@@ -76,12 +76,12 @@ namespace NJoemath
 
     inline float    Radians( float degrees )
     {
-        return degrees * M_PI / 180.0f;
+        return degrees * PI / 180.0f;
     }
 
     inline float    Degrees( float radians )
     {
-        return radians * 180.0f / M_PI;
+        return radians * 180.0f / PI;
     }
 
     inline float    Distance( float v0, float v1 )
