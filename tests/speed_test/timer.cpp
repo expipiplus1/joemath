@@ -40,7 +40,7 @@ CTimer::CTimer()
 #ifdef WIN32
     LARGE_INTEGER frequency;
     QueryPerformanceFrequency(&frequency);
-    m_recipFrequency = 1.0 / double(frequency);
+    m_recipFrequency = 1.0 / double(frequency.QuadPart);
     m_startTime.QuadPart = 0;
     m_endTime.QuadPart = 0;
 #else
@@ -69,7 +69,7 @@ void CTimer::Stop()
 {
     m_running = false;
 #ifdef WIN32
-    QueryPerformanceCounter(&endTime);
+    QueryPerformanceCounter(&m_endTime);
 #else
     gettimeofday(&m_endTime, NULL);
 #endif
@@ -77,17 +77,24 @@ void CTimer::Stop()
 
 double CTimer::GetElapsedTime()
 {
-#ifdef WIN32
-    if(m_running)
-        QueryPerformanceCounter(&m_endTime);
+#ifdef WIN32
+
+    if(m_running)
+
+        QueryPerformanceCounter(&m_endTime);
+
     
     return double(m_endTime.QuadPart - m_startTime.QuadPart) * m_recipFrequency;
-#else
-    if(m_running)
-        gettimeofday(&m_endTime, NULL);
+#else
+
+    if(m_running)
+
+        gettimeofday(&m_endTime, NULL);
+
     
     return (m_endTime.tv_sec - m_startTime.tv_sec) + double(m_endTime.tv_usec - m_startTime.tv_usec) * 0.0000001;
-#endif
+#endif
+
 
 }
 
