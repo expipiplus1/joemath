@@ -44,13 +44,13 @@ namespace NJoemath
 
     inline float    SmoothStep( float v, float edge0, float edge1 )
     {
-        float x = Clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
+        float x = Saturate( (v - edge0) / (edge1 - edge0) );
         return x*x * (3.0f - 2.0f * x);
     }
 
     inline float    SmootherStep( float v, float edge0, float edge1 )
     {
-        float x = Clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
+        float x = Saturate( (v - edge0) / (edge1 - edge0) );
         return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
     }
 
