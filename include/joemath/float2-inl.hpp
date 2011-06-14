@@ -148,7 +148,7 @@ namespace NJoemath
     float2& float2::operator *= ( const float&  f )
     {
         x *= f;
-        y += f;
+        y *= f;
         return *this;
     }
 
@@ -165,12 +165,14 @@ namespace NJoemath
 
     bool    float2::operator == ( const float2& v ) const
     {
-        return x == v.x && y == v.y;
+        return x == v.x &&
+               y == v.y;
     }
 
     bool    float2::operator != ( const float2& v ) const
     {
-        return x != v.x || y != v.y;
+        return x != v.x ||
+               y != v.y;
     }
 
     //
@@ -179,9 +181,17 @@ namespace NJoemath
 
     void    float2::Normalize   ( )
     {
-        float recip_length = 1.0f / Length();
-        x *= recip_length;
-        y *= recip_length;
+        *this = NJoemath::Normalize( *this );
+    }
+
+    void    float2::Clamp       ( const float2& min, const float2& max )
+    {
+        *this = NJoemath::Clamp( *this, min, max );
+    }
+
+    void    float2::Saturate    ( )
+    {
+        *this = NJoemath::Saturate(*this);
     }
 
     float   float2::Length      ( ) const
@@ -198,50 +208,112 @@ namespace NJoemath
     // Binary Operators
     //
 
-    float2  operator +  ( const float2& v0, const float2& v1 )
+    float2  operator +      ( const float2& v0, const float2& v1 )
     {
         return float2(v0.x+v1.x, v0.y+v1.y);
     }
 
-    float2  operator -  ( const float2& v0, const float2& v1 )
+    float2  operator -      ( const float2& v0, const float2& v1 )
     {
         return float2(v0.x-v1.x, v0.y-v1.y);
     }
 
     // component-wise multiplication
-    float2  operator *  ( const float2& v0, const float2& v1 )
+    float2  operator *      ( const float2& v0, const float2& v1 )
     {
         return float2(v0.x*v1.x, v0.y*v1.y);
     }
 
-    float2  operator *  ( const float2& v,  const float&  f )
+    float2  operator *      ( const float2& v,  const float&  f )
     {
         return float2(v.x*f, v.y*f);
     }
 
-    float2  operator *  ( const float&  f,  const float2& v )
+    float2  operator *      ( const float&  f,  const float2& v )
     {
         return float2(v.x*f, v.y*f);
     }
 
-    float2  operator /  ( const float2& v,  const float&  f )
+    float2  operator /      ( const float2& v,  const float&  f )
     {
         return float2(v.x/f, v.y/f);
     }
 
-    float2  Max     ( const float2& v0, const float2& v1 )
+    //
+    // Misc
+    //
+
+    float   Dot             ( const float2& v0, const float2& v1 )
     {
-        return float2( Max( v0.x, v1.x ), Max( v0.y, v1.y ) );
+        return v0.x*v1.x + v0.y*v1.y;
     }
 
-    float2  Min     ( const float2& v0, const float2& v1 )
+    float2  Normalize       ( const float2& v )
+    {
+        float recip_length = 1.0f / v.Length();
+        return v * recip_length;
+    }
+
+    float2  Lerp            ( const float2& v0, const float2& v1, const float t )
+    {
+        return v0 + (v1 - v0) * t;
+    }
+
+    float2  SmoothLerp      ( const float2& v0, const float2& v1, float t )
+    {
+        t = t*t * (3.0f - 2.0f * t);
+        return Lerp( v0, v1, t );
+    }
+
+    float2  SmootherLerp    ( const float2& v0, const float2& v1, float t )
+    {
+        t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
+        return Lerp( v0, v1, t );
+    }
+
+    float2  Step            ( const float2& v,  const float2& edge )
+    {
+        return float2( v.x < edge.x ? 0.0f : 1.0f,
+                       v.y < edge.y ? 0.0f : 1.0f );
+    }
+
+    float2  SmoothStep      ( const float2& v,  const float2& edge0, const float2& edge1 )
+    {
+        return float2( SmoothStep( v.x, edge0.x, edge1.x ),
+                       SmoothStep( v.y, edge0.y, edge1.y ) );
+    }
+
+    float2  SmootherStep    ( const float2& v,  const float2& edge0, const float2& edge1 )
+    {
+        return float2( SmootherStep( v.x, edge0.x, edge1.x ),
+                       SmootherStep( v.y, edge0.y, edge1.y ) );
+    }
+
+    float2  Clamp           ( const float2& v,  const float2& min, const float2& max )
+    {
+        return float2( Clamp( v.x, min.x, max.x ),
+                       Clamp( v.y, min.y, max.y ) );
+    }
+
+    float2  Saturate        ( const float2& v )
+    {
+        return float2( Saturate( v.x ),
+                       Saturate( v.y ) );
+    }
+
+    float2  Length          ( const float2& v )
+    {
+        return v.Length( );
+    }
+
+    float2  Min             ( const float2& v0, const float2& v1 )
     {
         return float2( Min( v0.x, v1.x ), Min( v0.y, v1.y ) );
     }
 
-    float   Dot2    ( const float2& v0, const float2& v1 )
+    float2  Max             ( const float2& v0, const float2& v1 )
     {
-        return v0.x*v1.x + v0.y*v1.y;
+        return float2( Max( v0.x, v1.x ), Max( v0.y, v1.y ) );
     }
 };
 

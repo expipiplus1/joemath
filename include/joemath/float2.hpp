@@ -105,6 +105,10 @@ namespace NJoemath
 
         void    Normalize   ( );
 
+        void    Clamp       ( const float2& min, const float2& max );
+
+        void    Saturate    ( );
+
         float   Length      ( ) const;
 
         float   LengthSq    ( ) const;
@@ -131,11 +135,31 @@ namespace NJoemath
     // Misc
     //
 
-    float2  Max     ( const float2& v0, const float2& v1 );
+    float   Dot             ( const float2& v0, const float2& v1 );
 
-    float2  Min     ( const float2& v0, const float2& v1 );
+    float2  Normalize       ( const float2& v );
 
-    float   Dot2    ( const float2& v0, const float2& v1 );
+    float2  Lerp            ( const float2& v0, const float2& v1, const float t );
+
+    float2  SmoothLerp      ( const float2& v0, const float2& v1, float t );
+
+    float2  SmootherLerp    ( const float2& v0, const float2& v1, float t );
+
+    float2  Step            ( const float2& v,  const float2& edge );
+
+    float2  SmoothStep      ( const float2& v,  const float2& edge0, const float2& edge1 );
+
+    float2  SmootherStep    ( const float2& v,  const float2& edge0, const float2& edge1 );
+
+    float2  Clamp           ( const float2& v,  const float2& min, const float2& max );
+
+    float2  Saturate        ( const float2& v );
+
+    float2  Length          ( const float2& v );
+
+    float2  Min             ( const float2& v0, const float2& v1 );
+
+    float2  Max             ( const float2& v0, const float2& v1 );
 };
 
 #include <joemath/float2-inl.hpp>
