@@ -32,6 +32,15 @@
 
 namespace NJoemath
 {
+    //
+    // Constants
+    //
+    const float PI = 3.1415926535897932384626433832795028841971693993751058209749f;
+
+    //
+    // Functions
+    //
+
     float   Step( float v, float edge );
     
     float   SmoothStep( float v, float edge0, float edge1 );
