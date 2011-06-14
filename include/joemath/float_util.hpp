@@ -32,27 +32,27 @@
 
 namespace NJoemath
 {
-    float   step( float v, float edge );
+    float   Step( float v, float edge );
     
-    float   smoothStep( float v, float edge0, float edge1 );
+    float   SmoothStep( float v, float edge0, float edge1 );
     
-    float   smootherStep( float v, float edge0, float edge1 );
+    float   SmootherStep( float v, float edge0, float edge1 );
     
-    float   clamp( float v, float min, float max );
+    float   Clamp( float v, float min, float max );
     
-    float   saturate( float v );
+    float   Saturate( float v );
     
-    float   length( float v );
+    float   Length( float v );
     
-    float   min( float v0, float v1 );
+    float   Min( float v0, float v1 );
     
-    float   max( float v0, float v1 );
+    float   Max( float v0, float v1 );
     
-    float   radians( float degrees );
+    float   Radians( float degrees );
     
-    float   degrees( float radians );
+    float   Degrees( float radians );
     
-    float   distance( float v0, float v1 );
+    float   Distance( float v0, float v1 );
 };
 
 #include <joemath/float_util-inl.hpp>

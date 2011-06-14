@@ -32,62 +32,60 @@
 
 namespace NJoemath
 {
-    
-inline float    step( float v, float edge )
-{
-    return v < edge ? 0.0f : 1.0f;
-}    
+    inline float    Step( float v, float edge )
+    {
+        return v < edge ? 0.0f : 1.0f;
+    }    
 
-inline float    smoothStep( float v, float edge0, float edge1 )
-{
-    float x = clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
-    return x*x * (3.0f - 2.0f * x);
-}
+    inline float    SmoothStep( float v, float edge0, float edge1 )
+    {
+        float x = Clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
+        return x*x * (3.0f - 2.0f * x);
+    }
 
-inline float    smootherStep( float v, float edge0, float edge1 )
-{
-    float x = clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
-    return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
-}
+    inline float    SmootherStep( float v, float edge0, float edge1 )
+    {
+        float x = Clamp( (v - edge0) / (edge1 - edge0), 0.0f, 1.0f );
+        return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
+    }
 
-inline float    clamp( float v, float min, float max )
-{
-    return v > min ? ( v < max ? v : max ) : min;
-}
+    inline float    Clamp( float v, float min, float max )
+    {
+        return v > min ? ( v < max ? v : max ) : min;
+    }
 
-inline float   saturate( float v )
-{    
-    return clamp( v, 0.0f, 1.0f ); 
-}
+    inline float    Saturate( float v )
+    {    
+        return Clamp( v, 0.0f, 1.0f ); 
+    }
 
-inline float   length( float v )
-{
-    return std::fabs( v );
-}    
+    inline float    Length( float v )
+    {
+        return std::fabs( v );
+    }    
 
-inline float   min( float v0, float v1 )
-{
-    return v0 < v1 ? v0 : v1;
-}
+    inline float    Min( float v0, float v1 )
+    {
+        return v0 < v1 ? v0 : v1;
+    }
 
-inline float   max( float v0, float v1 )
-{
-    return v0 < v1 ? v1 : v0;
-}
+    inline float    Max( float v0, float v1 )
+    {
+        return v0 < v1 ? v1 : v0;
+    }
 
-inline float   radians( float degrees )
-{
-    return degrees * M_PI / 180.0f;
-}
+    inline float    Radians( float degrees )
+    {
+        return degrees * M_PI / 180.0f;
+    }
 
-inline float   degrees( float radians )
-{
-    return radians * 180.0f / M_PI;
-}
+    inline float    Degrees( float radians )
+    {
+        return radians * 180.0f / M_PI;
+    }
 
-inline float   distance( float v0, float v1 )
-{
-    return length(v1 - v0);
-}
-
+    inline float    Distance( float v0, float v1 )
+    {
+        return Length(v1 - v0);
+    }
 };
