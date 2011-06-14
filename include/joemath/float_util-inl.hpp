@@ -32,6 +32,11 @@
 
 namespace NJoemath
 {
+    inline float    Lerp( float v0, float v1, float t )
+    {
+        return v0 + t * (v1 - v0);
+    }
+
     inline float    Step( float v, float edge )
     {
         return v < edge ? 0.0f : 1.0f;

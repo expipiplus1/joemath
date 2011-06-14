@@ -41,6 +41,8 @@ namespace NJoemath
     // Functions
     //
 
+    float   Lerp( float v0, float v1, float t );
+
     float   Step( float v, float edge );
     
     float   SmoothStep( float v, float edge0, float edge1 );
