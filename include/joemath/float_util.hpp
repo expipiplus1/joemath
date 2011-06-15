@@ -53,9 +53,9 @@ namespace NJoemath
   
     float   SmootherStep    ( const float v, const float edge0, const float edge1 );
     
-    float   Clamp           ( const float v, const float min, const float max );
+    float   Clamped         ( const float v, const float min, const float max );
     
-    float   Saturate        ( const float v );
+    float   Saturated       ( const float v );
     
     float   Length          ( const float v );
     

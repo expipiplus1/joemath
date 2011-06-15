@@ -56,24 +56,24 @@ namespace NJoemath
 
     inline float    SmoothStep      ( const float v, const float edge0, const float edge1 )
     {
-        float x = Saturate( (v - edge0) / (edge1 - edge0) );
+        float x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x * (3.0f - 2.0f * x);
     }
 
     inline float    SmootherStep    ( const float v, const float edge0, const float edge1 )
     {
-        float x = Saturate( (v - edge0) / (edge1 - edge0) );
+        float x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
     }
 
-    inline float    Clamp           ( const float v, const float min, const float max )
+    inline float    Clamped         ( const float v, const float min, const float max )
     {
         return v > min ? ( v < max ? v : max ) : min;
     }
 
-    inline float    Saturate        ( const float v )
+    inline float    Saturated       ( const float v )
     {    
-        return Clamp( v, 0.0f, 1.0f ); 
+        return Clamped( v, 0.0f, 1.0f ); 
     }
 
     inline float    Length          ( const float v )

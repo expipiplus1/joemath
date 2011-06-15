@@ -28,11 +28,31 @@
 
 #pragma once
 
-#include <joemath/config.hpp>
-#include <joemath/int_util.hpp>
 #include <joemath/random.hpp>
-#include <joemath/float_util.hpp>
-#include <joemath/float2.hpp>
-#include <joemath/float3.hpp>
-#include <joemath/float4.hpp>
+#include <cstring>
+#include <intrin.h>
+#include <joemath/int_util.hpp>
+
+namespace NJoemath
+{
+    CRandom::CRandom             ( )
+    {
+    }
+
+    void    CRandom::Init        ( u32 seed )
+    {
+        for( u32 i = 0; i < RANDOM_STATE_VECTOR_SIZE; ++i )
+            m_state[i] = seed = seed * 69069 + 1;
+        m_carry = seed * 69069 + 1;
+    }
+
+    u32     CRandom::U32         ( )
+    {
+        u64 x = __emulu( RANDOM_A, m_state[0]) + m_carry;
+        std::memmove( &m_state[0], &m_state[1], sizeof( m_state[0] ) * RANDOM_STATE_VECTOR_SIZE - 1 );
+        m_state[RANDOM_STATE_VECTOR_SIZE - 1] = x & 0xffffffff;
+        m_carry = ( x >> 32 ) & 0xffffffff;
+        return m_state[RANDOM_STATE_VECTOR_SIZE];
+    }
+};
 

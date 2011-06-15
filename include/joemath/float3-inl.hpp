@@ -209,17 +209,17 @@ namespace NJoemath
 
     void    float3::Normalize   ( )
     {
-        *this = NJoemath::Normalize(*this);
+        *this = NJoemath::Normalized(*this);
     }
 
     void    float3::Clamp       ( const float3& min, const float3& max )
     {
-        *this = NJoemath::Clamp( *this, min, max );
+        *this = NJoemath::Clamped( *this, min, max );
     }
 
     void    float3::Saturate    ( )
     {
-        *this = NJoemath::Saturate( *this );
+        *this = NJoemath::Saturated( *this );
     }
 
     float   float3::Length      ( ) const
@@ -295,7 +295,7 @@ namespace NJoemath
                        (v0.x * v1.y) - (v0.y * v1.x) );
     }
 
-    float3  Normalize       ( const float3& v )
+    float3  Normalized      ( const float3& v )
     {
         float recip_length = 1.0f / v.Length();
         return v * recip_length;
@@ -339,18 +339,18 @@ namespace NJoemath
                        SmootherStep( v.z, edge0.z, edge1.z ) );
     }
 
-    float3  Clamp           ( const float3& v,  const float3& min, const float3& max )
+    float3  Clamped         ( const float3& v,  const float3& min, const float3& max )
     {
-        return float3( Clamp( v.x, min.x, max.x ),
-                       Clamp( v.y, min.y, max.y ), 
-                       Clamp( v.z, min.z, max.z ) );
+        return float3( Clamped( v.x, min.x, max.x ),
+                       Clamped( v.y, min.y, max.y ), 
+                       Clamped( v.z, min.z, max.z ) );
     }
 
-    float3  Saturate        ( const float3& v )
+    float3  Saturated       ( const float3& v )
     {
-        return float3( Saturate( v.x ),
-                       Saturate( v.y ),
-                       Saturate( v.z ) );
+        return float3( Saturated( v.x ),
+                       Saturated( v.y ),
+                       Saturated( v.z ) );
     }
 
     float3  Length          ( const float3& v )
