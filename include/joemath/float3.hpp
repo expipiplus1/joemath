@@ -150,9 +150,9 @@ namespace NJoemath
 
     float3  Lerp            ( const float3& v0, const float3& v1, const float t );
 
-    float3  SmoothLerp      ( const float3& v0, const float3& v1, const float t );
+    float3  SmoothLerp      ( const float3& v0, const float3& v1, float t );
 
-    float3  SmootherLerp    ( const float3& v0, const float3& v1, const float t );
+    float3  SmootherLerp    ( const float3& v0, const float3& v1, float t );
 
     float3  Step            ( const float3& v,  const float3& edge );
 
