@@ -44,7 +44,7 @@ namespace NJoemath
         return a > b ? a : b;
     }
 
-    u32 Clamp   (u32 a, u32 min, u32 max)
+    u32 Clamped (u32 a, u32 min, u32 max)
     {
         return a < max ? ( a > min ? a : min ) : max;
     }
@@ -60,7 +60,7 @@ namespace NJoemath
         return a > b ? a : b;
     }
 
-    u64 Clamp   (u64 a, u64 min, u64 max)
+    u64 Clamped (u64 a, u64 min, u64 max)
     {
         return a < max ? ( a > min ? a : min ) : max;
     }
@@ -79,7 +79,7 @@ namespace NJoemath
         return a > b ? a : b;
     }
 
-    s32 Clamp   (s32 a, s32 min, s32 max)
+    s32 Clamped (s32 a, s32 min, s32 max)
     {
         return a < max ? ( a > min ? a : min ) : max;
     }
@@ -95,7 +95,7 @@ namespace NJoemath
         return a > b ? a : b;
     }
 
-    s64 Clamp   (s64 a, s64 min, s64 max)
+    s64 Clamped (s64 a, s64 min, s64 max)
     {
         return a < max ? ( a > min ? a : min ) : max;
     }

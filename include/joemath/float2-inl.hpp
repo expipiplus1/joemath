@@ -181,17 +181,17 @@ namespace NJoemath
 
     void    float2::Normalize   ( )
     {
-        *this = NJoemath::Normalize( *this );
+        *this = NJoemath::Normalized( *this );
     }
 
     void    float2::Clamp       ( const float2& min, const float2& max )
     {
-        *this = NJoemath::Clamp( *this, min, max );
+        *this = NJoemath::Clamped( *this, min, max );
     }
 
     void    float2::Saturate    ( )
     {
-        *this = NJoemath::Saturate(*this);
+        *this = NJoemath::Saturated(*this);
     }
 
     float   float2::Length      ( ) const
@@ -248,7 +248,7 @@ namespace NJoemath
         return v0.x*v1.x + v0.y*v1.y;
     }
 
-    float2  Normalize       ( const float2& v )
+    float2  Normalized      ( const float2& v )
     {
         float recip_length = 1.0f / v.Length();
         return v * recip_length;
@@ -289,16 +289,16 @@ namespace NJoemath
                        SmootherStep( v.y, edge0.y, edge1.y ) );
     }
 
-    float2  Clamp           ( const float2& v,  const float2& min, const float2& max )
+    float2  Clamped         ( const float2& v,  const float2& min, const float2& max )
     {
-        return float2( Clamp( v.x, min.x, max.x ),
-                       Clamp( v.y, min.y, max.y ) );
+        return float2( Clamped( v.x, min.x, max.x ),
+                       Clamped( v.y, min.y, max.y ) );
     }
 
-    float2  Saturate        ( const float2& v )
+    float2  Saturated       ( const float2& v )
     {
-        return float2( Saturate( v.x ),
-                       Saturate( v.y ) );
+        return float2( Saturated( v.x ),
+                       Saturated( v.y ) );
     }
 
     float2  Length          ( const float2& v )

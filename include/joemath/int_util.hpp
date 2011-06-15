@@ -50,14 +50,14 @@ namespace NJoemath
 
     u32 Max     (u32 a, u32 b);
 
-    u32 Clamp   (u32 a, u32 min, u32 max);
+    u32 Clamped (u32 a, u32 min, u32 max);
 
 
     u64 Min     (u64 a, u64 b);
 
     u64 Max     (u64 a, u64 b);
 
-    u64 Clamp   (u64 a, u64 min, u64 max);
+    u64 Clamped (u64 a, u64 min, u64 max);
 
     //
     // signed integers
@@ -67,13 +67,13 @@ namespace NJoemath
 
     s32 Max     (s32 a, s32 b);
 
-    s32 Clamp   (s32 a, s32 min, s32 max);
+    s32 Clamped (s32 a, s32 min, s32 max);
 
 
     s64 Min     (s64 a, s64 b);
 
     s64 Max     (s64 a, s64 b);
 
-    s64 Clamp   (s64 a, s64 min, s64 max);
+    s64 Clamped (s64 a, s64 min, s64 max);
 };
 
