@@ -196,7 +196,7 @@ namespace NJoemath
 
     float   float2::Length      ( ) const
     {
-        return std::sqrtf( x*x + y*y );
+        return std::sqrt( x*x + y*y );
     }
 
     float   float2::LengthSq    ( ) const
@@ -308,12 +308,14 @@ namespace NJoemath
 
     float2  Min             ( const float2& v0, const float2& v1 )
     {
-        return float2( Min( v0.x, v1.x ), Min( v0.y, v1.y ) );
+        return float2( Min( v0.x, v1.x ),
+                       Min( v0.y, v1.y ) );
     }
 
     float2  Max             ( const float2& v0, const float2& v1 )
     {
-        return float2( Max( v0.x, v1.x ), Max( v0.y, v1.y ) );
+        return float2( Max( v0.x, v1.x ),
+                       Max( v0.y, v1.y ) );
     }
 };
 
