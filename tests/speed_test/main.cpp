@@ -32,6 +32,26 @@
 
 const u32 NUM_ITERATIONS = 100000000;
 
+void testRandom()
+{
+    NTimer::CTimer timer;
+
+    std::cout << "Random U32, ";
+
+    NJoemath::CRandom random;
+    random.Init( 6 );
+
+    timer.Start();
+
+    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
+        std::cout << random.U32() << "\n";
+
+    timer.Stop();
+
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << "\n";
+
+}
+
 void testFloatUtil()
 {
     NTimer::CTimer timer;
@@ -88,6 +108,7 @@ void testFloat3()
 
 int main( int argc, char** argv )
 {
+    testRandom();
     testFloatUtil();
     testFloat2();
     testFloat3();
