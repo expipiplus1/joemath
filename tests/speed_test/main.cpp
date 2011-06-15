@@ -86,11 +86,30 @@ void testFloat3()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
+void testFloat4()
+{
+    NTimer::CTimer timer;
+
+    std::cout << "float4 length, ";
+
+    NJoemath::float4 v(1.0f, 1.0f, 1.0f, 1.0f);
+
+    timer.Start();
+
+    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
+        v.x = v.Length();
+
+    timer.Stop();
+
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
+}
+
 int main( int argc, char** argv )
 {
     testFloatUtil();
     testFloat2();
     testFloat3();
+    testFloat4();
     
 	return 0;
 }
