@@ -26,11 +26,9 @@
     or implied, of Joe Hermaszewski.
 */
 
-#pragma once
-
 #include <joemath/random.hpp>
 #include <cstring>
-#include <intrin.h>
+//#include <intrin.h>
 #include <joemath/int_util.hpp>
 
 namespace NJoemath
@@ -39,7 +37,7 @@ namespace NJoemath
     {
     }
 
-    void    CRandom::Init        ( u32 seed )
+    void    CRandom::Seed        ( u32 seed )
     {
         for( u32 i = 0; i < RANDOM_STATE_VECTOR_SIZE; ++i )
             m_state[i] = seed = seed * 69069 + 1;
@@ -48,11 +46,13 @@ namespace NJoemath
 
     u32     CRandom::U32         ( )
     {
-        u64 x = __emulu( RANDOM_A, m_state[0]) + m_carry;
+        //u64 x = __emulu( RANDOM_A, m_state[0]) + m_carry;
+        u64 x = (u64)RANDOM_A * (u64)m_state[0] + m_carry;
         std::memmove( &m_state[0], &m_state[1], sizeof( m_state[0] ) * RANDOM_STATE_VECTOR_SIZE - 1 );
         m_state[RANDOM_STATE_VECTOR_SIZE - 1] = x & 0xffffffff;
         m_carry = ( x >> 32 ) & 0xffffffff;
-        return m_state[RANDOM_STATE_VECTOR_SIZE];
+        return m_state[RANDOM_STATE_VECTOR_SIZE - 1];
     }
 };
+
 

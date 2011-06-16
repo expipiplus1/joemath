@@ -40,7 +40,7 @@ namespace NJoemath
     public:
         CRandom             ( );
 
-        void    Init        ( u32 seed );
+        void    Seed        ( u32 seed );
 
         u32     U32         ( );
 
