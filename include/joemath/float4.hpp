@@ -148,7 +148,7 @@ namespace NJoemath
 
     float   Dot             ( const float4& v0, const float4& v1 );
 
-    float4  Normalize       ( const float4& v );
+    float4  Normalized      ( const float4& v );
 
     float4  Lerp            ( const float4& v0, const float4& v1, const float t );
 
@@ -162,9 +162,9 @@ namespace NJoemath
 
     float4  SmootherStep    ( const float4& v,  const float4& edge0, const float4& edge1 );
 
-    float4  Clamp           ( const float4& v,  const float4& min, const float4& max );
+    float4  Clamped         ( const float4& v,  const float4& min, const float4& max );
 
-    float4  Saturate        ( const float4& v );
+    float4  Saturated       ( const float4& v );
 
     float4  Length          ( const float4& v );
     

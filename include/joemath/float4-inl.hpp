@@ -230,17 +230,17 @@ namespace NJoemath
 
     void    float4::Normalize   ( )
     {
-        *this = NJoemath::Normalize(*this);
+        *this = NJoemath::Normalized(*this);
     }
 
     void    float4::Clamp       ( const float4& min, const float4& max )
     {
-        *this = NJoemath::Clamp( *this, min, max );
+        *this = NJoemath::Clamped( *this, min, max );
     }
 
     void    float4::Saturate    ( )
     {
-        *this = NJoemath::Saturate( *this );
+        *this = NJoemath::Saturated( *this );
     }
 
     float   float4::Length      ( ) const
@@ -315,7 +315,7 @@ namespace NJoemath
         return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w;
     }
 
-    float4  Normalize       ( const float4& v )
+    float4  Normalized      ( const float4& v )
     {
         float recip_length = 1.0f / v.Length();
         return v * recip_length;
@@ -362,20 +362,20 @@ namespace NJoemath
                        SmootherStep( v.w, edge0.w, edge1.w ) );
     }
 
-    float4  Clamp           ( const float4& v,  const float4& min, const float4& max )
+    float4  Clamped         ( const float4& v,  const float4& min, const float4& max )
     {
-        return float4( Clamp( v.x, min.x, max.x ),
-                       Clamp( v.y, min.y, max.y ), 
-                       Clamp( v.w, min.w, max.w ),
-                       Clamp( v.z, min.z, max.z ) );
+        return float4( Clamped( v.x, min.x, max.x ),
+                       Clamped( v.y, min.y, max.y ), 
+                       Clamped( v.z, min.z, max.z ),
+                       Clamped( v.w, min.w, max.w ) );
     }
 
-    float4  Saturate        ( const float4& v )
+    float4  Saturated       ( const float4& v )
     {
-        return float4( Saturate( v.x ),
-                       Saturate( v.y ),
-                       Saturate( v.z ),
-                       Saturate( v.w ) );
+        return float4( Saturated( v.x ),
+                       Saturated( v.y ),
+                       Saturated( v.z ),
+                       Saturated( v.w ) );
     }
 
     float4  Length          ( const float4& v )
