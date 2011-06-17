@@ -32,18 +32,18 @@
 
 namespace NJoeMath
 {
-    CRandom::CRandom             ( )
+    CRandom::CRandom            ( )
     {
     }
 
-    void    CRandom::Seed        ( u32 seed )
+    void    CRandom::Seed       ( u32 seed )
     {
         for( u32 i = 0; i < RANDOM_STATE_VECTOR_SIZE; ++i )
             m_state[i] = seed = seed * 69069 + 1;
         m_carry = seed * 69069 + 1;
     }
 
-    u32     CRandom::U32         ( )
+    u32     CRandom::U32        ( )
     {
         u64 x = (u64)RANDOM_A * (u64)m_state[0] + m_carry;
         std::memmove( &m_state[0], &m_state[1], sizeof( m_state[0] ) * RANDOM_STATE_VECTOR_SIZE - 1 );
