@@ -1,3 +1,6 @@
 joemath.kdev4
 build/
 include/joemath/config.hpp
+.kdev4/_custom.kdev4
+src/random.cpp~
+tests/speed_test/main.cpp~
