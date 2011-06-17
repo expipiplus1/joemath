@@ -30,7 +30,7 @@
 
 #include <cmath>    
 
-namespace NJoemath
+namespace NJoeMath
 {
     inline float    Lerp            ( const float v0, const float v1, const float t )
     {

@@ -28,7 +28,7 @@
 
 #pragma once
 
-namespace NJoemath
+namespace NJoeMath
 {
     class float2
     {

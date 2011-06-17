@@ -30,29 +30,31 @@
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
-const u32 NUM_ITERATIONS = 100000000;
+const u32 NUM_ITERATIONS = 10000000;
 
-void testRandom()
+void TestRandom()
 {
     NTimer::CTimer timer;
 
     std::cout << "Random U32, ";
 
-    NJoemath::CRandom random;
-    random.Init( 6 );
+    NJoeMath::CRandom random;
+    random.Seed( 6 );
 
+    u32 acc = 0;
+    
     timer.Start();
 
     for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        std::cout << random.U32() << "\n";
+        acc += random.U32();
 
     timer.Stop();
 
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << "\n";
+    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << acc << "\n";
 
 }
 
-void testFloatUtil()
+void TestFloatUtil()
 {
     NTimer::CTimer timer;
     
@@ -63,20 +65,20 @@ void testFloatUtil()
     timer.Start();
     
     for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v = NJoemath::Step(v, 0.0f);
+        v = NJoeMath::Step(v, 0.0f);
     
     timer.Stop();
     
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v << "\n";
 }
 
-void testFloat2()
+void TestFloat2()
 {
     NTimer::CTimer timer;
 
     std::cout << "float2 length, ";
 
-    NJoemath::float2 v(1.0f, 1.0f);
+    NJoeMath::float2 v(1.0f, 1.0f);
 
     timer.Start();
 
@@ -88,13 +90,13 @@ void testFloat2()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
-void testFloat3()
+void TestFloat3()
 {
     NTimer::CTimer timer;
 
     std::cout << "float3 length, ";
 
-    NJoemath::float3 v(1.0f, 1.0f, 1.0f);
+    NJoeMath::float3 v(1.0f, 1.0f, 1.0f);
 
     timer.Start();
 
@@ -106,13 +108,13 @@ void testFloat3()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
-void testFloat4()
+void TestFloat4()
 {
     NTimer::CTimer timer;
 
     std::cout << "float4 length, ";
 
-    NJoemath::float4 v(1.0f, 1.0f, 1.0f, 1.0f);
+    NJoeMath::float4 v(1.0f, 1.0f, 1.0f, 1.0f);
 
     timer.Start();
 
@@ -126,11 +128,11 @@ void testFloat4()
 
 int main( int argc, char** argv )
 {
-    testRandom();
-    testFloatUtil();
-    testFloat2();
-    testFloat3();
-    testFloat4();
+    TestRandom();
+    TestFloatUtil();
+    TestFloat2();
+    TestFloat3();
+    TestFloat4();
     
 	return 0;
 }

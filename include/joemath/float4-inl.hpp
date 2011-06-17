@@ -31,7 +31,7 @@
 #include <joemath/float_util.hpp>
 #include <cmath>
 
-namespace NJoemath
+namespace NJoeMath
 {
     //
     // constructors
@@ -230,17 +230,17 @@ namespace NJoemath
 
     void    float4::Normalize   ( )
     {
-        *this = NJoemath::Normalized(*this);
+        *this = NJoeMath::Normalized(*this);
     }
 
     void    float4::Clamp       ( const float4& min, const float4& max )
     {
-        *this = NJoemath::Clamped( *this, min, max );
+        *this = NJoeMath::Clamped( *this, min, max );
     }
 
     void    float4::Saturate    ( )
     {
-        *this = NJoemath::Saturated( *this );
+        *this = NJoeMath::Saturated( *this );
     }
 
     float   float4::Length      ( ) const

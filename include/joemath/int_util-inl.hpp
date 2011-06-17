@@ -28,7 +28,7 @@ or implied, of Joe Hermaszewski.
 
 #pragma once
 
-namespace NJoemath
+namespace NJoeMath
 {
     //
     // Unsigned integers

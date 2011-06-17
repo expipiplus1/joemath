@@ -30,7 +30,7 @@
 
 #include <joemath/float2.hpp>
 
-namespace NJoemath
+namespace NJoeMath
 {
     class float3
     {

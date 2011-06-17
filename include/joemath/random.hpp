@@ -30,7 +30,7 @@
 
 #include <joemath/int_util.hpp>
 
-namespace NJoemath
+namespace NJoeMath
 {
     const u32 RANDOM_STATE_VECTOR_SIZE = 3;
     const u32 RANDOM_A = 4294967118;

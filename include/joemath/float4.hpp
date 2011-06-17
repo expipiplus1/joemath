@@ -31,7 +31,7 @@
 #include <joemath/float2.hpp>
 #include <joemath/float3.hpp>
 
-namespace NJoemath
+namespace NJoeMath
 {
     class float4
     {

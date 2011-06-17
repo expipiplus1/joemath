@@ -28,10 +28,9 @@
 
 #include <joemath/random.hpp>
 #include <cstring>
-//#include <intrin.h>
 #include <joemath/int_util.hpp>
 
-namespace NJoemath
+namespace NJoeMath
 {
     CRandom::CRandom             ( )
     {
@@ -46,11 +45,10 @@ namespace NJoemath
 
     u32     CRandom::U32         ( )
     {
-        //u64 x = __emulu( RANDOM_A, m_state[0]) + m_carry;
         u64 x = (u64)RANDOM_A * (u64)m_state[0] + m_carry;
         std::memmove( &m_state[0], &m_state[1], sizeof( m_state[0] ) * RANDOM_STATE_VECTOR_SIZE - 1 );
-        m_state[RANDOM_STATE_VECTOR_SIZE - 1] = x & 0xffffffff;
-        m_carry = ( x >> 32 ) & 0xffffffff;
+        m_state[RANDOM_STATE_VECTOR_SIZE - 1] = x;
+        m_carry = ( x >> 32 );
         return m_state[RANDOM_STATE_VECTOR_SIZE - 1];
     }
 };

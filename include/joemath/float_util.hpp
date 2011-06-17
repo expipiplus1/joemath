@@ -30,7 +30,7 @@
 
 #include <joemath/joemath.hpp>
 
-namespace NJoemath
+namespace NJoeMath
 {
     //
     // Constants
