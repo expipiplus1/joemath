@@ -28,8 +28,10 @@
 
 #pragma once
 
+#include <joemath/scalar.hpp>
 #include <joemath/float2.hpp>
 #include <joemath/float3.hpp>
+#include <joemath/config.hpp>
 
 namespace NJoeMath
 {

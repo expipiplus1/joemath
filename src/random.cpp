@@ -28,7 +28,7 @@
 
 #include <joemath/random.hpp>
 #include <cstring>
-#include <joemath/int_util.hpp>
+#include <joemath/scalar.hpp>
 
 namespace NJoeMath
 {

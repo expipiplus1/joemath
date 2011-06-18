@@ -13,10 +13,6 @@ include/joemath/float4-inl.hpp~
 include/joemath/float4.hpp~
 include/joemath/joemath.hpp~
 include/joemath/random.hpp~
-include/joemath/scalar-inl.hpp
-include/joemath/scalar.hpp
 include/joemath/scalar.hpp~
-include/joemath/vector2-inl.hpp
 include/joemath/vector2-inl.hpp~
-include/joemath/vector2.hpp
 include/joemath/vector2.hpp~

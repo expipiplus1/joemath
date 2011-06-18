@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include <joemath/float_util.hpp>
 #include <cmath>
 
 namespace NJoeMath
