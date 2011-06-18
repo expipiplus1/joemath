@@ -126,43 +126,6 @@ void TestFloat4()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
-template<typename T>
-class scalar
-{
-public:
-    scalar ()
-    {}
-    scalar (T t)
-    {
-        x = t;
-    }
-    scalar (const scalar<T>& t)
-    {
-        *this = t;
-    }
-    
-    const scalar<T>& operator =(const scalar<T> t)
-    {
-        *this = t;
-        return *this;
-    }
-    
-    template<typename U>
-    const scalar<T>& operator =(const scalar<U> t)
-    {
-        x = t.x;
-        return *this;
-    }
-    
-    T x;
-};    
-
-template<typename T, typename U, typename D = decltype(T()+U())>
-scalar< D > operator + (const scalar<T> a, const scalar<U> b)
-{
-    return scalar< D >(a.x+b.x);
-}    
-
 int main( int argc, char** argv )
 {
     TestRandom();
@@ -170,6 +133,14 @@ int main( int argc, char** argv )
     TestFloat2();
     TestFloat3();
     TestFloat4();
+    
+    NJoeMath::float3 a(1,2,3);
+    NJoeMath::float3 b(2,3,4);
+    NJoeMath::int3 c;
+    c = a + b;
+    
+    double d = c.Length();
+    return d;
     
 	return 0;
 }
