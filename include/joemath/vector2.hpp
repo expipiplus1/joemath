@@ -36,8 +36,6 @@ namespace NJoeMath
     template<typename T>
     class vector2
     {
-        typedef T          value_type;
-        typedef vector2<T> type;
     public:
         T   x;
         T   y;
@@ -52,58 +50,58 @@ namespace NJoeMath
 
         vector2                     ( T X, T Y );
 
-        vector2                     ( const type& v );
+        vector2                     ( const vector2<T>& v );
 
         //
         // Setters
         //
 
-        void        Set             ( value_type X, value_type Y );
+        void        Set             ( T X, T Y );
 
-        void        SetX            ( value_type X );
-        void        SetY            ( value_type Y );
+        void        SetX            ( T X );
+        void        SetY            ( T Y );
 
         //
         // Getters
         // 
 
-        value_type  GetX            ( ) const;
-        value_type  GetY            ( ) const;
+        T           GetX            ( ) const;
+        T           GetY            ( ) const;
 
-        value_type  operator []     ( u32 i ) const;
-        value_type& operator []     ( u32 i );
+        T           operator []     ( u32 i ) const;
+        T         & operator []     ( u32 i );
 
         //
         // Unary Operators
         //
 
         // this vector
-        type        operator +      ( ) const;
+        vector2<T>  operator +      ( ) const;
         
         // the negated vertion of this vector
-        type        operator -      ( ) const;
+        vector2<T>  operator -      ( ) const;
 
         //
         // Assignment operators
         //
 
-        type&       operator +=     ( const type& v );
+        vector2<T>& operator +=     ( const vector2<T>& v );
 
-        type&       operator -=     ( const type& v );
+        vector2<T>& operator -=     ( const vector2<T>& v );
 
         // component-wise multiplication
-        type&       operator *=     ( const type& v );
+        vector2<T>& operator *=     ( const vector2<T>& v );
 
-        type&       operator *=     ( const value_type&  f );
+        vector2<T>& operator *=     ( const T& f );
 
-        type&       operator /=     ( const value_type&  f );
+        vector2<T>& operator /=     ( const T& f );
 
         //
         // comparison
         //  
 
-        bool        operator ==     ( const type& v ) const;
-        bool        operator !=     ( const type& v ) const;
+        bool        operator ==     ( const vector2<T>& v ) const;
+        bool        operator !=     ( const vector2<T>& v ) const;
 
         //
         // methods
@@ -111,13 +109,13 @@ namespace NJoeMath
 
         void    Normalize           ( );
 
-        void    Clamp               ( const type& min, const type& max );
+        void    Clamp               ( const vector2<T>& min, const vector2<T>& max );
 
         void    Saturate            ( );
 
-        value_type   Length         ( ) const;
+        T       Length              ( ) const;
 
-        value_type   LengthSq       ( ) const;
+        T       LengthSq            ( ) const;
     };
     
     //
@@ -135,13 +133,13 @@ namespace NJoeMath
     vector2<T>  operator *  ( const vector2<T>& v0, const vector2<T>& v1 );
 
     template<typename T>
-    vector2<T>  operator *  ( const vector2<T>& v,  const T&  f );
+    vector2<T>  operator *  ( const vector2<T>& v,  const T& f );
     
     template<typename T>
-    vector2<T>  operator *  ( const T&  f,  const vector2<T>& v );
+    vector2<T>  operator *  ( const T& f,  const vector2<T>& v );
 
     template<typename T>
-    vector2<T>  operator /  ( const vector2<T>& v,  const T&  f );
+    vector2<T>  operator /  ( const vector2<T>& v,  const T& f );
     
     //
     // Misc
