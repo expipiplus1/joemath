@@ -317,7 +317,7 @@ namespace NJoeMath
     template<typename T, typename U, typename R = decltype(T()+U())>
     R           Dot             ( const vector3<T>& v0, const vector3<U>& v1 )
     {
-        return v0.x*v1.x + v0.y*v1.y, v0.z*v1.z;
+        return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z;
     }
     
     template<typename T, typename U, typename R = decltype(T()+U())>
