@@ -16,3 +16,5 @@ include/joemath/random.hpp~
 include/joemath/scalar.hpp~
 include/joemath/vector2-inl.hpp~
 include/joemath/vector2.hpp~
+include/joemath/vector3-inl.hpp~
+include/joemath/vector3.hpp~
