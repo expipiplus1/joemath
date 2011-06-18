@@ -30,7 +30,7 @@
 
 #include <joemath/scalar.hpp>
 #include <joemath/vector2.hpp>
-#include <joemath/float3.hpp>
+#include <joemath/vector3.hpp>
 #include <joemath/config.hpp>
 
 namespace NJoeMath
