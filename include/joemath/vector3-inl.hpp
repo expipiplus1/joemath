@@ -59,8 +59,7 @@ namespace NJoeMath
     }
     
     template<typename T>
-    template<typename U>
-    vector3<T>::vector3              ( const vector2<U>& v, const T Z )
+    vector3<T>::vector3              ( const vector2<T>& v, const T Z )
     :x(v.x)
     ,y(v.y)
     ,z(Z)
@@ -258,7 +257,8 @@ namespace NJoeMath
     }
     
     template<typename T>
-    T   vector3<T>::Length      ( ) const
+    template<typename R>
+    R   vector3<T>::Length      ( ) const
     {
         return std::sqrt( x*x + y*y + z*z );
     }
@@ -395,8 +395,8 @@ namespace NJoeMath
                            Saturated( v.z ) );
     }
     
-    template<typename T>
-    T           Length          ( const vector3<T>& v )
+    template<typename T, typename R = decltype(vector3<T>::Length())>
+    R           Length          ( const vector3<T>& v )
     {
         return v.Length( );
     }

@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <joemath/scalar.hpp>
 #include <joemath/vector2.hpp>
 #include <joemath/config.hpp>
@@ -60,8 +61,7 @@ namespace NJoeMath
         
         explicit    vector3         ( const T f );
         
-        template<typename U>
-        explicit    vector3         ( const vector2<U>& v, const T Z );
+        explicit    vector3         ( const vector2<T>& v, const T Z );
         
         explicit    vector3         ( const T X, const T Y, const T Z );
         
@@ -137,7 +137,8 @@ namespace NJoeMath
         
         void    Saturate            ( );
         
-        T       Length              ( ) const;
+        template<typename R = decltype(std::sqrt(T()))>
+        R       Length              ( ) const;
         
         T       LengthSq            ( ) const;
     };
@@ -173,7 +174,7 @@ namespace NJoeMath
     R           Dot             ( const vector3<T>& v0, const vector3<U>& v1 );
     
     template<typename T, typename U, typename R = decltype(T()+U())>
-    R           Cross           ( const vector3<T>& v0, const vector3<U>& v1 );
+    vector3<R>  Cross           ( const vector3<T>& v0, const vector3<U>& v1 );
     
     template<typename T>
     vector3<T>  Normalized      ( const vector3<T>& v );
@@ -202,8 +203,8 @@ namespace NJoeMath
     template<typename T>
     vector3<T>  Saturated       ( const vector3<T>& v );
     
-    template<typename T>
-    T           Length          ( const vector3<T>& v );
+    template<typename T, typename R = decltype(vector2<T>::Length())>
+    R           Length          ( const vector3<T>& v );
     
     template<typename T, typename U, typename R = decltype(T()+U())>
     vector3<R>  Min             ( const vector3<T>& v0, const vector3<U>& v1 );

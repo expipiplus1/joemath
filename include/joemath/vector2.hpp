@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
@@ -132,8 +133,9 @@ namespace NJoeMath
         void    Clamp               ( const vector2<U>& min, const vector2<V>& max );
 
         void    Saturate            ( );
-
-        T       Length              ( ) const;
+        
+        template<typename R = decltype(std::sqrt(T()))>
+        R       Length              ( ) const;
 
         T       LengthSq            ( ) const;
     };
@@ -195,8 +197,8 @@ namespace NJoeMath
     template<typename T>
     vector2<T>  Saturated       ( const vector2<T>& v );
 
-    template<typename T>
-    T           Length          ( const vector2<T>& v );
+    template<typename T, typename R = decltype(vector2<T>::Length())>
+    R           Length          ( const vector2<T>& v );
 
     template<typename T, typename U, typename R = decltype(T()+U())>
     vector2<R>  Min             ( const vector2<T>& v0, const vector2<U>& v1 );

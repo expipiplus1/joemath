@@ -230,7 +230,8 @@ namespace NJoeMath
     }
 
     template<typename T>
-    T   vector2<T>::Length      ( ) const
+    template<typename R>
+    R   vector2<T>::Length      ( ) const
     {
         return std::sqrt( x*x + y*y );
     }
@@ -354,8 +355,8 @@ namespace NJoeMath
                        Saturated( v.y ) );
     }
 
-    template<typename T>
-    T           Length          ( const vector2<T>& v )
+    template<typename T, typename R = decltype(vector2<T>::Length())>
+    R           Length          ( const vector2<T>& v )
     {
         return v.Length( );
     }
