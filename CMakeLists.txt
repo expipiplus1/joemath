@@ -10,14 +10,14 @@ include_directories(include)
 
 set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
                       ${joemath_SOURCE_DIR}/include/joemath/random.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float2-inl.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float2.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float3-inl.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float3.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float_util-inl.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float_util.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/int_util-inl.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/int_util.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/scalar-inl.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector2.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector2-inl.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector3.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector3-inl.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/float4.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/float4-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/joemath.hpp)
 
 #--------------------------------------------------------------------

@@ -28,80 +28,92 @@
 
 #pragma once
 
-#include <cmath>    
-
 namespace NJoeMath
 {
-    inline float    Lerp            ( const float v0, const float v1, const float t )
+    template <typename T>
+    inline T    Lerp            ( const T v0, const T v1, const float t )
     {
         return v0 + t * (v1 - v0);
     }
     
-    inline float    SmoothLerp      ( const float v0, const float v1, float t )
+    template <typename T>
+    inline T    SmoothLerp      ( const T v0, const T v1, float t )
     {
         t = t*t * (3.0f - 2.0f * t);
         return Lerp( v0, v1, t );
     }
 
-    inline float    SmootherLerp    ( const float v0, const float v1, float t )
+    template <typename T>
+    inline T    SmootherLerp    ( const T v0, const T v1, float t )
     {
         t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
         return Lerp( v0, v1, t );
     }
 
-    inline float    Step            ( const float v, const float edge )
+    template <typename T>
+    inline T    Step            ( const T v, const T edge )
     {
         return v < edge ? 0.0f : 1.0f;
     }    
 
-    inline float    SmoothStep      ( const float v, const float edge0, const float edge1 )
+    template <typename T>
+    inline T    SmoothStep      ( const T v, const T edge0, const T edge1 )
     {
-        float x = Saturated( (v - edge0) / (edge1 - edge0) );
+        T x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x * (3.0f - 2.0f * x);
     }
 
-    inline float    SmootherStep    ( const float v, const float edge0, const float edge1 )
+    template <typename T>
+    inline T    SmootherStep    ( const T v, const T edge0, const T edge1 )
     {
-        float x = Saturated( (v - edge0) / (edge1 - edge0) );
+        T x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
     }
 
-    inline float    Clamped         ( const float v, const float min, const float max )
+    template <typename T>
+    inline T    Clamped         ( const T v, const T min, const T max )
     {
         return v > min ? ( v < max ? v : max ) : min;
     }
 
-    inline float    Saturated       ( const float v )
+    template <typename T>
+    inline T    Saturated       ( const T v )
     {    
         return Clamped( v, 0.0f, 1.0f ); 
     }
 
-    inline float    Length          ( const float v )
+    template <typename T>
+    inline T    Length          ( const T v )
     {
-        return std::fabs( v );
+        return v > 0 ? v : -v;
     }    
 
-    inline float    Min             ( const float v0, const float v1 )
+    template <typename T>
+    inline T    Min             ( const T v0, const T v1 )
     {
         return v0 < v1 ? v0 : v1;
     }
 
-    inline float    Max             ( const float v0, const float v1 )
+    template <typename T>
+    inline T    Max             ( const T v0, const T v1 )
     {
         return v0 < v1 ? v1 : v0;
     }
 
-    inline float    Radians         ( const float degrees )
+    template <typename T>
+    inline T    Radians         ( const T degrees )
     {
         return degrees * PI / 180.0f;
     }
 
-    inline float    Degrees         ( const float radians )
+    template <typename T>
+    inline T    Degrees         ( const T radians )
     {
         return radians * 180.0f / PI;
     }
 
-    inline float    Distance        ( const float v0, const float v1 )
+    template <typename T>
+    inline T    Distance        ( const T v0, const T v1 )
     {
         return Length(v1 - v0);
     }

@@ -28,46 +28,71 @@
 
 #pragma once
 
-#include <joemath/joemath.hpp>
+#include <cstdint>
+#include <joemath/config.hpp>
+
+typedef uint8_t         u8;
+typedef uint16_t        u16;
+typedef uint32_t        u32;
+typedef uint64_t        u64;
+
+typedef int8_t          s8;
+typedef int16_t         s16;
+typedef int32_t         s32;
+typedef int64_t         s64;
 
 namespace NJoeMath
 {
     //
     // Constants
     //
-    const float PI = 3.1415926535897932384626433832795028841971693993751058209749f;
+    const float     PI = 3.1415926535897932384626433832795028841971693993751058209749f;
 
     //
     // Functions
     //
 
-    float   Lerp            ( const float v0, const float v1, const float t );
+    template <typename T>
+    T   Lerp            ( const T v0, const T v1, const float t );
 
-    float   SmoothLerp      ( const float v0, const float v1, const float t );
+    template <typename T>
+    T   SmoothLerp      ( const T v0, const T v1, const float t );
 
-    float   SmootherLerp    ( const float v0, const float v1, const float t );
+    template <typename T>
+    T   SmootherLerp    ( const T v0, const T v1, const float t );
 
-    float   Step            ( const float v, const float edge );
+    template <typename T>
+    T   Step            ( const T v, const T edge );
     
-    float   SmoothStep      ( const float v, const float edge0, const float edge1 );
+    template <typename T>
+    T   SmoothStep      ( const T v, const T edge0, const T edge1 );
   
-    float   SmootherStep    ( const float v, const float edge0, const float edge1 );
+    template <typename T>
+    T   SmootherStep    ( const T v, const T edge0, const T edge1 );
     
-    float   Clamped         ( const float v, const float min, const float max );
+    template <typename T>
+    T   Clamped         ( const T v, const T min, const T max );
     
-    float   Saturated       ( const float v );
+    template <typename T>
+    T   Saturated       ( const T v );
     
-    float   Length          ( const float v );
+    template <typename T>
+    T   Length          ( const T v );
     
-    float   Min             ( const float v0, const float v1 );
+    template <typename T>
+    T   Min             ( const T v0, const T v1 );
     
-    float   Max             ( const float v0, const float v1 );
+    template <typename T>
+    T   Max             ( const T v0, const T v1 );
     
-    float   Radians         ( const float degrees );
+    template <typename T>
+    T   Radians         ( const T degrees );
     
-    float   Degrees         ( const float radians );
+    template <typename T>
+    T   Degrees         ( const T radians );
     
-    float   Distance        ( const float v0, const float v1 );
+    template <typename T>
+    T   Distance        ( const T v0, const T v1 );
 };
 
-#include <joemath/float_util-inl.hpp>
+#include <joemath/scalar-inl.hpp>
