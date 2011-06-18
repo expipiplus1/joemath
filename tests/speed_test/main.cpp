@@ -54,18 +54,18 @@ void TestRandom()
 
 }
 
-void TestFloatUtil()
+void TestFloat()
 {
     NTimer::CTimer timer;
     
     std::cout << "float step, ";
     
-    float v = 0.0f;
+    double v = 0.0f;
     
     timer.Start();
     
     for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v = NJoeMath::Step(v, 0.0f);
+        v = NJoeMath::Step(v, 0.0);
     
     timer.Stop();
     
@@ -128,11 +128,20 @@ void TestFloat4()
 
 int main( int argc, char** argv )
 {
-    TestRandom();
-    TestFloatUtil();
-    TestFloat2();
-    TestFloat3();
-    TestFloat4();
+//     TestRandom();
+//     TestFloat();
+//     TestFloat2();
+//     TestFloat3();
+//     TestFloat4();
+    
+    typedef NJoeMath::vector2<float> f2;
+    
+    f2 a(1.0f, 1.0f);
+    f2 v(0.0f, 2.0f);
+    
+    f2 c = a + v;
+    
+    std::cout << c.x << "\n";
     
 	return 0;
 }

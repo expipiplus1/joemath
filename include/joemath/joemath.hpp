@@ -29,10 +29,10 @@
 #pragma once
 
 #include <joemath/config.hpp>
-#include <joemath/int_util.hpp>
-#include <joemath/random.hpp>
-#include <joemath/float_util.hpp>
+#include <joemath/scalar.hpp>
 #include <joemath/float2.hpp>
+#include <joemath/vector2.hpp>
 #include <joemath/float3.hpp>
 #include <joemath/float4.hpp>
+#include <joemath/random.hpp>
 
