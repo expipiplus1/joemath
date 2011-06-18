@@ -76,7 +76,7 @@ add_subdirectory(tests)
 #--------------------------------------------------------------------
 
 install(DIRECTORY include/joemath DESTINATION include 
-        FILES_MATCHING REGEX "(.*\\.h$|.*\\.inl$)")
+        FILES_MATCHING REGEX "(.*\\.hpp$|.*\\.inl$)")
 
 install(FILES license.txt readme.txt 
         DESTINATION share/doc/joemath/)
