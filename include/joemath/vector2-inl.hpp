@@ -109,13 +109,13 @@ namespace NJoeMath
     template<typename T>
     T   vector2<T>::operator [] ( u32 i ) const
     {
-        return ((float*)&x)[i];
+        return ((T*)&x)[i];
     }
 
     template<typename T>
     T&  vector2<T>::operator [] ( u32 i )
     {
-        return ((float*)&x)[i];
+        return ((T*)&x)[i];
     }
 
     //
