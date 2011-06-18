@@ -32,6 +32,6 @@
 #include <joemath/scalar.hpp>
 #include <joemath/vector2.hpp>
 #include <joemath/vector3.hpp>
-#include <joemath/float4.hpp>
+#include <joemath/vector4.hpp>
 #include <joemath/random.hpp>
 
