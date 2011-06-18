@@ -16,8 +16,8 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
                       ${joemath_SOURCE_DIR}/include/joemath/vector2-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/vector3.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/vector3-inl.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float4.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/float4-inl.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector4.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/vector4-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/joemath.hpp)
 
 #--------------------------------------------------------------------
