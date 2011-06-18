@@ -45,6 +45,14 @@ namespace NJoeMath
 
     template<typename T>
     template<typename U>
+    vector2<T>::vector2              ( const vector2<U>& v )
+    :x(v.x)
+    ,y(v.y)
+    {
+    }
+    
+    template<typename T>
+    template<typename U>
     vector2<T>::vector2              ( const U f )
     :x(f)
     ,y(f)
@@ -59,14 +67,6 @@ namespace NJoeMath
     {
     }
     
-    template<typename T>
-    template<typename U>
-    vector2<T>::vector2              ( const vector2<U>& v )
-    :x(v.x)
-    ,y(v.y)
-    {
-    }
-
     //
     // Setters
     //

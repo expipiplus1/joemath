@@ -42,7 +42,8 @@ namespace NJoeMath
     }
     
     template<typename T>
-    vector3<T>::vector3              ( const vector3<T>& v )
+    template<typename U>
+    vector3<T>::vector3              ( const vector3<U>& v )
     :x(v.x)
     ,y(v.y)
     ,z(v.z)
@@ -71,15 +72,6 @@ namespace NJoeMath
     :x(X)
     ,y(Y)
     ,z(Z)
-    {
-    }
-    
-    template<typename T>
-    template<typename U>
-    vector3<T>::vector3              ( const vector3<U>& v )
-    :x(v.x)
-    ,y(v.y)
-    ,z(v.z)
     {
     }
     

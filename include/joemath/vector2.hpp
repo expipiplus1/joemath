@@ -51,18 +51,16 @@ namespace NJoeMath
         // constructors
         //
 
-                    vector2         ( );
+        vector2                     ( );
 
-                    vector2         ( const vector2<T>& v );
+        template<typename U>
+        vector2                     ( const vector2<U>& v );
 
         template<typename U>
         explicit    vector2         ( const U f );
 
         template<typename U, typename V>
         explicit    vector2         ( const U X, const V Y );
-
-        template<typename U>
-        explicit    vector2         ( const vector2<U>& v);
 
         //
         // Setters

@@ -55,7 +55,8 @@ namespace NJoeMath
         
         vector3                     ( );
         
-        vector3                     ( const vector3<T>& v );
+        template<typename U>
+        vector3                     ( const vector3<U>& v);
         
         explicit    vector3         ( const T f );
         
@@ -63,9 +64,6 @@ namespace NJoeMath
         explicit    vector3         ( const vector2<U>& v, const T Z );
         
         explicit    vector3         ( const T X, const T Y, const T Z );
-        
-        template<typename U>
-        explicit    vector3         ( const vector3<U>& v);
         
         //
         // Setters
