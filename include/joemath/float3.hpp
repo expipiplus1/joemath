@@ -29,7 +29,7 @@
 #pragma once
 
 #include <joemath/scalar.hpp>
-#include <joemath/float2.hpp>
+#include <joemath/vector2.hpp>
 #include <joemath/config.hpp>
 
 namespace NJoeMath

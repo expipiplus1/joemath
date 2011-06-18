@@ -33,6 +33,13 @@
 
 namespace NJoeMath
 {
+    template <typename t>
+    class vector2;
+    
+    typedef vector2<float>  float2;
+    typedef vector2<double> double2;
+    typedef vector2<int>    int2;
+    
     template<typename T>
     class vector2
     {
@@ -44,13 +51,18 @@ namespace NJoeMath
         // constructors
         //
 
-        vector2                     ( );
+                    vector2         ( );
 
-        vector2                     ( T f );
+                    vector2         ( const vector2<T>& v );
 
-        vector2                     ( T X, T Y );
+        template<typename U>
+        explicit    vector2         ( const U f );
 
-        vector2                     ( const vector2<T>& v );
+        template<typename U, typename V>
+        explicit    vector2         ( const U X, const V Y );
+
+        template<typename U>
+        explicit    vector2         ( const vector2<U>& v);
 
         //
         // Setters
@@ -59,6 +71,7 @@ namespace NJoeMath
         void        Set             ( T X, T Y );
 
         void        SetX            ( T X );
+
         void        SetY            ( T Y );
 
         //
@@ -69,7 +82,7 @@ namespace NJoeMath
         T           GetY            ( ) const;
 
         T           operator []     ( u32 i ) const;
-        T         & operator []     ( u32 i );
+        T&          operator []     ( u32 i );
 
         //
         // Unary Operators
@@ -85,23 +98,31 @@ namespace NJoeMath
         // Assignment operators
         //
 
-        vector2<T>& operator +=     ( const vector2<T>& v );
+        template<typename U>
+        vector2<T>& operator +=     ( const vector2<U>& v );
 
-        vector2<T>& operator -=     ( const vector2<T>& v );
+        template<typename U>
+        vector2<T>& operator -=     ( const vector2<U>& v );
 
         // component-wise multiplication
-        vector2<T>& operator *=     ( const vector2<T>& v );
+        template<typename U>
+        vector2<T>& operator *=     ( const vector2<U>& v );
 
-        vector2<T>& operator *=     ( const T& f );
+        template<typename U>
+        vector2<T>& operator *=     ( const U& f );
 
-        vector2<T>& operator /=     ( const T& f );
+        template<typename U>
+        vector2<T>& operator /=     ( const U& f );
 
         //
         // comparison
         //  
 
-        bool        operator ==     ( const vector2<T>& v ) const;
-        bool        operator !=     ( const vector2<T>& v ) const;
+        template<typename U>
+        bool        operator ==     ( const vector2<U>& v ) const;
+
+        template<typename U>
+        bool        operator !=     ( const vector2<U>& v ) const;
 
         //
         // methods
@@ -109,7 +130,8 @@ namespace NJoeMath
 
         void    Normalize           ( );
 
-        void    Clamp               ( const vector2<T>& min, const vector2<T>& max );
+        template<typename U, typename V>
+        void    Clamp               ( const vector2<U>& min, const vector2<V>& max );
 
         void    Saturate            ( );
 
@@ -122,67 +144,67 @@ namespace NJoeMath
     // Binary Operators
     //
 
-    template<typename T>
-    vector2<T>  operator +  ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator +  ( const vector2<T>& v0, const vector2<U>& v1 );
 
-    template<typename T>
-    vector2<T>  operator -  ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()-U())>
+    vector2<R>  operator -  ( const vector2<T>& v0, const vector2<U>& v1 );
 
     // component-wise multiplication
-    template<typename T>
-    vector2<T>  operator *  ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()*U())>
+    vector2<R>  operator *  ( const vector2<T>& v0, const vector2<U>& v1 );
 
-    template<typename T>
-    vector2<T>  operator *  ( const vector2<T>& v,  const T& f );
+    template<typename T, typename U, typename R = decltype(T()*U())>
+    vector2<R>  operator *  ( const vector2<T>& v,  const U& f );
     
-    template<typename T>
-    vector2<T>  operator *  ( const T& f,  const vector2<T>& v );
+    template<typename T, typename U, typename R = decltype(T()*U())>
+    vector2<R>  operator *  ( const T& f,  const vector2<U>& v );
 
-    template<typename T>
-    vector2<T>  operator /  ( const vector2<T>& v,  const T& f );
+    template<typename T, typename U, typename R = decltype(T()/U())>
+    vector2<R>  operator /  ( const vector2<T>& v,  const U& f );
     
     //
     // Misc
     //
 
-    template<typename T>
-    T           Dot             ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    R           Dot             ( const vector2<T>& v0, const vector2<U>& v1 );
 
     template<typename T>
     vector2<T>  Normalized      ( const vector2<T>& v );
 
-    template<typename T>
-    vector2<T>  Lerp            ( const vector2<T>& v0, const vector2<T>& v1, const float t );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Lerp            ( const vector2<T>& v0, const vector2<U>& v1, const float t );
 
-    template<typename T>
-    vector2<T>  SmoothLerp      ( const vector2<T>& v0, const vector2<T>& v1, float t );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  SmoothLerp      ( const vector2<T>& v0, const vector2<U>& v1, float t );
 
-    template<typename T>
-    vector2<T>  SmootherLerp    ( const vector2<T>& v0, const vector2<T>& v1, float t );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  SmootherLerp    ( const vector2<T>& v0, const vector2<U>& v1, float t );
 
-    template<typename T>
-    vector2<T>  Step            ( const vector2<T>& v,  const vector2<T>& edge );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Step            ( const vector2<T>& v,  const vector2<U>& edge );
 
-    template<typename T>
-    vector2<T>  SmoothStep      ( const vector2<T>& v,  const vector2<T>& edge0, const vector2<T>& edge1 );
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  SmoothStep      ( const vector2<T>& v,  const vector2<U>& edge0, const vector2<V>& edge1 );
 
-    template<typename T>
-    vector2<T>  SmootherStep    ( const vector2<T>& v,  const vector2<T>& edge0, const vector2<T>& edge1 );
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  SmootherStep    ( const vector2<T>& v,  const vector2<U>& edge0, const vector2<V>& edge1 );
 
-    template<typename T>
-    vector2<T>  Clamped         ( const vector2<T>& v,  const vector2<T>& min, const vector2<T>& max );
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  Clamped         ( const vector2<T>& v,  const vector2<U>& min, const vector2<V>& max );
 
     template<typename T>
     vector2<T>  Saturated       ( const vector2<T>& v );
 
     template<typename T>
-    vector2<T>  Length          ( const vector2<T>& v );
+    T           Length          ( const vector2<T>& v );
 
-    template<typename T>
-    vector2<T>  Min             ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Min             ( const vector2<T>& v0, const vector2<U>& v1 );
 
-    template<typename T>
-    vector2<T>  Max             ( const vector2<T>& v0, const vector2<T>& v1 );
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Max             ( const vector2<T>& v0, const vector2<U>& v1 );
 };
 
 #include <joemath/vector2-inl.hpp>

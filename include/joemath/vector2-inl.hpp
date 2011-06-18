@@ -44,21 +44,24 @@ namespace NJoeMath
     }
 
     template<typename T>
-    vector2<T>::vector2              ( T f )
+    template<typename U>
+    vector2<T>::vector2              ( const U f )
     :x(f)
     ,y(f)
     {
     }
-
+    
     template<typename T>
-    vector2<T>::vector2              ( T X, T Y )
+    template<typename U, typename V>
+    vector2<T>::vector2              ( const U X, const V Y )
     :x(X)
     ,y(Y)
     {
     }
-
+    
     template<typename T>
-    vector2<T>::vector2              ( const vector2<T>& v )
+    template<typename U>
+    vector2<T>::vector2              ( const vector2<U>& v )
     :x(v.x)
     ,y(v.y)
     {
@@ -138,7 +141,8 @@ namespace NJoeMath
     //
 
     template<typename T>
-    vector2<T>& vector2<T>::operator += ( const vector2<T>& v )
+    template<typename U>
+    vector2<T>& vector2<T>::operator += ( const vector2<U>& v )
     {
         x += v.x;
         y += v.y;
@@ -146,7 +150,8 @@ namespace NJoeMath
     }
 
     template<typename T>
-    vector2<T>& vector2<T>::operator -= ( const vector2<T>& v )
+    template<typename U>
+    vector2<T>& vector2<T>::operator -= ( const vector2<U>& v )
     {
         x -= v.x;
         y -= v.y;
@@ -155,7 +160,8 @@ namespace NJoeMath
 
     // component-wise multiplication
     template<typename T>
-    vector2<T>& vector2<T>::operator *= ( const vector2<T>& v )
+    template<typename U>
+    vector2<T>& vector2<T>::operator *= ( const vector2<U>& v )
     {
         x *= v.x;
         y *= v.y;
@@ -163,7 +169,8 @@ namespace NJoeMath
     }
 
     template<typename T>
-    vector2<T>& vector2<T>::operator *= ( const T&  f )
+    template<typename U>
+    vector2<T>& vector2<T>::operator *= ( const U&  f )
     {
         x *= f;
         y *= f;
@@ -171,7 +178,8 @@ namespace NJoeMath
     }
 
     template<typename T>
-    vector2<T>& vector2<T>::operator /= ( const T&  f )
+    template<typename U>
+    vector2<T>& vector2<T>::operator /= ( const U&  f )
     {
         x /= f;
         y /= f;
@@ -183,14 +191,16 @@ namespace NJoeMath
     //  
 
     template<typename T>
-    bool    vector2<T>::operator == ( const vector2<T>& v ) const
+    template<typename U>
+    bool    vector2<T>::operator == ( const vector2<U>& v ) const
     {
         return x == v.x &&
                y == v.y;
     }
 
     template<typename T>
-    bool    vector2<T>::operator != ( const vector2<T>& v ) const
+    template<typename U>
+    bool    vector2<T>::operator != ( const vector2<U>& v ) const
     {
         return x != v.x ||
                y != v.y;
@@ -207,9 +217,10 @@ namespace NJoeMath
     }
 
     template<typename T>
-    void    vector2<T>::Clamp       ( const vector2<T>& min, const vector2<T>& max )
+    template<typename U, typename V>
+    void    vector2<T>::Clamp       ( const vector2<U>& min, const vector2<V>& max )
     {
-        *this = NJoeMath::Clamped( *this, min, max );
+        *this = NJoeMath::Clamped( *this, vector2<T>(min), vector2<T>(max) );
     }
 
     template<typename T>
@@ -233,50 +244,50 @@ namespace NJoeMath
     //
     // Binary Operators
     //
-
-    template<typename T>
-    vector2<T>  operator +      ( const vector2<T>& v0, const vector2<T>& v1 )
+    
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator +      ( const vector2<T>& v0, const vector2<U>& v1 )
     {
-        return vector2<T>(v0.x+v1.x, v0.y+v1.y);
+        return vector2<R>(v0.x+v1.x, v0.y+v1.y);
     }
 
-    template<typename T>
-    vector2<T>  operator -      ( const vector2<T>& v0, const vector2<T>& v1 )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator -      ( const vector2<T>& v0, const vector2<U>& v1 )
     {
-        return vector2<T>(v0.x-v1.x, v0.y-v1.y);
+        return vector2<R>(v0.x-v1.x, v0.y-v1.y);
     }
 
     // component-wise multiplication
-    template<typename T>
-    vector2<T>  operator *      ( const vector2<T>& v0, const vector2<T>& v1 )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator *      ( const vector2<T>& v0, const vector2<U>& v1 )
     {
-        return vector2<T>(v0.x*v1.x, v0.y*v1.y);
+        return vector2<R>(v0.x*v1.x, v0.y*v1.y);
     }
 
-    template<typename T>
-    vector2<T>  operator *      ( const vector2<T>& v,  const T&  f )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator *      ( const vector2<T>& v,  const U&  f )
     {
-        return vector2<T>(v.x*f, v.y*f);
+        return vector2<R>(v.x*f, v.y*f);
     }
 
-    template<typename T>
-    vector2<T>  operator *      ( const T&  f,  const vector2<T>& v )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator *      ( const T&  f,  const vector2<U>& v )
     {
-        return vector2<T>(v.x*f, v.y*f);
+        return vector2<R>(v.x*f, v.y*f);
     }
 
-    template<typename T>
-    vector2<T>  operator /      ( const vector2<T>& v,  const T&  f )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  operator /      ( const vector2<T>& v,  const U&  f )
     {
-        return vector2<T>(v.x/f, v.y/f);
+        return vector2<R>(v.x/f, v.y/f);
     }
 
     //
     // Misc
     //
 
-    template<typename T>
-    float   Dot             ( const vector2<T>& v0, const vector2<T>& v1 )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    R           Dot             ( const vector2<T>& v0, const vector2<U>& v1 )
     {
         return v0.x*v1.x + v0.y*v1.y;
     }
@@ -288,51 +299,51 @@ namespace NJoeMath
         return v * recip_length;
     }
 
-    template<typename T>
-    vector2<T>  Lerp            ( const vector2<T>& v0, const vector2<T>& v1, const float t )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Lerp            ( const vector2<T>& v0, const vector2<U>& v1, const float t )
     {
         return v0 + (v1 - v0) * t;
     }
 
-    template<typename T>
-    vector2<T>  SmoothLerp      ( const vector2<T>& v0, const vector2<T>& v1, float t )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  SmoothLerp      ( const vector2<T>& v0, const vector2<U>& v1, float t )
     {
         t = t*t * (3.0f - 2.0f * t);
         return Lerp( v0, v1, t );
     }
 
-    template<typename T>
-    vector2<T>  SmootherLerp    ( const vector2<T>& v0, const vector2<T>& v1, float t )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  SmootherLerp    ( const vector2<T>& v0, const vector2<U>& v1, float t )
     {
         t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
         return Lerp( v0, v1, t );
     }
 
-    template<typename T>
-    vector2<T>  Step            ( const vector2<T>& v,  const vector2<T>& edge )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Step            ( const vector2<T>& v,  const vector2<U>& edge )
     {
-        return vector2<T>( v.x < edge.x ? 0.0f : 1.0f,
+        return vector2<R>( v.x < edge.x ? 0.0f : 1.0f,
                        v.y < edge.y ? 0.0f : 1.0f );
     }
-
-    template<typename T>
-    vector2<T>  SmoothStep      ( const vector2<T>& v,  const vector2<T>& edge0, const vector2<T>& edge1 )
+    
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  SmoothStep      ( const vector2<T>& v,  const vector2<U>& edge0, const vector2<V>& edge1 )
     {
-        return vector2<T>( SmoothStep( v.x, edge0.x, edge1.x ),
+        return vector2<R>( SmoothStep( v.x, edge0.x, edge1.x ),
                        SmoothStep( v.y, edge0.y, edge1.y ) );
     }
-
-    template<typename T>
-    vector2<T>  SmootherStep    ( const vector2<T>& v,  const vector2<T>& edge0, const vector2<T>& edge1 )
+    
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  SmootherStep    ( const vector2<T>& v,  const vector2<U>& edge0, const vector2<V>& edge1 )
     {
-        return vector2<T>( SmootherStep( v.x, edge0.x, edge1.x ),
+        return vector2<R>( SmootherStep( v.x, edge0.x, edge1.x ),
                        SmootherStep( v.y, edge0.y, edge1.y ) );
     }
 
-    template<typename T>
-    vector2<T>  Clamped         ( const vector2<T>& v,  const vector2<T>& min, const vector2<T>& max )
+    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    vector2<R>  Clamped         ( const vector2<T>& v,  const vector2<U>& min, const vector2<V>& max )
     {
-        return vector2<T>( Clamped( v.x, min.x, max.x ),
+        return vector2<R>( Clamped( v.x, min.x, max.x ),
                        Clamped( v.y, min.y, max.y ) );
     }
 
@@ -344,22 +355,22 @@ namespace NJoeMath
     }
 
     template<typename T>
-    vector2<T>  Length          ( const vector2<T>& v )
+    T           Length          ( const vector2<T>& v )
     {
         return v.Length( );
     }
 
-    template<typename T>
-    vector2<T>  Min             ( const vector2<T>& v0, const vector2<T>& v1 )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Min             ( const vector2<T>& v0, const vector2<U>& v1 )
     {
-        return vector2<T>( Min( v0.x, v1.x ),
+        return vector2<R>( Min( v0.x, v1.x ),
                        Min( v0.y, v1.y ) );
     }
 
-    template<typename T>
-    vector2<T>  Max             ( const vector2<T>& v0, const vector2<T>& v1 )
+    template<typename T, typename U, typename R = decltype(T()+U())>
+    vector2<R>  Max             ( const vector2<T>& v0, const vector2<U>& v1 )
     {
-        return vector2<T>( Max( v0.x, v1.x ),
+        return vector2<R>( Max( v0.x, v1.x ),
                        Max( v0.y, v1.y ) );
     }
 };
