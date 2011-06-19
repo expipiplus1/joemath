@@ -126,6 +126,17 @@ void TestFloat4()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
 }
 
+void AddVec(NJoeMath::float4& a, const NJoeMath::float4& b)
+{
+    for(u32 i = 0; i < 4; ++i)
+    {
+        ((float*)&a)[i] += ((float*)&b)[i];
+    }
+}
+    
+
+#include <joemath/templatemath.hpp>
+
 int main( int argc, char** argv )
 {
     TestRandom();
@@ -134,13 +145,26 @@ int main( int argc, char** argv )
     TestFloat3();
     TestFloat4();
     
-    NJoeMath::float3 a(1,2,3);
-    NJoeMath::float3 b(2,3,4);
-    NJoeMath::int3 c;
+    NJoeMath::CRandom random;
+    NTimer::CTimer time;
+    time.Start();
+    random.Seed(time.GetElapsedTime());
+    
+    NJoeMath::float4 a,b,c;
+    a = NJoeMath::float4(0,0,0,float(random.U32())/float(0xffffffff));
+    b = NJoeMath::float4(1,1,1,float(random.U32())/float(0xffffffff));;
     c = a + b;
     
-    double d = c.Length();
-    return d;
+    AddVec(c,a);
+    
+    return c.w;
+    
+//     Vec4f C;
+//     Vec4f A(0.0f,0.0f,0.0f,0.0f);
+//     Vec4f B(1.0f, 1.0f, 1.0f, 1.0f);
+//     C = A + B;
+//     
+//     return c.x + C.x();
     
 	return 0;
 }

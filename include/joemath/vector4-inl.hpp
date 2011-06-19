@@ -297,38 +297,38 @@ namespace NJoeMath
     // Binary Operators
     //
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator +      ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return vector4<R>(v0.x+v1.x, v0.y+v1.y, v0.z+v1.z, v0.w+v1.w);
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator -      ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return vector4<R>(v0.x-v1.x, v0.y-v1.y, v0.z-v1.z, v0.w-v1.w);
     }
     
     // component-wise multiplication
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator *      ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return vector4<R>(v0.x*v1.x, v0.y*v1.y, v0.z*v1.z, v0.w*v1.w);
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator *      ( const vector4<T>& v,  const U&  f )
     {
         return vector4<R>(v.x*f, v.y*f, v.z*f, v.w*f);
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator *      ( const T&  f,  const vector4<U>& v )
     {
         return vector4<R>(v.x*f, v.y*f, v.z*f, v.w*f);
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  operator /      ( const vector4<T>& v,  const U&  f )
     {
         return vector4<R>(v.x/f, v.y/f, v.z/f, v.w/f);
@@ -338,7 +338,7 @@ namespace NJoeMath
     // Misc
     //
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     R           Dot             ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w;
@@ -351,27 +351,27 @@ namespace NJoeMath
         return v * recip_length;
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  Lerp            ( const vector4<T>& v0, const vector4<U>& v1, const float t )
     {
         return v0 + (v1 - v0) * t;
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  SmoothLerp      ( const vector4<T>& v0, const vector4<U>& v1, float t )
     {
         t = t*t * (3.0f - 2.0f * t);
         return Lerp( v0, v1, t );
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  SmootherLerp    ( const vector4<T>& v0, const vector4<U>& v1, float t )
     {
         t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
         return Lerp( v0, v1, t );
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  Step            ( const vector4<T>& v,  const vector4<U>& edge )
     {
         return vector4<R>( v.x < edge.x ? R(0.0f) : R(1.0f),
@@ -380,7 +380,7 @@ namespace NJoeMath
                            v.z < edge.w ? R(0.0f) : R(1.0f) );
     }
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R>
     vector4<R>  SmoothStep      ( const vector4<T>& v,  const vector4<U>& edge0, const vector4<V>& edge1 )
     {
         return vector4<R>( SmoothStep( v.x, edge0.x, edge1.x ),
@@ -389,7 +389,7 @@ namespace NJoeMath
                            SmoothStep( v.w, edge0.w, edge1.w ) );
     }
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R>
     vector4<R>  SmootherStep    ( const vector4<T>& v,  const vector4<U>& edge0, const vector4<V>& edge1 )
     {
         return vector4<R>( SmootherStep( v.x, edge0.x, edge1.x ),
@@ -398,7 +398,7 @@ namespace NJoeMath
                            SmootherStep( v.w, edge0.w, edge1.w ) );
     }
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R>
     vector4<R>  Clamped         ( const vector4<T>& v,  const vector4<U>& min, const vector4<V>& max )
     {
         return vector4<R>( Clamped( v.x, min.x, max.x ),
@@ -416,13 +416,13 @@ namespace NJoeMath
                            Saturated( v.w ) );
     }
     
-    template<typename T, typename R = decltype(vector4<T>::Length())>
+    template<typename T, typename R>
     R           Length          ( const vector4<T>& v )
     {
         return v.Length( );
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  Min             ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return vector4<R>( Min( v0.x, v1.x ),
@@ -431,7 +431,7 @@ namespace NJoeMath
                            Min( v0.w, v1.w ) );
     }
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R>
     vector4<R>  Max             ( const vector4<T>& v0, const vector4<U>& v1 )
     {
         return vector4<R>( Max( v0.x, v1.x ),

@@ -141,76 +141,76 @@ namespace NJoeMath
         
         void    Saturate            ( );
         
-        template<typename R = decltype(std::sqrt(T()))>
+        template<typename R = decltype( std::sqrt( std::declval<T>() ) )>
         R       Length              ( ) const;
         
         T       LengthSq            ( ) const;
-    };
+    } __attribute__ ((aligned(16)));
     
     //
     // Binary Operators
     //
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() ) >
     vector4<R>  operator +  ( const vector4<T>& v0, const vector4<U>& v1 );
     
-    template<typename T, typename U, typename R = decltype(T()-U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() - std::declval<U>() )>
     vector4<R>  operator -  ( const vector4<T>& v0, const vector4<U>& v1 );
     
     // component-wise multiplication
-    template<typename T, typename U, typename R = decltype(T()*U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() * std::declval<U>() )>
     vector4<R>  operator *  ( const vector4<T>& v0, const vector4<U>& v1 );
     
-    template<typename T, typename U, typename R = decltype(T()*U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() * std::declval<U>() )>
     vector4<R>  operator *  ( const vector4<T>& v,  const U& f );
     
-    template<typename T, typename U, typename R = decltype(T()*U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() * std::declval<U>() )>
     vector4<R>  operator *  ( const T& f,  const vector4<U>& v );
     
-    template<typename T, typename U, typename R = decltype(T()/U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() / std::declval<U>() )>
     vector4<R>  operator /  ( const vector4<T>& v,  const U& f );
     
     //
     // Misc
     //
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     R           Dot             ( const vector4<T>& v0, const vector4<U>& v1 );
     
     template<typename T>
     vector4<T>  Normalized      ( const vector4<T>& v );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  Lerp            ( const vector4<T>& v0, const vector4<U>& v1, const float t );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  SmoothLerp      ( const vector4<T>& v0, const vector4<U>& v1, float t );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  SmootherLerp    ( const vector4<T>& v0, const vector4<U>& v1, float t );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  Step            ( const vector4<T>& v,  const vector4<U>& edge );
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R = decltype( std::declval<T>() + std::declval<U>() + std::declval<V>() )>
     vector4<R>  SmoothStep      ( const vector4<T>& v,  const vector4<U>& edge0, const vector4<V>& edge1 );
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R = decltype( std::declval<T>() + std::declval<U>() + std::declval<V>() )>
     vector4<R>  SmootherStep    ( const vector4<T>& v,  const vector4<U>& edge0, const vector4<V>& edge1 );
     
-    template<typename T, typename U, typename V, typename R = decltype(T()+U()+V())>
+    template<typename T, typename U, typename V, typename R = decltype( std::declval<T>() + std::declval<U>() + std::declval<V>() )>
     vector4<R>  Clamped         ( const vector4<T>& v,  const vector4<U>& min, const vector4<V>& max );
     
     template<typename T>
     vector4<T>  Saturated       ( const vector4<T>& v );
     
-    template<typename T, typename R = decltype(vector4<T>::Length())>
+    template<typename T, typename R = decltype( vector4<T>::Length() )>
     T           Length          ( const vector4<T>& v );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  Min             ( const vector4<T>& v0, const vector4<U>& v1 );
     
-    template<typename T, typename U, typename R = decltype(T()+U())>
+    template<typename T, typename U, typename R = decltype( std::declval<T>() + std::declval<U>() )>
     vector4<R>  Max             ( const vector4<T>& v0, const vector4<U>& v1 );
 };
 
