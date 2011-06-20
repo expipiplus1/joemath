@@ -97,11 +97,11 @@ int main( int argc, char** argv )
     
     std::cout << "Zero: " << v.LengthSq() - Dot(v,v) << "\n";*/
     
-    float4 v(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 v(1.0f, 0.0f, 0.0f, 0.0f);
     
     float3 x(1.0f, 0.0f, 0.0f);
     float3 y(0.0f, 1.0f, 0.0f);
-    float3 z = Cross(x,y);
+    float3 z = Cross(y,v.xyz());
     
     
     CMatrix<float,2,2> m(1.0f,2.0f,
