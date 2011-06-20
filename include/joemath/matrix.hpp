@@ -180,8 +180,8 @@ namespace NJoeMath
     class CMatrix
     {
     protected:
-        //Scalar m_elements[Rows][Columns];
-        std::array<std::array<Scalar, Columns>, Rows> m_elements;
+        Scalar m_elements[Rows][Columns];
+        //std::array<std::array<Scalar, Columns>, Rows> m_elements;
     public:
         //
         // Constructors
@@ -270,6 +270,38 @@ namespace NJoeMath
                   u32  VectorSize = vector_size<Rows, Columns>::value>
         typename std::enable_if<IsVector && VectorSize >= 4, Scalar&>::type
                                         w               ( );
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 2, const CMatrix<Scalar, 1, 2>&>::type
+                                        xy              ( ) const;
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 2, CMatrix<Scalar, 1, 2>&>::type
+                                        xy              ( );
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 3, const CMatrix<Scalar, 1, 3>&>::type
+                                        xyz             ( ) const;
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 3, CMatrix<Scalar, 1, 3>&>::type
+                                        xyz             ( );
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 4, const CMatrix<Scalar, 1, 4>&>::type
+                                        xyzw            ( ) const;
+        
+        template <bool IsVector = is_vector<Rows, Columns>::value,
+                  u32  VectorSize = vector_size<Rows, Columns>::value>
+        typename std::enable_if<IsVector && VectorSize >= 4, CMatrix<Scalar, 1, 4>&>::type
+                                        xyzw            ( );
+        
+                                        
         
         //
         // Unary Operators

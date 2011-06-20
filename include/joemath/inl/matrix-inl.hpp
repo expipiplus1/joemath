@@ -233,6 +233,73 @@ namespace NJoeMath
         return m_elements[0][3];
     }
     
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 2, const CMatrix<Scalar, 1, 2>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xy              ( ) const
+    {
+        static_assert(IsVector, "You can only get the xy component of a vector");
+        static_assert(VectorSize >= 2, "You can only get the xy component of a vector of size 2 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 2>*>(this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 2, CMatrix<Scalar, 1, 2>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xy              ( )
+    {
+        static_assert(IsVector, "You can only get the xy component of a vector");
+        static_assert(VectorSize >= 2, "You can only get the xy component of a vector of size 2 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 2>*>(this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 3, const CMatrix<Scalar, 1, 3>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xyz             ( ) const
+    {
+        static_assert(IsVector, "You can only get the xyz component of a vector");
+        static_assert(VectorSize >= 3, "You can only get the xyz component of a vector of size 3 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 3, CMatrix<Scalar, 1, 3>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xyz             ( )
+    {
+        static_assert(IsVector, "You can only get the xyz component of a vector");
+        static_assert(VectorSize >= 3, "You can only get the xyz component of a vector of size 3 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 4, const CMatrix<Scalar, 1, 4>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xyzw            ( ) const
+    {
+        static_assert(IsVector, "You can only get the xyzw component of a vector");
+        static_assert(VectorSize >= 4, "You can only get the xyzw component of a vector of size 4 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 4>*>(this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 4, CMatrix<Scalar, 1, 4>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::xyzw            ( )
+    {
+        static_assert(IsVector, "You can only get the xyxw component of a vector");
+        static_assert(VectorSize >= 4, "You can only get the xyzw component of a vector of size 4 or greater");
+        return *reinterpret_cast<CMatrix<Scalar, 1, 4>*>(this);
+    }
+    
+    
     //
     // Unary Operators
     //
