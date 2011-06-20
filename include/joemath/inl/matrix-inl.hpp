@@ -29,6 +29,7 @@
 #pragma once
 
 #include <cmath>
+#include <initializer_list>
 #include <type_traits>
 #include <joemath/matrix.hpp>
 #include <joemath/scalar.hpp>
@@ -44,24 +45,26 @@ namespace NJoeMath
     
     // Initialize every value to s
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( Scalar2 s )
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( Scalar s )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = s;
     }
     
-//     template <typename Scalar, u32 Rows, u32 Columns>
-//     template <typename... ElementTypes>
-//     typename std::enable_if<sizeof...( ElementTypes ) == Rows * Columns, void>
-//     inline  CMatrix<Scalar, Rows, Columns>::Init( const ElementTypes&... elements )
-//     {
-//         for( u32 i = 0; i < Rows; ++i )
-//             for( u32 j = 0; j < Columns; ++j )
-//                 m_elements[i][j] = std::get<i*Columns + j>(elements);
-//     }
-    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename... ElementTypes>
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix( const ElementTypes&... elements )
+    {
+        static_assert(sizeof...(elements) == Rows * Columns, "Wrong number of elements in initializer");
+        
+        std::array<Scalar, Rows * Columns> temp {{elements...}};
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                m_elements[i][j] = temp[i * Columns + j];
+    }
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m)
@@ -72,8 +75,7 @@ namespace NJoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar2(& elements)[Rows * Columns] )
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar(& elements)[Rows * Columns] )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -81,8 +83,7 @@ namespace NJoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar2(& elements)[Rows][Columns] )
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar(& elements)[Rows][Columns] )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -142,6 +143,94 @@ namespace NJoeMath
     inline          Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ))          [Columns]
     {
         return m_elements[i];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 1, const Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::x               ( ) const
+    {
+        static_assert(IsVector, "You can only get the x component of a vector");
+        static_assert(VectorSize >= 1, "You can only get the x component of a vector of size 1 or greater");
+        return m_elements[0][0];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 1, Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::x               ( )
+    {
+        static_assert(IsVector, "You can only get the x component of a vector");
+        static_assert(VectorSize >= 1, "You can only get the x component of a vector of size 1 or greater");
+        return m_elements[0][0];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 2, const Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::y               ( ) const
+    {
+        static_assert(IsVector, "You can only get the y component of a vector");
+        static_assert(VectorSize >= 2, "You can only get the y component of a vector of size 2 or greater");
+        return m_elements[0][1];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 2, Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::y               ( )
+    {
+        static_assert(IsVector, "You can only get the y component of a vector");
+        static_assert(VectorSize >= 2, "You can only get the y component of a vector of size 2 or greater");
+        return m_elements[0][1];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 3, const Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::z               ( ) const
+    {
+        static_assert(IsVector, "You can only get the z component of a vector");
+        static_assert(VectorSize >= 3, "You can only get the z component of a vector of size 3 or greater");
+        return m_elements[0][2];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 3, Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::z               ( )
+    {
+        static_assert(IsVector, "You can only get the z component of a vector");
+        static_assert(VectorSize >= 3, "You can only get the z component of a vector of size 3 or greater");
+        return m_elements[0][2];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 4, const Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::w               ( ) const
+    {
+        static_assert(IsVector, "You can only get the w component of a vector");
+        static_assert(VectorSize >= 4, "You can only get the w component of a vector of size 4 or greater");
+        return m_elements[0][3];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector,
+              u32  VectorSize>
+    inline  typename std::enable_if<IsVector && VectorSize >= 4, Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::w               ( )
+    {
+        static_assert(IsVector, "You can only get the w component of a vector");
+        static_assert(VectorSize >= 4, "You can only get the w component of a vector of size 4 or greater");
+        return m_elements[0][3];
     }
     
     //
@@ -228,10 +317,11 @@ namespace NJoeMath
     // Component wise multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              bool ComponentWise>
-    inline  typename std::enable_if< ComponentWise, CMatrix<Scalar, Rows, Columns>& >::type
+              bool IsVector>
+    inline  typename std::enable_if< IsVector, CMatrix<Scalar, Rows, Columns>& >::type
                                             CMatrix<Scalar, Rows, Columns>::operator *=     ( const CMatrix<Scalar2, Rows, Columns>& m )
     {
+        static_assert(IsVector, "You can only perform a component wise multiply on vectors");
         *this = *this * m;
         return *this;
     }
@@ -239,10 +329,11 @@ namespace NJoeMath
     // Component wise division
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              bool ComponentWise>
-    inline  typename std::enable_if< ComponentWise, CMatrix<Scalar, Rows, Columns>& >::type
+              bool IsVector>
+    inline  typename std::enable_if< IsVector, CMatrix<Scalar, Rows, Columns>& >::type
                                             CMatrix<Scalar, Rows, Columns>::operator /=     ( const CMatrix<Scalar2, Rows, Columns>& m )
     {
+        static_assert(IsVector, "You can only perform a component wise divide on vectors");
         *this = *this / m;
         return *this;
     }
@@ -397,10 +488,11 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar,
-              bool ComponentWise>
-    inline  typename std::enable_if< ComponentWise, CMatrix<ReturnScalar, Rows, Columns> >::type
+              bool     IsVector>
+    inline  typename std::enable_if< IsVector, CMatrix<ReturnScalar, Rows, Columns> >::type
                                                     operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {
+        static_assert(IsVector, "You can only perform a component wise multiply on vectors");
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
@@ -415,10 +507,11 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar,
-              bool ComponentWise>
-    inline  typename std::enable_if< ComponentWise, CMatrix<ReturnScalar, Rows, Columns> >::type
+              bool     IsVector>
+    inline  typename std::enable_if< IsVector, CMatrix<ReturnScalar, Rows, Columns> >::type
                                                     operator /      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {
+        static_assert(IsVector, "You can only perform a component wise divide on vectors");
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
@@ -432,10 +525,8 @@ namespace NJoeMath
     // Only with Matrices of the right dimensions
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Columns2,
-              typename ReturnScalar,
-              bool ComponentWise>
-    inline  typename std::enable_if< !ComponentWise, CMatrix<ReturnScalar, Rows, Columns2> >::type
-                                                    operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2>& m1 )  
+              typename ReturnScalar>
+    inline  CMatrix<ReturnScalar, Rows, Columns2>           operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2>& m1 )  
     {
         ReturnScalar ret[Rows][Columns2] = { { 0 } };
         
@@ -465,23 +556,27 @@ namespace NJoeMath
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
-              bool Vector>
-    inline  typename    std::enable_if<Vector, ReturnScalar>::type
+              bool     IsVector>
+    inline  typename    std::enable_if<IsVector, ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::LengthSq        ( ) const
     {
+        static_assert(IsVector, "You can only take the squared length of a vector");
         ReturnScalar ret = 0;
+        
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-            ret += m_elements[i][j] * m_elements[i][j];
+                ret += m_elements[i][j] * m_elements[i][j];
+            
         return ret;
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
-              bool Vector>
-    inline  typename    std::enable_if<Vector, ReturnScalar>::type
+              bool     IsVector>
+    inline  typename    std::enable_if<IsVector, ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Length          ( ) const
     {
+        static_assert(IsVector, "You can only take the length of a vector");
         return std::sqrt( LengthSq( ) );
     }
     //
@@ -502,11 +597,47 @@ namespace NJoeMath
     
    
     template <typename Scalar, u32 Rows, u32 Columns,
-              bool Vector>
-    inline  typename std::enable_if<Vector, CMatrix<Scalar, Rows, Columns>>::type
+              bool     IsVector>
+    inline  typename std::enable_if<IsVector, CMatrix<Scalar, Rows, Columns>>::type
                                                             Normalized      ( const CMatrix<Scalar, Rows, Columns>& m ) 
     {
+        static_assert(IsVector, "You can only normalize a vector");
         return m / m.Length();
+    }
+   
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar,
+              bool     IsVector>
+    inline  typename std::enable_if<IsVector, ReturnScalar>::type
+                                                        Dot             ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    {
+        static_assert(IsVector, "You can only take the Dot product of vectors");
+        ReturnScalar ret = 0;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret += m0.m_elements[i][j] * m1.m_elements[i][j];
+        
+        return ret;
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar,
+              bool     IsVector3>
+    typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows, Columns>>::type
+                                            Cross           ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    {
+        static_assert(IsVector3, "You can only take the cross product of Vector3s");
+        
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        ret.x() = m0.y() * m1.z() - m0.z() * m1.y();
+        ret.y() = m0.z() * m1.x() - m0.x() * m1.z();
+        ret.z() = m0.x() * m1.y() - m0.y() * m1.x();
+        
+        return ret;
     }
     
 };
