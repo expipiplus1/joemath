@@ -55,40 +55,6 @@ void TestRandom()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << acc << "\n";
 
 }
-
-template<typename Scalar, u32 Rows, u32 Columns>
-class Matrix
-{
-public:
-    Matrix()
-    {
-        std::cout << "Matrix Constructor " << Rows << " " << Columns << "\n";
-    }
-    
-    template<bool Vector = (Rows == 1)>
-    typename std::enable_if< Vector, void >::type
-    Print();
-    
-    template<bool Vector = (Rows == 1)>
-    typename std::enable_if< !Vector, void >::type
-    Print();
-};
-
-template<typename Scalar, u32 Rows, u32 Columns>
-template<bool Vector>
-typename std::enable_if< Vector, void >::type
-Matrix<Scalar,Rows,Columns>::Print()
-{
-    std::cout << "Vector Size: " << Columns << "\n";
-}
-
-template<typename Scalar, u32 Rows, u32 Columns>
-template<bool Vector>
-typename std::enable_if< !Vector, void >::type
-Matrix<Scalar,Rows,Columns>::Print()
-{
-    std::cout << "Matrix Size: " << Rows << "x" << Columns << "\n";
-}
     
 int main( int argc, char** argv )
 {
@@ -99,16 +65,7 @@ int main( int argc, char** argv )
     time.Start();
     random.Seed(time.GetElapsedTime());
     
-    Matrix<float, 4,4> P;
-    P.Print();
-    
-    Matrix<float, 4,4> D;
-    D.Print();
-    
-    Matrix<float, 1,4> V;
-    V.Print(); 
-    
-    
+    /*
     CMatrix<float, 4, 4> m = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
                                             {0.0f,1.0f,0.0f,0.0f},
                                             {0.0f,0.0f,1.0f,0.0f},
@@ -121,10 +78,35 @@ int main( int argc, char** argv )
     
     n = n * m;
     n*= m;
+    n.Transpose();
     
     CMatrix<float, 1, 4> v(1.0f);
     
+//    v.Init(1,2);
+    
     v = v * v;
+    
+    n.Transpose();
+    
+    std::cout << v.LengthSq() << "\n";
+
+    v.Normalize();
+    
+    CMatrix<float,1,4> b((float[4]){1.0f, 1.0f, 1.0f, 1.0f});
+    
+    
+    std::cout << "Zero: " << v.LengthSq() - Dot(v,v) << "\n";*/
+    
+    float4 v(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    float3 x(1.0f, 0.0f, 0.0f);
+    float3 y(0.0f, 1.0f, 0.0f);
+    float3 z = Cross(x,y);
+    
+    
+    CMatrix<float,2,2> m(1.0f,2.0f,
+                         3.0f,4.0f);
+    //v.Transpose();
     
     //v = v * v;
     
