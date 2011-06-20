@@ -38,7 +38,7 @@ if(MSVC)
   endif()
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W -std=c++0x -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W -std=c++0x -g3 -O0 -ffast-math -fomit-frame-pointer")
 endif()
 
 add_library(libjoemathStatic    STATIC    ${joemath_SOURCES})
