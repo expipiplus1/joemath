@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
@@ -112,13 +113,24 @@ namespace NJoeMath
               typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
               bool ComponentWise = (Rows == 1) && (Columns == 1)>
     typename std::enable_if< !ComponentWise, CMatrix<ReturnScalar, Rows, Columns2> >::type
-                                            operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2>& m1 );  
+                                            operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2>& m1 );
                                             
-//     // Matrix multiplication
-//     template <typename Scalar2, u32 Columns2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-//     CMatrix<ReturnScalar, Rows, Columns2>   operator *  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2> m1 );
-//     
+    //
+    // Misc
+    //
+            
+    template <typename Scalar, u32 Rows, u32 Columns>
+    CMatrix<Scalar, Columns, Rows>          Transposed      ( const CMatrix<Scalar, Rows, Columns>& m );
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool Vector = (Rows == 1) || (Columns == 1)>
+    typename std::enable_if<Vector, CMatrix<Scalar, Rows, Columns>>::type
+                                            Normalized      ( const CMatrix<Scalar, Rows, Columns>& m );
+    
+    
+    //
+    // The class
+    //
     
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix
@@ -136,7 +148,17 @@ namespace NJoeMath
         
         // Initialize every value to s
         template <typename Scalar2>
-        explicit CMatrix                     ( Scalar2 s );
+        explicit CMatrix            ( Scalar2 s );
+        
+        // TODO Initialize from vector
+        
+        // Initialize from variable list
+        template <typename... ElementTypes> 
+        explicit CMatrix            ( const ElementTypes&... elements );
+        
+        template <typename... ElementTypes>
+        typename std::enable_if<sizeof...( ElementTypes ) == Rows * Columns, void>
+        Init( const ElementTypes&... elements );
         
         template <typename Scalar2>
         CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m);
@@ -306,15 +328,36 @@ namespace NJoeMath
                   bool ComponentWise>
         friend typename std::enable_if< !ComponentWise, CMatrix<ReturnScalar, Rows_, Columns2> >::type
                                                          operator *      ( const CMatrix<Scalar_, Rows_, Columns_>& m0, const CMatrix<Scalar2, Columns_, Columns2>& m1 );  
-/*
-        // Matrix multiplication
-        template <typename Scalar2, u32 Columns2,
-                  typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-        friend  CMatrix<ReturnScalar, Rows, Columns2>   operator *  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2> m1 );
-        */
+                                                         
         //
         // methods
         //
+        
+        void                                            Transpose ( );        
+        
+        void                                            Normalize ( );
+        
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool Vector = (Rows == 1) || (Columns == 1)>
+        typename    std::enable_if<Vector, ReturnScalar>::type
+                                                        LengthSq        ( ) const;
+        
+        template <typename ReturnScalar = decltype( std::sqrt( std::declval<Scalar>() * std::declval<Scalar>() ) ),
+                  bool Vector = (Rows == 1) || (Columns == 1)>
+        typename    std::enable_if<Vector, ReturnScalar>::type
+                                                        Length          ( ) const;
+                                                        
+        //
+        // Friends
+        //
+                                                        
+        template<typename Scalar_, u32 Rows_, u32 Columns_>
+        friend CMatrix<Scalar_, Columns_, Rows_>        Transposed      ( const CMatrix<Scalar_, Rows_, Columns_>& m );
+        
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  bool Vector>
+        friend typename std::enable_if<Vector, CMatrix<Scalar_, Rows_, Columns_>>::type
+                                                        Normalized      ( const CMatrix<Scalar_, Rows_, Columns_>& m );
     };
     
     //
