@@ -35,39 +35,51 @@
 namespace NJoeMath
 {
     // Doesn't initialize
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    CMatrix<Scalar, Rows, Columns, ParentType>::CMatrix     ( )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    CMatrix<Scalar, Rows, Columns>::CMatrix     ( )
     {
     }
     
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
+    // Initialize every value to s
+    template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
-    CMatrix<Scalar, Rows, Columns, ParentType>::CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m)
+    CMatrix<Scalar, Rows, Columns>::CMatrix                     ( Scalar2 s )
+    {
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                m_elements[i][j] = s;
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m)
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = m.m_elements[i][j];
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    CMatrix<Scalar, Rows, Columns, ParentType>::CMatrix                     ( const Scalar(& elements)[Rows * Columns] )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar2(& elements)[Rows * Columns] )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = elements[i * Columns + j];
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    CMatrix<Scalar, Rows, Columns, ParentType>::CMatrix                     ( const Scalar(& elements)[Rows][Columns] )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar2(& elements)[Rows][Columns] )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = elements[i][j];
     }
     
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
+    template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2, typename ReturnScalar>
-    CMatrix<ReturnScalar, Rows, Columns>&   CMatrix<Scalar, Rows, Columns, ParentType>::operator = ( const CMatrix<ReturnScalar, Rows, Columns>& m )
+    CMatrix<ReturnScalar, Rows, Columns>&   CMatrix<Scalar, Rows, Columns>::operator = ( const CMatrix<ReturnScalar, Rows, Columns>& m )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -85,26 +97,37 @@ namespace NJoeMath
     // Getters
     // 
 
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    const CMatrix<Scalar, 1, Columns>&  CMatrix<Scalar, Rows, Columns, ParentType>::GetRow         ( u32 i ) const
+    template <typename Scalar, u32 Rows, u32 Columns>
+    const CMatrix<Scalar, 1, Columns>&  CMatrix<Scalar, Rows, Columns>::GetRow         ( u32 row ) const
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, Columns>*>(m_elements[i]);
+        return *reinterpret_cast<CMatrix<Scalar, 1, Columns>*>(m_elements[row]);
     }
         
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-          CMatrix<Scalar, 1, Columns>&  CMatrix<Scalar, Rows, Columns, ParentType>::GetRow         ( u32 i )
+    template <typename Scalar, u32 Rows, u32 Columns>
+          CMatrix<Scalar, 1, Columns>&  CMatrix<Scalar, Rows, Columns>::GetRow         ( u32 row )
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, Columns>*>(m_elements[i]);
+        return *reinterpret_cast<CMatrix<Scalar, 1, Columns>*>(m_elements[row]);
     }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+          CMatrix<Scalar, Rows, 1>      CMatrix<Scalar, Rows, Columns>::GetColumn       ( u32 column ) const
+    {
+        CMatrix<Scalar, Rows, 1> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            ret.m_elements[i][0] = m_elements[i][column];
+        
+        return ret;
+    }          
 
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    const   Scalar(&                    CMatrix<Scalar, Rows, Columns, ParentType>::operator []    ( u32 i ) const)    [Columns]
+    template <typename Scalar, u32 Rows, u32 Columns>
+    const   Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ) const)    [Columns]
     {
         return m_elements[i];
     }
     
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-            Scalar(&                    CMatrix<Scalar, Rows, Columns, ParentType>::operator []    ( u32 i ))          [Columns]
+    template <typename Scalar, u32 Rows, u32 Columns>
+            Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ))          [Columns]
     {
         return m_elements[i];
     }
@@ -113,15 +136,15 @@ namespace NJoeMath
     // Unary Operators
     //
     
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    CMatrix<Scalar, Rows, Columns>      CMatrix<Scalar, Rows, Columns, ParentType>::operator +     ( ) const
+    template <typename Scalar, u32 Rows, u32 Columns>
+    CMatrix<Scalar, Rows, Columns>      CMatrix<Scalar, Rows, Columns>::operator +     ( ) const
     {
         return *this;
     }
     
     // the negated vertion of this vector
-    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
-    CMatrix<Scalar, Rows, Columns>      CMatrix<Scalar, Rows, Columns, ParentType>::operator -     ( ) const
+    template <typename Scalar, u32 Rows, u32 Columns>
+    CMatrix<Scalar, Rows, Columns>      CMatrix<Scalar, Rows, Columns>::operator -     ( ) const
     {
         CMatrix<Scalar, Rows, Columns> ret;
         
@@ -135,6 +158,91 @@ namespace NJoeMath
     //
     // Assignment operators
     //
+    
+    // Scalar addition
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator +=     ( const Scalar2 s )
+    {
+        *this = *this + s;
+        return *this;
+    }
+    
+    // Scalar subtraction
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator -=     ( const Scalar2 s )
+    {
+        *this = *this - s;
+        return *this;
+    }
+    
+    // Scalar multiplication
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator *=     ( const Scalar2 s )
+    {
+        *this = *this * s;
+        return *this;
+    }
+    
+    // Scalar division
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator /=     ( const Scalar2 s )
+    {
+        *this = *this / s;
+        return *this;
+    }
+    
+    // Component wise addition
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator +=     ( const CMatrix<Scalar2, Rows, Columns>& m )
+    {
+        *this = *this + m;
+        return *this;
+    }
+    
+    // Component wise subtraction
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator -=     ( const CMatrix<Scalar2, Rows, Columns>& m )
+    {
+        *this = *this - m;
+        return *this;
+    }
+    
+    // Component wise multiplication
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
+              bool ComponentWise>
+    typename std::enable_if< ComponentWise, CMatrix<Scalar, Rows, Columns>& >::type
+                                    CMatrix<Scalar, Rows, Columns>::operator *=     ( const CMatrix<Scalar2, Rows, Columns>& m )
+    {
+        *this = *this * m;
+        return *this;
+    }
+    
+    // Component wise division
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
+              bool ComponentWise>
+    typename std::enable_if< ComponentWise, CMatrix<Scalar, Rows, Columns>& >::type
+                                    CMatrix<Scalar, Rows, Columns>::operator /=     ( const CMatrix<Scalar2, Rows, Columns>& m )
+    {
+        *this = *this / m;
+        return *this;
+    }
+    
+    // Matrix multiplication
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    CMatrix<Scalar, Rows, Columns>& CMatrix<Scalar, Rows, Columns>::operator *=     ( const CMatrix<Scalar2, Columns, Columns>& m )
+    {
+        *this = *this * m;
+        return *this;
+    }
     
     
     //
@@ -164,22 +272,21 @@ namespace NJoeMath
     }
     
     //
-    // methods
+    // Arithmetic
     //
-    
     
     // Scalar addition
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
-    CMatrix<ReturnScalar, Rows, Columns>    operator + ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s )
+    CMatrix<ReturnScalar, Rows, Columns>    operator +      ( const CMatrix<Scalar, Rows, Columns>& m, const Scalar2 s )
     {
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[i][j] = m.m_elements[i][j] + s;
-        
+            
         return ret;
     }
     
@@ -187,41 +294,146 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
-    CMatrix<ReturnScalar, Rows, Columns>    operator - ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s )
+    CMatrix<ReturnScalar, Rows, Columns>    operator -      ( const CMatrix<Scalar, Rows, Columns>& m, const Scalar2 s )
     {
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] + s;
-        
+                ret.m_elements[i][j] = m.m_elements[i][j] - s;
+            
         return ret;
     }
-//     
-//     // Scalar multiplication
-//     template <typename Scalar2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-//     friend  CMatrix<ReturnScalar, Rows, Columns>    operator * ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s );
-//     
-//     // Scalar division
-//     template <typename Scalar2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) )>
-//     friend  CMatrix<ReturnScalar, Rows, Columns>    operator / ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s );
-//     
-//     // Component wise addition
-//     template <typename Scalar2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) + std::declval<Scalar2>( ) )>
-//     friend  CMatrix<ReturnScalar, Rows, Columns>    operator +  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns> m1 );
-//     
-//     // Component wise subtraction
-//     template <typename Scalar2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) - std::declval<Scalar2>( ) )>
-//     friend  CMatrix<ReturnScalar, Rows, Columns>    operator -  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns> m1 );
-//     
-//     // Matrix multiplication
-//     template <typename Scalar2, u32 Columns2,
-//     typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-//     friend  CMatrix<ReturnScalar, Rows, Columns2>   operator *  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2> m1 );
+   
+    // Scalar multiplication
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar>
+    CMatrix<ReturnScalar, Rows, Columns>    operator *      ( const CMatrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m.m_elements[i][j] * s;
+            
+        return ret;
+    }
+    
+    // Scalar multiplication
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar>
+    CMatrix<ReturnScalar, Rows, Columns>    operator *      ( const Scalar2 s, const CMatrix<Scalar, Rows, Columns>& m)
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m.m_elements[i][j] * s;
+            
+        return ret;
+    }
+    
+    // Scalar division
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar>
+    CMatrix<ReturnScalar, Rows, Columns>    operator /      ( const CMatrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m.m_elements[i][j] / s;
+            
+        return ret;
+    } 
+     
+    // Component wise addition
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar>
+    CMatrix<ReturnScalar, Rows, Columns>    operator +      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m0.m_elements[i][j] + m1.m_elements[i][j];
+            
+        return ret;
+    }
+    
+    // Component wise subtraction
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar>
+    CMatrix<ReturnScalar, Rows, Columns>    operator -      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 ) 
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m0.m_elements[i][j] - m1.m_elements[i][j];
+            
+        return ret;
+    }
+   
+    // Component wise multiplication
+    // Only with vectors
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar,
+              bool ComponentWise>
+    typename std::enable_if< ComponentWise, CMatrix<ReturnScalar, Rows, Columns> >::type
+                                            operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m0.m_elements[i][j] * m1.m_elements[i][j];
+            
+        return ret;
+    }
+    
+    // Component wise division
+    // Only with vectors
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar,
+              bool ComponentWise>
+    typename std::enable_if< ComponentWise, CMatrix<ReturnScalar, Rows, Columns> >::type
+                                            operator /      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    {
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[i][j] = m0.m_elements[i][j] / m1.m_elements[i][j];
+            
+        return ret;
+    }
+    
+    // Matrix multiplication
+    // Only with Matrices of the right dimensions
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2, u32 Columns2,
+              typename ReturnScalar,
+              bool ComponentWise>
+    typename std::enable_if< !ComponentWise, CMatrix<ReturnScalar, Rows, Columns2> >::type
+                                            operator *      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2>& m1 )  
+    {
+        ReturnScalar ret[Rows][Columns2] = { { 0 } };
+        
+        for(unsigned i = 0; i < Columns2; ++i)
+            for(unsigned j = 0; j < Rows; ++j)
+                for(unsigned k = 0; k < Columns; ++k)
+                    ret[j][i] += m0.m_elements[j][k] * m1.m_elements[k][i];
+                
+        return CMatrix<ReturnScalar, Rows, Columns2>(ret);
+    }                        
 };
 
 
