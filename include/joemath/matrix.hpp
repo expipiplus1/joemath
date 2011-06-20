@@ -33,7 +33,7 @@
 
 namespace NJoeMath
 {
-    template <typename Scalar, u32 Rows, u32 Columns, u32 Depth = 0>
+    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType = void>
     class CMatrix;
         
     template <typename Scalar, u32 Rows, u32 Columns,
@@ -82,7 +82,7 @@ namespace NJoeMath
 //     CMatrix<ReturnScalar, Rows, Columns2>   operator *  ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Columns, Columns2> m1 );
 //     
     
-    template <typename Scalar, u32 Rows, u32 Columns, u32 depth>
+    template <typename Scalar, u32 Rows, u32 Columns, typename ParentType>
     class CMatrix
     {
     protected:

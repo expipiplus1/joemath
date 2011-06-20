@@ -34,6 +34,18 @@
 
 namespace NJoeMath
 {
+    // Component wise multiplication
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
+    CMatrix<ReturnScalar, Rows, Columns>    operator * ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar, Rows, Columns>& m1 );
+    
+    // Component wise division
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2,
+              typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) )>
+    CMatrix<ReturnScalar, Rows, Columns>    operator / ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar, Rows, Columns>& m1 ); 
+    
     template <typename Scalar, u32 Columns>
     class CMatrix<Scalar, 1, Columns, CMatrix< Scalar, 1, Columns>> : public CMatrix<Scalar, 1, Columns>
     {
@@ -79,13 +91,13 @@ namespace NJoeMath
         template <typename Scalar_, u32 Rows_, u32 Columns_,
                   typename Scalar2,
                   typename ReturnScalar>
-        friend  CMatrix<ReturnScalar, Rows_, Columns_>    operator * ( const CMatrix<Scalar_, Rows_, Columns_>& m, Scalar2 s );
+        friend  CMatrix<ReturnScalar, Rows_, Columns_>    operator * ( const CMatrix<Scalar_, Rows_, Columns_>& m0, const CMatrix<Scalar_, Rows_, Columns_>& m1 );
         
         // Component wise division
         template <typename Scalar_, u32 Rows_, u32 Columns_,
                   typename Scalar2,
                   typename ReturnScalar>
-        friend  CMatrix<ReturnScalar, Rows_, Columns_>    operator / ( const CMatrix<Scalar_, Rows_, Columns_>& m, Scalar2 s );
+        friend  CMatrix<ReturnScalar, Rows_, Columns_>    operator / ( const CMatrix<Scalar_, Rows_, Columns_>& m0, const CMatrix<Scalar_, Rows_, Columns_>& m1 );
         
       /* 
         // Scalar multiplication

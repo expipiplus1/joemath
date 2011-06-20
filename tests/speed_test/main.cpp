@@ -77,8 +77,6 @@ int main( int argc, char** argv )
     
     n = n - 1.0f;
     
-    return n ==  n;
-    
 	return 0;
 }
 

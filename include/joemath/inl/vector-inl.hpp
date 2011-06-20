@@ -58,32 +58,32 @@ namespace NJoeMath
     //
     
     
-    // Scalar addition
+    // Component wise multiplication
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
-    CMatrix<ReturnScalar, Rows, Columns>    operator + ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s )
+    CMatrix<ReturnScalar, Rows, Columns>    operator * ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar, Rows, Columns>& m1 )
     {
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] + s;
+                ret.m_elements[i][j] = m0.m_elements[i][j] * m1.m_elements[i][j];
         
         return ret;
     }
     
-    // Scalar subtraction
+    // Component wise division
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
-    CMatrix<ReturnScalar, Rows, Columns>    operator - ( const CMatrix<Scalar, Rows, Columns>& m, Scalar2 s )
+    CMatrix<ReturnScalar, Rows, Columns>    operator / ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar, Rows, Columns>& m1 ) 
     {
         CMatrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] + s;
+                ret.m_elements[i][j] = m0.m_elements[i][j] / m1.m_elements[i][j];
         
         return ret;
     }
