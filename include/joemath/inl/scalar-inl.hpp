@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <joemath/scalar.hpp>
+
 namespace NJoeMath
 {
     template <typename T>

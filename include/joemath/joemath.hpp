@@ -30,8 +30,7 @@
 
 #include <joemath/config.hpp>
 #include <joemath/scalar.hpp>
-#include <joemath/vector2.hpp>
-#include <joemath/vector3.hpp>
-#include <joemath/vector4.hpp>
+#include <joemath/matrix.hpp>
+#include <joemath/vector.hpp>
 #include <joemath/random.hpp>
 

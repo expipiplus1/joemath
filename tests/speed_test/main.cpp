@@ -30,6 +30,8 @@
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
+using namespace NJoeMath;
+
 const u32 NUM_ITERATIONS = 10000000;
 
 void TestRandom()
@@ -53,118 +55,29 @@ void TestRandom()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << acc << "\n";
 
 }
-
-void TestFloat()
-{
-    NTimer::CTimer timer;
     
-    std::cout << "float step, ";
-    
-    double v = 0.0f;
-    
-    timer.Start();
-    
-    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v = NJoeMath::Step(v, 0.0);
-    
-    timer.Stop();
-    
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v << "\n";
-}
-
-void TestFloat2()
-{
-    NTimer::CTimer timer;
-
-    std::cout << "float2 length, ";
-
-    NJoeMath::float2 v(1.0f, 1.0f);
-
-    timer.Start();
-
-    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v.x = v.Length();
-        
-    timer.Stop();
-
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
-}
-
-void TestFloat3()
-{
-    NTimer::CTimer timer;
-
-    std::cout << "float3 length, ";
-
-    NJoeMath::float3 v(1.0f, 1.0f, 1.0f);
-
-    timer.Start();
-
-    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v.x = v.Length();
-
-    timer.Stop();
-
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
-}
-
-void TestFloat4()
-{
-    NTimer::CTimer timer;
-
-    std::cout << "float4 length, ";
-
-    NJoeMath::float4 v(1.0f, 1.0f, 1.0f, 1.0f);
-
-    timer.Start();
-
-    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        v.x = v.Length();
-
-    timer.Stop();
-
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << v.x << "\n";
-}
-
-void AddVec(NJoeMath::float4& a, const NJoeMath::float4& b)
-{
-    for(u32 i = 0; i < 4; ++i)
-    {
-        ((float*)&a)[i] += ((float*)&b)[i];
-    }
-}
-    
-
-#include <joemath/templatemath.hpp>
-
 int main( int argc, char** argv )
 {
     TestRandom();
-    TestFloat(); 
-    TestFloat2();
-    TestFloat3();
-    TestFloat4();
     
     NJoeMath::CRandom random;
     NTimer::CTimer time;
     time.Start();
     random.Seed(time.GetElapsedTime());
     
-    NJoeMath::float4 a,b,c;
-    a = NJoeMath::float4(0,0,0,float(random.U32())/float(0xffffffff));
-    b = NJoeMath::float4(1,1,1,float(random.U32())/float(0xffffffff));;
-    c = a + b;
+    CMatrix<float, 4, 4> m = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
+                                            {0.0f,1.0f,0.0f,0.0f},
+                                            {0.0f,0.0f,1.0f,0.0f},
+                                            {0.0f,0.0f,0.0f,1.0f} };
+                                            
+    CMatrix<float, 4, 4> n = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
+                                            {0.0f,1.0f,0.0f,0.0f},
+                                            {0.0f,0.0f,1.0f,0.0f},
+                                            {0.0f,0.0f,0.0f,1.0f} };
     
-    AddVec(c,a);
+    n = n - 1.0f;
     
-    return c.w;
-    
-//     Vec4f C;
-//     Vec4f A(0.0f,0.0f,0.0f,0.0f);
-//     Vec4f B(1.0f, 1.0f, 1.0f, 1.0f);
-//     C = A + B;
-//     
-//     return c.x + C.x();
+    return n ==  n;
     
 	return 0;
 }

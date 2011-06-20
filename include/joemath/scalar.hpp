@@ -95,4 +95,4 @@ namespace NJoeMath
     T   Distance        ( const T v0, const T v1 );
 };
 
-#include <joemath/scalar-inl.hpp>
+#include "inl/scalar-inl.hpp"
