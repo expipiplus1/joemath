@@ -36,6 +36,12 @@ namespace NJoeMath
     const u32 RANDOM_STATE_VECTOR_SIZE = 3;
     const u32 RANDOM_A = 4294967118;
 
+    //
+    // Multiplier and increment for the lcg used to generate the seed values
+    //
+    const u32 RANDOM_SEEDER_MULTIPLY = 1664525;
+    const u32 RANDOM_SEEDER_INCREMENT = 1013904223;
+
     class CRandom
     {
     public:

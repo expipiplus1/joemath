@@ -39,8 +39,8 @@ namespace NJoeMath
     void    CRandom::Seed       ( u32 seed )
     {
         for( u32 i = 0; i < RANDOM_STATE_VECTOR_SIZE; ++i )
-            m_state[i] = seed = seed * 69069 + 1;
-        m_carry = seed * 69069 + 1;
+            m_state[i] = seed = seed * RANDOM_SEEDER_MULTIPLY + RANDOM_SEEDER_INCREMENT;
+        m_carry = seed * RANDOM_SEEDER_MULTIPLY + RANDOM_SEEDER_INCREMENT;
     }
 
     u32     CRandom::U32        ( )
