@@ -685,7 +685,9 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-       return m_elements[0][0];
+        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        static_assert(SquareMatrixSize == 1, "This function is for square matrices of size 1 only");
+        return m_elements[0][0];
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -695,6 +697,8 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
+        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        static_assert(SquareMatrixSize == 2, "This function is for square matrices of size 2 only");
        return m_elements[0][0]*m_elements[1][1] - m_elements[0][1]*m_elements[1][0];
     }
     
@@ -705,6 +709,8 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
+        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        static_assert(SquareMatrixSize == 3, "This function is for square matrices of size 3 only");
         return m_elements[0][0] * (m_elements[1][1]*m_elements[2][2] - m_elements[1][2]*m_elements[2][1])
              - m_elements[1][0] * (m_elements[0][1]*m_elements[2][2] - m_elements[0][2]*m_elements[2][1])
              + m_elements[2][0] * (m_elements[0][1]*m_elements[1][2] - m_elements[0][2]*m_elements[1][1]);
@@ -717,6 +723,9 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
+        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        static_assert(SquareMatrixSize == 4, "This function is for square matrices of size 4 only");
+                
         return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0] 
              - m_elements[0][2] * m_elements[1][3] * m_elements[2][1] * m_elements[3][0]
              - m_elements[0][3] * m_elements[1][1] * m_elements[2][2] * m_elements[3][0]
@@ -750,19 +759,33 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
                             CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
+        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        
         ReturnScalar det = ReturnScalar(0);
-        CMatrix<Scalar, Rows-1, Columns-1> minor_matrix;
         
         for( u32 i = 0; i < Columns; ++i )
         {
-            for( u32 x = 0; x < Rows-1; ++x )
-                for( u32 y = 0; y < Columns-1; ++y )
-                    minor_matrix[x][y] = m_elements[x+1][y < i ? y : y+1];
-            det += ((i & 0x1) ? -1 : 1) * m_elements[0][i] * minor_matrix.Determinant();
+            det += ((i & 0x1) ? -1 : 1) * m_elements[0][i] * Minor(0, i);
         }
+        
         return det;
     }
-    
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+                bool     IsSquare>
+    typename std::enable_if<IsSquare, ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Minor           ( u32 row, u32 column ) const
+    {
+        CMatrix<Scalar, Rows-1, Columns-1> minor_matrix;
+        
+        for( u32 x = 0; x < Rows-1; ++x )
+            for( u32 y = 0; y < Columns-1; ++y )
+                    minor_matrix[x][y] = m_elements[x < row ? x : x+1][y < column ? y : y+1];
+            
+        return minor_matrix.Determinant( );
+    }
+                                                        
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector>
     inline  typename std::enable_if<IsVector, void>::type
@@ -814,15 +837,85 @@ namespace NJoeMath
     }
    
     template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare>
-    inline  typename std::enable_if<IsSquare, CMatrix<Scalar, Rows, Columns>>::type
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), CMatrix<Scalar, Rows, Columns>>::type
+                                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m )
+    {
+        static_assert(IsSquare, "You can only invert a square matrix");
+        static_assert(SquareMatrixSize == 1, "This function can only be used on square matrices of size 1");
+        
+        return CMatrix<Scalar, Rows, Columns>(Scalar(1)/m.m_elements[0][0]);               
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), CMatrix<Scalar, Rows, Columns>>::type
+                                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m )
+    {
+        static_assert(IsSquare, "You can only invert a square matrix");
+        static_assert(SquareMatrixSize == 2, "This function can only be used on square matrices of size 2");
+        
+        return CMatrix<Scalar, Rows, Columns>( m.m_elements[1][1], -m.m_elements[0][1],
+                                              -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
+    }
+    
+    /*
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), CMatrix<ReturnScalar, Rows, Columns>>::type
+                                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m )
+    {
+        static_assert(IsSquare, "You can only invert a square matrix");
+        static_assert(SquareMatrixSize == 3, "This function can only be used on square matrices of size 3");
+        
+        CMatrix<ReturnScalar, Rows, Columns> ret;
+        ret.m_elements[0][0] = m.m_elements[1][1] * m.m_elements[2][2] - m.m_elements[2][1] * m.m_elements[1][2];
+        ret.m_elements[0][1] = m.m_elements[1][2] * m.m_elements[2][0] - m.m_elements[2][2] * m.m_elements[1][0];
+        ret.m_elements[0][2] = m.m_elements[1][0] * m.m_elements[2][1] - m.m_elements[2][0] * m.m_elements[1][1];
+        ret.m_elements[1][0] = m.m_elements[0][2] * m.m_elements[2][1] - m.m_elements[0][1] * m.m_elements[2][2];
+        ret.m_elements[1][1] = m.m_elements[0][0] * m.m_elements[2][2] - m.m_elements[0][2] * m.m_elements[2][0];
+        ret.m_elements[1][2] = m.m_elements[0][1] * m.m_elements[2][0] - m.m_elements[0][0] * m.m_elements[2][1];
+        ret.m_elements[2][0] = m.m_elements[1][2] * m.m_elements[0][1] - m.m_elements[1][1] * m.m_elements[0][2];
+        ret.m_elements[2][1] = m.m_elements[1][0] * m.m_elements[0][2] - m.m_elements[1][2] * m.m_elements[0][0];
+        ret.m_elements[2][2] = m.m_elements[1][1] * m.m_elements[0][0] - m.m_elements[1][0] * m.m_elements[0][1];
+
+        ReturnScalar det = m.m_elements[0][0] * ret.m_elements[0][0]
+                         - m.m_elements[0][1] * ret.m_elements[0][1]
+                         + m.m_elements[0][2] * ret.m_elements[0][2];
+                         
+        return ret / det;
+    }
+    */
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 2), CMatrix<Scalar, Rows, Columns>>::type
                                                             Inverted        ( const CMatrix<Scalar, Rows, Columns>& m )
     {
         static_assert(IsSquare, "You can only invert a square matrix");
         
-               
+        CMatrix<Scalar, Rows, Columns> ret;
+        
+        //
+        // Compute the cofactors
+        //
+        
+        for( u32 i = 0; i < Rows; ++i )
+            for( u32 j = 0; j < Columns; ++j )
+                ret.m_elements[j][i] = (((i + j) & 0x1) ? -1 : 1) * m.Minor(i,j);     
+            
+        Scalar det = Scalar(0);
+        
+        for( u32 i = 0; i < Columns; ++i )
+            det += m.m_elements[0][i] * ret.m_elements[i][0];
+        
+        return ret / det;
     }
-    
     
     template <typename Scalar, u32 Rows, u32 Columns,
               bool     IsVector>

@@ -145,8 +145,30 @@ namespace NJoeMath
     CMatrix<Scalar, Columns, Rows>          Transposed      ( const CMatrix<Scalar, Rows, Columns>& m );
     
     template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsSquare, CMatrix<Scalar, Rows, Columns>>::type
+              bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+              u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+    typename std::enable_if<IsSquare && (SquareMatrixSize == 1), CMatrix<Scalar, Rows, Columns>>::type
+                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m );
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+              u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+    typename std::enable_if<IsSquare && (SquareMatrixSize == 2), CMatrix<Scalar, Rows, Columns>>::type
+                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m );
+                                            
+    /*
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar>( ) ),
+              bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+              u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+    typename std::enable_if<IsSquare && (SquareMatrixSize == 3), CMatrix<ReturnScalar, Rows, Columns>>::type
+                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m );
+    */
+        
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+              u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+    typename std::enable_if<IsSquare && (SquareMatrixSize > 2), CMatrix<Scalar, Rows, Columns>>::type
                                             Inverted        ( const CMatrix<Scalar, Rows, Columns>& m );
     
     template <typename Scalar, u32 Rows, u32 Columns,
@@ -503,6 +525,11 @@ namespace NJoeMath
         typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
                                                         Determinant     ( ) const;
     
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>                                                
+        typename std::enable_if<IsSquare, ReturnScalar>::type
+                                                        Minor           ( u32 row, u32 column ) const;
+        
         // 
         // Vector only
         //
@@ -529,10 +556,32 @@ namespace NJoeMath
         friend  CMatrix<Scalar_, Columns_, Rows_>       Transposed     ( const CMatrix<Scalar_, Rows_, Columns_>& m );
         
         template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  bool     IsSquare>
-        friend  typename std::enable_if<IsSquare, CMatrix<Scalar, Rows_, Columns_>>::type
-                                                        Inverted        ( const CMatrix<Scalar, Rows_, Columns_>& m );
+                  bool     IsSquare,
+                  u32      SquareMatrixSize>
+        friend  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), CMatrix<Scalar_, Rows_, Columns_>>::type
+                                                        Inverted        ( const CMatrix<Scalar_, Rows_, Columns_>& m );
                                                 
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  bool     IsSquare,
+                  u32      SquareMatrixSize>
+        friend  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), CMatrix<Scalar_, Rows_, Columns_>>::type
+                                                        Inverted        ( const CMatrix<Scalar_, Rows_, Columns_>& m );
+                                                
+        /*
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  typename ReturnScalar,
+                  bool     IsSquare,
+                  u32      SquareMatrixSize>
+        friend  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), CMatrix<ReturnScalar, Rows_, Columns_>>::type
+                                                        Inverted        ( const CMatrix<Scalar, Rows_, Columns_>& m );
+        */
+                                                
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  bool     IsSquare,
+                  u32      SquareMatrixSize>
+        friend  typename std::enable_if<IsSquare && (SquareMatrixSize > 2), CMatrix<Scalar_, Rows_, Columns_>>::type
+                                                        Inverted        ( const CMatrix<Scalar_, Rows_, Columns_>& m );
+                                                        
         template <typename Scalar_, u32 Rows_, u32 Columns_,
                   bool     IsVector>
         friend  typename std::enable_if<IsVector, CMatrix<Scalar_, Rows_, Columns_>>::type
