@@ -65,7 +65,7 @@ int main( int argc, char** argv )
     time.Start();
     random.Seed(time.GetElapsedTime());
     
-    /*
+    
     CMatrix<float, 4, 4> m = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
                                             {0.0f,1.0f,0.0f,0.0f},
                                             {0.0f,0.0f,1.0f,0.0f},
@@ -95,16 +95,24 @@ int main( int argc, char** argv )
     CMatrix<float,1,4> b((float[4]){1.0f, 1.0f, 1.0f, 1.0f});
     
     
-    std::cout << "Zero: " << v.LengthSq() - Dot(v,v) << "\n";*/
+    std::cout << "Zero: " << v.LengthSq() - Dot(v,v) << "\n";
     
-    float4 v(1.0f, 0.0f, 0.0f, 0.0f);
+    v = float4(1.0f, 0.0f, 0.0f, 1.0f);
     
     float3 x(1.0f, 0.0f, 0.0f);
     float3 y(0.0f, 1.0f, 0.0f);
     float3 z = Cross(y,v.xyz());
     
+    float4x4 t(1.0f, 0.0f, 0.0f, 0.0f,
+               0.0f, 1.0f, 0.0f, 0.0f,
+               0.0f, 0.0f, 1.0f, 0.0f,
+               5.0f, 2.0f, 3.0f, 1.0f );
     
-    CMatrix<float,2,2> m(1.0f,2.0f,
+  //  v = v * t;
+    
+    v = v*t;
+    
+    CMatrix<float,2,2> d(1.0f,2.0f,
                          3.0f,4.0f);
     //v.Transpose();
     
