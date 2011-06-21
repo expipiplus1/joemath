@@ -47,8 +47,8 @@ namespace NJoeMath
     {
         u64 x = (u64)RANDOM_A * (u64)m_state[0] + m_carry;
         std::memmove( &m_state[0], &m_state[1], sizeof( m_state[0] ) * RANDOM_STATE_VECTOR_SIZE - 1 );
-        m_state[RANDOM_STATE_VECTOR_SIZE - 1] = x;
-        m_carry = ( x >> 32 );
+        m_state[RANDOM_STATE_VECTOR_SIZE - 1] = (u32)x;
+        m_carry = (u32)( x >> 32 );
         return m_state[RANDOM_STATE_VECTOR_SIZE - 1];
     }
 };

@@ -28,6 +28,9 @@
 
 #pragma once
 
+#pragma warning (1 : 4519)
+#pragma warning (disable : 4519)
+
 #include <cmath>
 #include <array>
 #include <initializer_list>
@@ -184,9 +187,9 @@ namespace NJoeMath
     //
     // The class
     //
-    
     template <typename Scalar, u32 Rows, u32 Columns>
-    class CMatrix
+    class 
+        __declspec( align( 16 ) ) CMatrix
     {
     protected:
         Scalar m_elements[Rows][Columns];
@@ -205,9 +208,15 @@ namespace NJoeMath
         // TODO Initialize from vector
         
         // Initialize from variable list
+#ifndef _MSC_VER
         template <typename... ElementTypes> 
         explicit CMatrix            ( const ElementTypes&... elements );
-        
+
+        CMatrix                     ( const std::initializer_list<Scalar>& elements );
+#else // _MSC_VER
+        explicit CMatrix            ( const Scalar first, ... );
+#endif // _MSC_VER
+
         template <typename Scalar2>
         CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m);
 
@@ -233,8 +242,8 @@ namespace NJoeMath
               
               CMatrix<Scalar, Rows, 1 >     GetColumn       ( u32 column )  const;
 
-        const   Scalar(&            operator []     ( u32 i ) const)  [Columns];
-                Scalar(&            operator []     ( u32 i )      )  [Columns];
+        //const   Scalar(&            operator []     ( u32 i ) const)  [Columns];
+        //        Scalar(&            operator []     ( u32 i )      )  [Columns];
                 
         //
         // Get elements of vectors
@@ -441,7 +450,7 @@ namespace NJoeMath
                   typename ReturnScalar,
                   bool     IsVector>
         friend  typename std::enable_if<IsVector, CMatrix<ReturnScalar, Rows_, Columns_> >::type
-                                                        operator /      ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
+                                                        operator /      ( const CMatrix<Scalar_, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
                                                          
         // Matrix multiplication
         // Only with Matrices of the right dimensions
