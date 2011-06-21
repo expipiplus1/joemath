@@ -41,6 +41,10 @@ namespace NJoeMath
     class CMatrix;
     
     template<u32 Rows, u32 Columns>
+    struct is_square        : public std::integral_constant<bool, Rows == Columns>
+    { };
+    
+    template<u32 Rows, u32 Columns>
     struct is_vector        : public std::integral_constant<bool, (Rows == 1) || (Columns == 1)>
     { };
     
@@ -149,6 +153,11 @@ namespace NJoeMath
             
     template <typename Scalar, u32 Rows, u32 Columns>
     CMatrix<Scalar, Columns, Rows>          Transposed      ( const CMatrix<Scalar, Rows, Columns>& m );
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare = is_square<Rows, Columns>::value>
+    typename std::enable_if<IsSquare, CMatrix<Scalar, Rows, Columns>>::type
+                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m );
     
     template <typename Scalar, u32 Rows, u32 Columns,
               bool     IsVector = is_vector<Rows, Columns>::value>
@@ -464,8 +473,13 @@ namespace NJoeMath
         //
                                                         
         template<typename Scalar_, u32 Rows_, u32 Columns_>
-        friend  CMatrix<Scalar_, Columns_, Rows_>        Transposed     ( const CMatrix<Scalar_, Rows_, Columns_>& m );
+        friend  CMatrix<Scalar_, Columns_, Rows_>       Transposed     ( const CMatrix<Scalar_, Rows_, Columns_>& m );
         
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  bool     IsSquare>
+        friend  typename std::enable_if<IsSquare, CMatrix<Scalar, Rows_, Columns_>>::type
+                                                        Inverted        ( const CMatrix<Scalar, Rows_, Columns_>& m );
+                                                
         template <typename Scalar_, u32 Rows_, u32 Columns_,
                   bool     IsVector>
         friend  typename std::enable_if<IsVector, CMatrix<Scalar_, Rows_, Columns_>>::type
@@ -482,8 +496,8 @@ namespace NJoeMath
                   typename Scalar2,
                   typename ReturnScalar,
                   bool     IsVector3>
-        typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows_, Columns_>>::type
-                                                Cross           ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
+        friend  typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows_, Columns_>>::type
+                                                        Cross           ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
     };    
 };
 

@@ -58,11 +58,8 @@ namespace NJoeMath
     {
         static_assert(sizeof...(elements) == Rows * Columns, "Wrong number of elements in initializer");
         
-        std::array<Scalar, Rows * Columns> temp {{elements...}};
-        
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = temp[i * Columns + j];
+        std::array<Scalar, Rows * Columns>& temp = *reinterpret_cast<std::array<Scalar, Rows * Columns>*>(&m_elements[0][0]);
+        temp = std::array<Scalar, Rows * Columns> {{elements...}};
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -661,7 +658,15 @@ namespace NJoeMath
         
         return ret;
     }
-    
+   
+    template <typename Scalar, u32 Rows, u32 Columns,
+              bool     IsSquare>
+    inline  typename std::enable_if<IsSquare, CMatrix<Scalar, Rows, Columns>>::type
+                                                            Inverted        ( const CMatrix<Scalar, Rows, Columns>& m )
+    {
+        static_assert(IsSquare, "You can only invert a square matrix");
+        
+    }
    
     template <typename Scalar, u32 Rows, u32 Columns,
               bool     IsVector>
@@ -677,7 +682,7 @@ namespace NJoeMath
               typename ReturnScalar,
               bool     IsVector>
     inline  typename std::enable_if<IsVector, ReturnScalar>::type
-                                                        Dot             ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+                                                            Dot             ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {
         static_assert(IsVector, "You can only take the Dot product of vectors");
         ReturnScalar ret = 0;
@@ -693,8 +698,8 @@ namespace NJoeMath
               typename Scalar2,
               typename ReturnScalar,
               bool     IsVector3>
-    typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows, Columns>>::type
-                                            Cross           ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
+    inline  typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows, Columns>>::type
+                                                            Cross           ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {
         static_assert(IsVector3, "You can only take the cross product of Vector3s");
         
