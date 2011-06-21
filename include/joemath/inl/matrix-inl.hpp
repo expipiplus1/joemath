@@ -28,6 +28,9 @@
 
 #pragma once
 
+#ifdef _MSC_VER
+#include <cstdarg>
+#endif
 #include <cmath>
 #include <initializer_list>
 #include <type_traits>
@@ -52,15 +55,40 @@ namespace NJoeMath
                 m_elements[i][j] = s;
     }
     
+#ifndef _MSC_VER
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename... ElementTypes>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix( const ElementTypes&... elements )
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const ElementTypes&... elements )
     {
         static_assert(sizeof...(elements) == Rows * Columns, "Wrong number of elements in initializer");
         
         std::array<Scalar, Rows * Columns>& temp = *reinterpret_cast<std::array<Scalar, Rows * Columns>*>(&m_elements[0][0]);
         temp = std::array<Scalar, Rows * Columns> {{elements...}};
     }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const std::initializer_list<Scalar> elements )
+    {
+
+    }
+#else // _MSC_VER
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar first, ... )
+    {
+        std::va_list list;
+        Scalar i = first;
+        u32    c = 0;
+        va_start( list, first );
+        
+        while( *(int*)&i != 0xffffffff && c < Rows * Columns )
+        {
+            m_elements[0][c] = i;
+            ++c;
+            i = va_arg( list, Scalar );
+        }
+        va_end( list );              /* Reset variable arguments.      */
+    }
+#endif // _MSC_VER
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -130,7 +158,7 @@ namespace NJoeMath
         return ret;
     }          
 
-    template <typename Scalar, u32 Rows, u32 Columns>
+   /* template <typename Scalar, u32 Rows, u32 Columns>
     inline  const   Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ) const)    [Columns]
     {
         return m_elements[i];
@@ -140,7 +168,7 @@ namespace NJoeMath
     inline          Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ))          [Columns]
     {
         return m_elements[i];
-    }
+    }*/
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
@@ -570,8 +598,8 @@ namespace NJoeMath
     // Only with vectors
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar,
-              bool     IsVector>
+              typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) ),
+              bool     IsVector = is_vector<Rows, Columns>::value>
     inline  typename std::enable_if< IsVector, CMatrix<ReturnScalar, Rows, Columns> >::type
                                                     operator /      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {

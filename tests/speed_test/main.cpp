@@ -55,7 +55,14 @@ void TestRandom()
     std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << acc << "\n";
 
 }
-    
+ 
+
+float4 AddVec(float4& a, float4& b)
+{
+    return operator +<float, 1,4,float, float> (a,b);
+}
+
+
 int main( int argc, char** argv )
 {
     TestRandom();
@@ -63,61 +70,21 @@ int main( int argc, char** argv )
     NJoeMath::CRandom random;
     NTimer::CTimer time;
     time.Start();
-    random.Seed(time.GetElapsedTime());
+    random.Seed((u32)(time.GetElapsedTime()*0xffffffff));
     
-    
-    CMatrix<float, 4, 4> m = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
-                                            {0.0f,1.0f,0.0f,0.0f},
-                                            {0.0f,0.0f,1.0f,0.0f},
-                                            {0.0f,0.0f,0.0f,1.0f} };
-                                            
-    CMatrix<float, 4, 4> n = (float[4][4]){ {1.0f,0.0f,0.0f,0.0f},
-                                            {0.0f,1.0f,0.0f,0.0f},
-                                            {0.0f,0.0f,1.0f,0.0f},
-                                            {0.0f,0.0f,0.0f,1.0f} };
-    
-    n = n * m;
-    n*= m;
-    n.Transpose();
-    
-    CMatrix<float, 1, 4> v(1.0f);
-    
-//    v.Init(1,2);
-    
-    v = v * v;
-    
-    n.Transpose();
-    
-    std::cout << v.LengthSq() << "\n";
+    float4 a(1.0f, 0.0f, 0.0f, 0.0f);
+    float4 b(1.0f, 0.0f, 0.0f, 0.0f);
 
-    v.Normalize();
+    CMatrix<float,1,2> c;
+    CMatrix<float,1,2> d;
+    operator /<float, 1,2,float, float, true> (c,d);
+
     
-    CMatrix<float,1,4> b((float[4]){1.0f, 1.0f, 1.0f, 1.0f});
-    
-    
-    std::cout << "Zero: " << v.LengthSq() - Dot(v,v) << "\n";
-    
-    v = float4(1.0f, 0.0f, 0.0f, 1.0f);
-    
-    float3 x(1.0f, 0.0f, 0.0f);
-    float3 y(0.0f, 1.0f, 0.0f);
-    float3 z = Cross(y,v.xyz());
-    
-    float4x4 t(1.0f, 0.0f, 0.0f, 0.0f,
-               0.0f, 1.0f, 0.0f, 0.0f,
-               0.0f, 0.0f, 1.0f, 0.0f,
-               5.0f, 2.0f, 3.0f, 1.0f );
-    
-  //  v = v * t;
-    
-    v = v*t;
-    
-    CMatrix<float,2,2> d(1.0f,2.0f,
-                         3.0f,4.0f);
-    //v.Transpose();
-    
-    //v = v * v;
-    
+
+    a = AddVec(a,b);
+
+    return *(int*)&a;
+
 	return 0;
 }
 
