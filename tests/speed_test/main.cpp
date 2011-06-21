@@ -84,8 +84,26 @@ int main( int argc, char** argv )
     j = j/j;
     
     float3x3 r(1.0f, 0.0f, 0.0f,
-               0.0f, 1.0f, 1.0f,
+               0.0f, 1.0f, 0.0f,
                0.0f, 0.0f, 1.0f);
+    
+    float fDet = r.Determinant();
+    
+    CMatrix<u32,4,4> q(1,0,0,0,
+                       0,1,0,0,
+                       0,0,1,0,
+                       0,0,0,1);
+    
+    u32 uDet = q.Determinant();
+    
+    CMatrix<double,6,6> dd(0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+                           2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                           0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+                           0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+                           0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+                           0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    
+    double dDet = dd.Determinant();
     
     float3 y = r[2];
 
@@ -96,8 +114,13 @@ int main( int argc, char** argv )
 
     myBool = is_matrix<CMatrix<float, 1,2>>::value;
     
-    return *(int*)&a;
+    CMatrix<u32,2,2> mat( 1, 0,
+                          0, 1 );
+    
+    u32 det = mat.Determinant();
 
-	return 0;
+    return det - det;
+    
+    return 0;
 }
 
