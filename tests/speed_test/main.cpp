@@ -79,8 +79,17 @@ int main( int argc, char** argv )
     CMatrix<float,1,2> d;
     operator /<float, 1,2,float, float, true> (c,d);
 
+    float j = a[0];
     
+    j = j/j;
+    
+    float3x3 r(1.0f, 0.0f, 0.0f,
+               0.0f, 1.0f, 1.0f,
+               0.0f, 0.0f, 1.0f);
+    
+    float3 y = r[2];
 
+    
     a = AddVec(a,b);
     
     bool myBool = is_matrix<int>::value;
