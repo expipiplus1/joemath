@@ -57,6 +57,15 @@ namespace NJoeMath
     { };
     
     template <typename T>
+    struct square_matrix_size
+    { };
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    struct square_matrix_size <CMatrix<Scalar, Rows, Columns>>
+    : public std::integral_constant<u32, Rows>
+    { };
+    
+    template <typename T>
     struct is_vector
     : public std::false_type
     { };
@@ -68,6 +77,7 @@ namespace NJoeMath
     
     template <typename T>
     struct is_vector3
+    : public std::false_type
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
