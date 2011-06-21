@@ -665,13 +665,23 @@ namespace NJoeMath
     //
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void            CMatrix<Scalar, Rows, Columns>::Transpose        ( )
+    template <bool IsSquare>
+    inline  typename std::enable_if<IsSquare, void>::type
+                            CMatrix<Scalar, Rows, Columns>::Invert          ( )
+    {
+        *this = Inverted(*this);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  void            CMatrix<Scalar, Rows, Columns>::Transpose       ( )
     {
         *this = Transposed(*this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void            CMatrix<Scalar, Rows, Columns>::Normalize        ( )
+    template <bool IsVector>
+    inline  typename std::enable_if<IsVector, void>::type
+                            CMatrix<Scalar, Rows, Columns>::Normalize       ( )
     {
         *this = Normalized(*this);
     }
@@ -724,6 +734,7 @@ namespace NJoeMath
     {
         static_assert(IsSquare, "You can only invert a square matrix");
         
+               
     }
    
     template <typename Scalar, u32 Rows, u32 Columns,

@@ -178,7 +178,7 @@ namespace NJoeMath
     class 
     CMatrix
     {
-    protected:
+    private:
         Scalar m_elements[Rows][Columns];
         //std::array<std::array<Scalar, Columns>, Rows> m_elements;
     public:
@@ -469,7 +469,18 @@ namespace NJoeMath
         
         void                                            Transpose ( );        
         
-        void                                            Normalize ( );
+        template <bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare, void>::type
+                                                        Invert ( );
+        
+    
+        // 
+        // Vector only
+        //
+                                                        
+        template <bool     IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsVector, void>::type
+                                                        Normalize ( );
         
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
                   bool     IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
