@@ -83,16 +83,22 @@ int main( int argc, char** argv )
     
     j = j/j;
     
-    float3x3 r(1.0f, 0.0f, 0.0f,
-               0.0f, 1.0f, 0.0f,
-               0.0f, 0.0f, 1.0f);
+    float3x3 r(0.0f, 2.0f, 2.0f,
+               3.0f, 3.0f, 0.0f,
+               1.0f, 0.0f, 1.0f);
+    
+    float ttt = r.Determinant();
+    
+    r.Invert();
     
     float fDet = r.Determinant();
     
-    CMatrix<u32,4,4> q(1,0,0,0,
-                       0,1,0,0,
-                       0,0,1,0,
-                       0,0,0,1);
+    CMatrix<float,4,4> q(0.0f,1.0f,0.0f,0.0f,
+                       2.0f,0.0f,0.0f,0.0f,
+                       0.0f,0.0f,1.0f,0.0f,
+                       0.0f,0.0f,0.0f,1.0f);
+    
+    q.Invert( );
     
     u32 uDet = q.Determinant();
     
@@ -104,6 +110,8 @@ int main( int argc, char** argv )
                            0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
     
     double dDet = dd.Determinant();
+    
+    dd.Invert();
     
     float3 y = r[2];
 
@@ -118,7 +126,19 @@ int main( int argc, char** argv )
                           0, 1 );
     
     u32 det = mat.Determinant();
+    
+    mat.Transpose();
+    
+    mat.Invert();
+    
+    CMatrix<float,1,1> s(1.0f);
+    s.Invert();
 
+    float4 v0(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 v1(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    u32 d0 = Dot(v0, v1);
+    
     return det - det;
     
     return 0;
