@@ -679,6 +679,91 @@ namespace NJoeMath
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
+    {
+       return m_elements[0][0];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
+    {
+       return m_elements[0][0]*m_elements[1][1] - m_elements[0][1]*m_elements[1][0];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
+    {
+        return m_elements[0][0] * (m_elements[1][1]*m_elements[2][2] - m_elements[1][2]*m_elements[2][1])
+             - m_elements[1][0] * (m_elements[0][1]*m_elements[2][2] - m_elements[0][2]*m_elements[2][1])
+             + m_elements[2][0] * (m_elements[0][1]*m_elements[1][2] - m_elements[0][2]*m_elements[1][1]);
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
+    {
+        return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0] 
+             - m_elements[0][2] * m_elements[1][3] * m_elements[2][1] * m_elements[3][0]
+             - m_elements[0][3] * m_elements[1][1] * m_elements[2][2] * m_elements[3][0]
+             + m_elements[0][1] * m_elements[1][3] * m_elements[2][2] * m_elements[3][0]
+             + m_elements[0][2] * m_elements[1][1] * m_elements[2][3] * m_elements[3][0]
+             - m_elements[0][1] * m_elements[1][2] * m_elements[2][3] * m_elements[3][0]
+             - m_elements[0][3] * m_elements[1][2] * m_elements[2][0] * m_elements[3][1]
+             + m_elements[0][2] * m_elements[1][3] * m_elements[2][0] * m_elements[3][1]
+             + m_elements[0][3] * m_elements[1][0] * m_elements[2][2] * m_elements[3][1]
+             - m_elements[0][0] * m_elements[1][3] * m_elements[2][2] * m_elements[3][1]
+             - m_elements[0][2] * m_elements[1][0] * m_elements[2][3] * m_elements[3][1]
+             + m_elements[0][0] * m_elements[1][2] * m_elements[2][3] * m_elements[3][1]
+             + m_elements[0][3] * m_elements[1][1] * m_elements[2][0] * m_elements[3][2]
+             - m_elements[0][1] * m_elements[1][3] * m_elements[2][0] * m_elements[3][2]
+             - m_elements[0][3] * m_elements[1][0] * m_elements[2][1] * m_elements[3][2]
+             + m_elements[0][0] * m_elements[1][3] * m_elements[2][1] * m_elements[3][2]
+             + m_elements[0][1] * m_elements[1][0] * m_elements[2][3] * m_elements[3][2]
+             - m_elements[0][0] * m_elements[1][1] * m_elements[2][3] * m_elements[3][2]
+             - m_elements[0][2] * m_elements[1][1] * m_elements[2][0] * m_elements[3][3]
+             + m_elements[0][1] * m_elements[1][2] * m_elements[2][0] * m_elements[3][3]
+             + m_elements[0][2] * m_elements[1][0] * m_elements[2][1] * m_elements[3][3]
+             - m_elements[0][0] * m_elements[1][2] * m_elements[2][1] * m_elements[3][3]
+             - m_elements[0][1] * m_elements[1][0] * m_elements[2][2] * m_elements[3][3]
+             + m_elements[0][0] * m_elements[1][1] * m_elements[2][2] * m_elements[3][3];
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename ReturnScalar,
+              bool     IsSquare,
+              u32      SquareMatrixSize>
+    inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
+                            CMatrix<Scalar, Rows, Columns>::Determinant     ( )  const
+    {
+        ReturnScalar det = ReturnScalar(0);
+        CMatrix<Scalar, Rows-1, Columns-1> minor_matrix;
+        
+        for( u32 i = 0; i < Columns; ++i )
+        {
+            for( u32 x = 0; x < Rows-1; ++x )
+                for( u32 y = 0; y < Columns-1; ++y )
+                    minor_matrix[x][y] = m_elements[x+1][y < i ? y : y+1];
+            det += ((i & 0x1) ? -1 : 1) * m_elements[0][i] * minor_matrix.Determinant();
+        }
+        return det;
+    }
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector>
     inline  typename std::enable_if<IsVector, void>::type
                             CMatrix<Scalar, Rows, Columns>::Normalize       ( )
@@ -711,6 +796,7 @@ namespace NJoeMath
         static_assert(IsVector, "You can only take the length of a vector");
         return std::sqrt( LengthSq( ) );
     }
+                                                        
     //
     // Misc
     //
@@ -736,7 +822,8 @@ namespace NJoeMath
         
                
     }
-   
+    
+    
     template <typename Scalar, u32 Rows, u32 Columns,
               bool     IsVector>
     inline  typename std::enable_if<IsVector, CMatrix<Scalar, Rows, Columns>>::type

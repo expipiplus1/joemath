@@ -467,12 +467,41 @@ namespace NJoeMath
         // methods
         //
         
-        void                                            Transpose ( );        
+        void                                            Transpose       ( );        
         
         template <bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, void>::type
-                                                        Invert ( );
+                                                        Invert          ( );
         
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+                  u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
+                                                        Determinant     ( ) const;
+                                                        
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+                  u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
+                                                        Determinant     ( ) const;
+    
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+                  u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
+                                                        Determinant     ( ) const;
+    
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+                  u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
+                                                        Determinant     ( ) const;
+    
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
+                  bool     IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value,
+                  u32      SquareMatrixSize = square_matrix_size<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
+                                                        Determinant     ( ) const;
     
         // 
         // Vector only
@@ -480,7 +509,7 @@ namespace NJoeMath
                                                         
         template <bool     IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsVector, void>::type
-                                                        Normalize ( );
+                                                        Normalize       ( );
         
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
                   bool     IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
