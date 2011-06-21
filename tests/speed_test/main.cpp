@@ -82,7 +82,11 @@ int main( int argc, char** argv )
     
 
     a = AddVec(a,b);
+    
+    bool myBool = is_matrix<int>::value;
 
+    myBool = is_matrix<CMatrix<float, 1,2>>::value;
+    
     return *(int*)&a;
 
 	return 0;
