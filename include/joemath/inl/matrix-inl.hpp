@@ -56,6 +56,7 @@ namespace NJoeMath
     }
     
 #ifndef _MSC_VER
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename... ElementTypes>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const ElementTypes&... elements )
@@ -67,11 +68,18 @@ namespace NJoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const std::initializer_list<Scalar> elements )
+    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const std::initializer_list<Scalar>& elements )
     {
-
+        u32 c = 0;
+        for( auto i = elements.begin(); i < elements.end() && c < Rows * Columns; ++i, ++c)
+        {
+            m_elements[0][c] = i;
+            ++c;
+        }
     }
+    
 #else // _MSC_VER
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar first, ... )
     {
@@ -80,7 +88,7 @@ namespace NJoeMath
         u32    c = 0;
         va_start( list, first );
         
-        while( *(int*)&i != 0xffffffff && c < Rows * Columns )
+        while( c < Rows * Columns )
         {
             m_elements[0][c] = i;
             ++c;
@@ -88,6 +96,7 @@ namespace NJoeMath
         }
         va_end( list );              /* Reset variable arguments.      */
     }
+    
 #endif // _MSC_VER
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -598,8 +607,8 @@ namespace NJoeMath
     // Only with vectors
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) ),
-              bool     IsVector = is_vector<Rows, Columns>::value>
+              typename ReturnScalar,
+              bool     IsVector>
     inline  typename std::enable_if< IsVector, CMatrix<ReturnScalar, Rows, Columns> >::type
                                                     operator /      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 )
     {
