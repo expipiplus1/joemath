@@ -167,18 +167,39 @@ namespace NJoeMath
         return ret;
     }          
 
-   /* template <typename Scalar, u32 Rows, u32 Columns>
-    inline  const   Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ) const)    [Columns]
-    {
-        return m_elements[i];
-    }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline          Scalar(&                    CMatrix<Scalar, Rows, Columns>::operator []    ( u32 i ))          [Columns]
+    template <bool IsVector>
+    inline  typename std::enable_if<!IsVector, const CMatrix<Scalar, 1, Columns>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
-        return m_elements[i];
-    }*/
-    
+        return *reinterpret_cast<const CMatrix<Scalar, 1, Columns>*>(&m_elements[i]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector>
+    inline  typename std::enable_if<!IsVector, CMatrix<Scalar, 1, Columns>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
+    {
+        return *reinterpret_cast<CMatrix<Scalar, 1, Columns>*>(&m_elements[i]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector>
+    inline  typename std::enable_if<IsVector,  const Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
+    {
+        return m_elements[0][i];
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool IsVector>
+    inline  typename std::enable_if<IsVector,  Scalar&>::type
+                                                CMatrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
+    {
+        return m_elements[0][i];
+    }
+        
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>

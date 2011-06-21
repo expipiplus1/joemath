@@ -229,6 +229,23 @@ namespace NJoeMath
               
               CMatrix<Scalar, Rows, 1 >     GetColumn       ( u32 column )  const;
 
+        template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<!IsVector, const CMatrix<Scalar, 1, Columns>&>::type
+                                            operator    []  ( u32 i )       const;
+                                            
+        template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<!IsVector, CMatrix<Scalar, 1, Columns>&>::type
+                                            operator    []  ( u32 i );
+                                            
+        template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsVector,  const Scalar&>::type
+                                            operator    []  ( u32 i )       const;
+                                            
+        template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsVector,  Scalar&>::type
+                                            operator    []  ( u32 i );
+
+                                            
         //const   Scalar(&            operator []     ( u32 i ) const)  [Columns];
         //        Scalar(&            operator []     ( u32 i )      )  [Columns];
                 
