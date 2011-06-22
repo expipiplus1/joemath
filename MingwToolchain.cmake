@@ -2,19 +2,15 @@
 SET(CMAKE_SYSTEM_NAME Windows)
  
 # which compilers to use for C and C++
-SET(CMAKE_C_COMPILER i686-pc-mingw32-gcc)
-SET(CMAKE_CXX_COMPILER i686-pc-mingw32-g++)
-if(WIN32)
-    SET(CMAKE_RC_COMPILER C:/mingw/bin/i686-pc-mingw32-windres)
-else()
-    SET(CMAKE_RC_COMPILER /usr/bin/i686-pc-mingw32-windres)
-endif()
+SET(CMAKE_C_COMPILER gcc)
+SET(CMAKE_CXX_COMPILER g++)
+SET(CMAKE_RC_COMPILER windres)
  
 # here is the target environment located
 if(WIN32)
-    SET(CMAKE_FIND_ROOT_PATH C:/mingw/i686-pc-mingw32)
+    SET(CMAKE_FIND_ROOT_PATH C:/MinGW/x86_64-w64-mingw32)
 else()
-    set(CMAKE_FIND_ROOT_PATH /usr/mingw/i686-pc-mingw32)
+    set(CMAKE_FIND_ROOT_PATH /usr/mingw/x86_64-w64-mingw32)
 endif()
  
 # adjust the default behaviour of the FIND_XXX() commands:
