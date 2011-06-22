@@ -52,7 +52,7 @@ namespace NJoeMath
     
     typedef CMatrix<float, 1, 2> float2;
     typedef CMatrix<float, 1, 3> float3;
-    typedef CMatrix<float, 1, 4> float4;
+    typedef CMatrix<float, 1, 4> float4 __attribute__ ((aligned (16)));
     
     typedef CMatrix<float, 2, 2> float2x2;
     typedef CMatrix<float, 3, 3> float3x3;
@@ -222,7 +222,7 @@ namespace NJoeMath
     CMatrix<Scalar, Size+1, Size+1>         Translate       ( CMatrix<Scalar, 1, Size>& position );
     
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>             Reflect         ( CMatrix<Scalar, 1, 4>& plane );
+    CMatrix<Scalar, 4, 4>                   Reflect         ( CMatrix<Scalar, 1, 4>& plane );
     
     template <typename Scalar>
     CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar fov, Scalar aspect_ratio, Scalar near, Scalar far );
@@ -237,13 +237,13 @@ namespace NJoeMath
     // The class
     //
     template <typename Scalar, u32 Rows, u32 Columns>
-    class 
-    CMatrix
+    class CMatrix
     {
-    private:
+    public:
+        
         Scalar m_elements[Rows][Columns];
         //std::array<std::array<Scalar, Columns>, Rows> m_elements;
-    public:
+        
         //
         // Constructors
         //
@@ -683,6 +683,42 @@ namespace NJoeMath
         template <typename Scalar_, u32 Size>
         friend  CMatrix<Scalar_, Size, Size>            Identity        ( );
     
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            Scale           ( CMatrix<Scalar_, 1, Size>& s );
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            Rotate2D        ( Scalar_ angle );
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            RotateX         ( Scalar_ angle ); 
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            RotateY         ( Scalar_ angle ); 
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            RotateZ         ( Scalar_ angle ); 
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            RotateXYZ       ( Scalar_ x, Scalar_ y, Scalar_ z );
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size, Size>            Rotate3D        ( CMatrix<Scalar_, 1, 3>& axis, Scalar_ angle ); 
+        
+        template <typename Scalar_, u32 Size>
+        friend  CMatrix<Scalar_, Size+1, Size+1>        Translate       ( CMatrix<Scalar_, 1, Size>& position );
+        
+        template <typename Scalar_>
+        friend  CMatrix<Scalar_, 4, 4>                  Reflect         ( CMatrix<Scalar_, 1, 4>& plane );
+        
+        template <typename Scalar_>
+        friend  CMatrix<Scalar_, 4, 4>                  Perspective     ( Scalar_ fov, Scalar_ aspect_ratio, Scalar_ near, Scalar_ far );
+        
+        template <typename Scalar_>
+        friend  CMatrix<Scalar_, 4, 4>                  View            ( CMatrix<Scalar_, 1, 3>& position, CMatrix<Scalar_, 1, 3>& direction, CMatrix<Scalar_, 1, 3>& up );
+        
+        template <typename Scalar_>
+        friend  CMatrix<Scalar_, 4, 4>                  Ortho           ( Scalar_ left, Scalar_ right, Scalar_ top, Scalar_ bottom, Scalar_ near, Scalar_ far);
+        
     };    
 };
 
