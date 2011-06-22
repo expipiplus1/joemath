@@ -1074,7 +1074,7 @@ namespace NJoeMath
               u32      VectorSize0,
               u32      VectorSize1>
     typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
-                                                    TensorProduct   ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ) 
+                                                            Outer           ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ) 
     {
         CMatrix<ReturnScalar, VectorSize0, VectorSize1> ret;
 
@@ -1193,7 +1193,7 @@ namespace NJoeMath
 
         rotation += cos * Identity<Scalar, 3>( );
 
-        rotation += ( Scalar( 1 ) - cos ) * TensorProduct( axis, axis );
+        rotation += ( Scalar( 1 ) - cos ) * Outer( axis, axis );
 
         CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>( );
 
