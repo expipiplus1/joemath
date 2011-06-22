@@ -66,6 +66,24 @@ namespace NJoeMath
     { };
     
     template <typename T>
+    struct min_matrix_dimension
+    { };
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    struct min_matrix_dimension <CMatrix<Scalar, Rows, Columns>>
+    : public std::integral_constant<u32, (Rows < Columns) ? Rows : Columns>
+    { };
+     
+    template <typename T>
+    struct max_matrix_dimension
+    { };
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    struct max_matrix_dimension <CMatrix<Scalar, Rows, Columns>>
+    : public std::integral_constant<u32, (Rows > Columns) ? Rows : Columns>
+    { };
+    
+    template <typename T>
     struct is_vector
     : public std::false_type
     { };
