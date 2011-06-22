@@ -172,8 +172,14 @@ int main( int argc, char** argv )
     float4 v0(1.0f, 1.0f, 1.0f, 1.0f);
     float4 v1(1.0f, 1.0f, 1.0f, 1.0f);
     
+    float3x3 rotation = Rotate3D(float3(1.0f, 1.0f, 1.0f), 0.0f);
+
     u32 d0 = Dot(v0, v1);
     
+    float4x4 i = Identity<float, 4>();
+
+    float4x4 f = Scale(i[0]);
+
     return det - det;
     
     return 0;
