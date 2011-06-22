@@ -190,6 +190,15 @@ namespace NJoeMath
     typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows, Columns>>::type
                                             Cross           ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 );
 
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2, u32 Rows2, u32 Columns2,
+              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
+              bool     IsVector0 = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
+              bool     IsVector1 = is_vector<CMatrix<Scalar2, Rows2, Columns2>>::value,
+              u32      VectorSize0 = vector_size<CMatrix<Scalar, Rows, Columns>>::value,
+              u32      VectorSize1 = vector_size<CMatrix<Scalar2, Rows2, Columns2>>::value>
+    typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
+                                                    TensorProduct   ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ); 
     //
     // Utility functions
     //
@@ -198,7 +207,7 @@ namespace NJoeMath
     CMatrix<Scalar, Size, Size>             Identity        ( );
     
     template <typename Scalar, u32 Size>
-    CMatrix<Scalar, Size, Size>             Scale           ( CMatrix<Scalar, 1, Size>& s );
+    CMatrix<Scalar, Size, Size>             Scale           ( const CMatrix<Scalar, 1, Size>& s );
     
     template <typename Scalar, u32 Size = 2>
     CMatrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle );
@@ -213,22 +222,22 @@ namespace NJoeMath
     CMatrix<Scalar, Size, Size>             RotateZ         ( Scalar angle ); 
     
     template <typename Scalar, u32 Size = 3>
-    CMatrix<Scalar, Size, Size>             RotateXYZ       ( Scalar x, Scalar y, Scalar z );
+    CMatrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z );
     
     template <typename Scalar, u32 Size = 3>
-    CMatrix<Scalar, Size, Size>             Rotate3D        ( CMatrix<Scalar, 1, 3>& axis, Scalar angle ); 
+    CMatrix<Scalar, Size, Size>             Rotate3D        ( const CMatrix<Scalar, 1, 3>& axis, Scalar angle ); 
     
     template <typename Scalar, u32 Size = 3>
-    CMatrix<Scalar, Size+1, Size+1>         Translate       ( CMatrix<Scalar, 1, Size>& position );
+    CMatrix<Scalar, Size+1, Size+1>         Translate       ( const CMatrix<Scalar, 1, Size>& position );
     
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Reflect         ( CMatrix<Scalar, 1, 4>& plane );
+    CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane );
     
     template <typename Scalar>
     CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar fov, Scalar aspect_ratio, Scalar near, Scalar far );
     
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   View            ( CMatrix<Scalar, 1, 3>& position, CMatrix<Scalar, 1, 3>& direction, CMatrix<Scalar, 1, 3>& up );
+    CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up );
     
     template <typename Scalar>
     CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far);
@@ -273,19 +282,34 @@ namespace NJoeMath
 
         CMatrix                     ( const Scalar(& elements)[Rows][Columns] );
         
-        template <typename Scalar2, 
-                  typename ReturnScalar = decltype( std::declval<Scalar>( ) = std::declval<Scalar2>( ) )>
-        CMatrix<ReturnScalar, Rows, Columns>&   operator =  ( const CMatrix<ReturnScalar, Rows, Columns>& m );
+        template <typename Scalar2>
+        CMatrix<Scalar, Rows, Columns>&   operator =  ( const CMatrix<Scalar2, Rows, Columns>& m );
 
         //
         // Setters
         //
         
-        
+        template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
+                  bool Fits = has_sub_matrix<CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>, i, j>::value>
+        typename std::enable_if<Fits, void>::type
+                                            SetSubMatrix    ( const CMatrix<Scalar, Rows2, Columns2>& m );
+
         //
         // Getters
         // 
 
+        template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
+                  bool Fits = has_sub_matrix<CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>, i, j>::value,
+                  bool HasSameDimensions = has_same_dimensions<CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>>::value>
+        typename std::enable_if<Fits && !HasSameDimensions, CMatrix<Scalar, Rows2, Columns2>>::type
+                                            GetSubMatrix    ( ) const;
+        
+        template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
+                  bool Fits = has_sub_matrix<CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>, i, j>::value,
+                  bool HasSameDimensions = has_same_dimensions<CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>>::value>
+        typename std::enable_if<Fits && HasSameDimensions, const CMatrix<Scalar, Rows2, Columns2>&>::type
+                                            GetSubMatrix    ( ) const;
+        
         const CMatrix<Scalar, 1, Columns>&  GetRow          ( u32 row )     const;
               CMatrix<Scalar, 1, Columns>&  GetRow          ( u32 row );
               
@@ -315,16 +339,13 @@ namespace NJoeMath
         typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
                                             GetUp           ( );
                                             
-        template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value,
-                  u32 NumRows = Rows>
-        typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), const CMatrix<Scalar, 1, 3>&>::type
+        template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
                                             GetPosition     ( )             const;
                                             
-        template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value,
-                  u32 NumRows = Rows>
-        typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), CMatrix<Scalar, 1, 3>&>::type
-                                            GetPosition     ( );
-                  
+        template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare, CMatrix<Scalar, 1, Columns-1>&>::type
+                                            GetPosition     ( );                  
                                             
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<!IsVector, const CMatrix<Scalar, 1, Columns>&>::type
@@ -676,6 +697,15 @@ namespace NJoeMath
         friend  typename std::enable_if<IsVector3, CMatrix<ReturnScalar, Rows_, Columns_>>::type
                                                         Cross           ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
                                                         
+        template <typename Scalar_, u32 Rows_, u32 Columns_,
+                  typename Scalar2, u32 Rows2, u32 Columns2,
+                  typename ReturnScalar,
+                  bool     IsVector0,
+                  bool     IsVector1,
+                  u32      VectorSize0,
+                  u32      VectorSize1>
+        friend  typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
+                                                        TensorProduct   ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
         //
         // Utility friends
         //
@@ -699,7 +729,7 @@ namespace NJoeMath
         friend  CMatrix<Scalar_, Size, Size>            RotateZ         ( Scalar_ angle ); 
         
         template <typename Scalar_, u32 Size>
-        friend  CMatrix<Scalar_, Size, Size>            RotateXYZ       ( Scalar_ x, Scalar_ y, Scalar_ z );
+        friend  CMatrix<Scalar_, Size, Size>            RotateZXY       ( Scalar_ x, Scalar_ y, Scalar_ z );
         
         template <typename Scalar_, u32 Size>
         friend  CMatrix<Scalar_, Size, Size>            Rotate3D        ( CMatrix<Scalar_, 1, 3>& axis, Scalar_ angle ); 

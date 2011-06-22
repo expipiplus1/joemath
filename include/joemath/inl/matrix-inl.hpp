@@ -125,24 +125,66 @@ namespace NJoeMath
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2, typename ReturnScalar>
-    inline  CMatrix<ReturnScalar, Rows, Columns>&   CMatrix<Scalar, Rows, Columns>::operator = ( const CMatrix<ReturnScalar, Rows, Columns>& m )
+    template <typename Scalar2>
+    inline  CMatrix<Scalar, Rows, Columns>&   CMatrix<Scalar, Rows, Columns>::operator = ( const CMatrix<Scalar2, Rows, Columns>& m )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = m.m_elements[i][j];
             
-        return static_cast<CMatrix<ReturnScalar, Rows, Columns>&>(*this);
+        return *this;
     }
 
     //
     // Setters
     //
-    
-    
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
+              bool Fits>
+    inline  typename std::enable_if<Fits, void>::type
+                                                CMatrix<Scalar, Rows, Columns>::SetSubMatrix    ( const CMatrix<Scalar, Rows2, Columns2>& m )
+    {
+        static_assert(Rows2 + i <= Rows, "The target Matrix doesn't have enough rows to set the submatrix");
+        static_assert(Columns2 + j <= Columns, "The target Matrix doesn't have enough columns to set the submatrix");
+
+        for( u32 row = 0; row < Rows2; ++row )
+            for( u32 column = 0; column < Columns2; ++column )
+                m_elements[row+i][column+j] = m.m_elements[row][column];
+    }
+
     //
     // Getters
     // 
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
+              bool Fits,
+              bool HasSameDimensions>
+    inline  typename std::enable_if<Fits && !HasSameDimensions, CMatrix<Scalar, Rows2, Columns2>>::type
+                                                CMatrix<Scalar, Rows, Columns>::GetSubMatrix    ( ) const
+    {
+        static_assert(Rows2 + i <= Rows, "The source Matrix doesn't have enough rows to contain this submatrix");
+        static_assert(Columns2 + j <= Columns, "The source Matrix doesn't have enough columns to contain this submatrix");
+
+        CMatrix<Scalar, Rows2, Columns2> ret;
+
+        for( u32 row = 0; row < Rows2; ++row )
+            for( u32 column = 0; column < Columns2; ++column )
+                ret.m_elements[row][column] = m_elements[row+i][column+j];
+
+        return ret;
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
+              bool Fits,
+              bool HasSameDimensions>
+    inline  typename std::enable_if<Fits && HasSameDimensions, const CMatrix<Scalar, Rows2, Columns2>&>::type
+                                                CMatrix<Scalar, Rows, Columns>::GetSubMatrix    ( ) const
+    {
+        return *this;
+    }
 
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  const CMatrix<Scalar, 1, Columns>&  CMatrix<Scalar, Rows, Columns>::GetRow          ( u32 row ) const
@@ -188,7 +230,7 @@ namespace NJoeMath
     typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetForward      ( )             const
     {
-        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][1]);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[1][0]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -196,7 +238,7 @@ namespace NJoeMath
     typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetForward      ( )
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][1]);
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[1][0]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -204,7 +246,7 @@ namespace NJoeMath
     typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetUp           ( )             const
     {
-        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][2]);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[2][0]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -212,25 +254,23 @@ namespace NJoeMath
     typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetUp           ( )
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][2]);
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[2][0]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension,
-              u32 NumRows>
-    typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), const CMatrix<Scalar, 1, 3>&>::type
+    template <bool IsSquare>
+    typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetPosition     ( )             const
     {
-        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][3]);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, Columns-1>*>(&m_elements[Rows-1][0]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension,
-              u32 NumRows>
-    typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), CMatrix<Scalar, 1, 3>&>::type
+    template <bool IsSquare>
+    typename std::enable_if<IsSquare, CMatrix<Scalar, 1, Columns-1>&>::type
                                          CMatrix<Scalar, Rows, Columns>::GetPosition     ( )
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][3]);
+        return *reinterpret_cast<CMatrix<Scalar, 1, Columns-1>*>(&m_elements[Rows-1][0]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -910,7 +950,7 @@ namespace NJoeMath
         static_assert(IsSquare, "You can only invert a square matrix");
         static_assert(SquareMatrixSize == 1, "This function can only be used on square matrices of size 1");
         
-        return CMatrix<Scalar, Rows, Columns>(Scalar(1)/m.m_elements[0][0]);               
+        return CMatrix<Scalar, Columns, Rows>(Scalar(1)/m.m_elements[0][0]);               
     }
     
     template <typename Scalar, u32 Rows, u32 Columns,
@@ -922,7 +962,7 @@ namespace NJoeMath
         static_assert(IsSquare, "You can only invert a square matrix");
         static_assert(SquareMatrixSize == 2, "This function can only be used on square matrices of size 2");
         
-        return CMatrix<Scalar, Rows, Columns>( m.m_elements[1][1], -m.m_elements[0][1],
+        return CMatrix<Scalar, Columns, Rows>( m.m_elements[1][1], -m.m_elements[0][1],
                                               -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
     }
     
@@ -964,7 +1004,7 @@ namespace NJoeMath
     {
         static_assert(IsSquare, "You can only invert a square matrix");
         
-        CMatrix<Scalar, Rows, Columns> ret;
+        CMatrix<Scalar, Columns, Rows> ret;
         
         //
         // Compute the cofactors
@@ -1025,6 +1065,164 @@ namespace NJoeMath
         
         return ret;
     }
+    
+    template <typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2, u32 Rows2, u32 Columns2,
+              typename ReturnScalar,
+              bool     IsVector0,
+              bool     IsVector1,
+              u32      VectorSize0,
+              u32      VectorSize1>
+    typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
+                                                    TensorProduct   ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ) 
+    {
+        CMatrix<ReturnScalar, VectorSize0, VectorSize1> ret;
+
+        for( u32 i = 0; i < VectorSize1; ++i )
+            for( u32 j = 0; j < VectorSize0; ++j )
+                ret.m_elements[i][j] = m0.m_elements[0][j] * m1.m_elements[0][i];
+
+        return ret;
+    }
+
+    //
+    // Utility functions    
+    //     
+
+    template <typename Scalar, u32 Size>
+    CMatrix<Scalar, Size, Size>             Identity        ( )
+    {
+        CMatrix<Scalar, Size, Size> ret( Scalar(0) );
+        for( u32 i = 0; i < Size; ++i )
+                ret.m_elements[i][i] = Scalar(1);
+        return ret;
+    }
+
+    template <typename Scalar, u32 Size>
+    CMatrix<Scalar, Size, Size>             Scale           ( const CMatrix<Scalar, 1, Size>& s )
+    {
+        CMatrix<Scalar, Size, Size> ret( Scalar(0) );
+        for( u32 i = 0; i < Size; ++i )
+                ret.m_elements[i][i] = s[i];
+        return ret;
+    }
+
+    template <typename Scalar, u32 Size = 2>
+    CMatrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle )
+    {
+        static_assert( Size >= 2, "You can only construct a 2d rotation matrix of size 2 or above");
+
+        Scalar sin = std::sin( angle );
+        Scalar cos = std::cos( angle );
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        ret.m_elements[0][0] = cos;
+        ret.m_elements[0][1] = -sin;
+        ret.m_elements[1][0] = sin;
+        ret.m_elements[1][1] = cos;
+
+        return ret;
+    }
+
+    template <typename Scalar, u32 Size = 3>
+    CMatrix<Scalar, Size, Size>             RotateX         ( Scalar angle )
+    {
+        static_assert( Size >= 3, "You can only construct an x axis rotation matrix of size 3 or above");
+
+        Scalar sin = std::sin( angle );
+        Scalar cos = std::cos( angle );
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        ret.m_elements[1][1] = cos;
+        ret.m_elements[1][2] = -sin;
+        ret.m_elements[2][1] = sin;
+        ret.m_elements[2][2] = cos;
+    }
+
+    template <typename Scalar, u32 Size = 3>
+    CMatrix<Scalar, Size, Size>             RotateY         ( Scalar angle ) 
+    {
+        static_assert( Size >= 3, "You can only construct an y axis rotation matrix of size 3 or above");
+
+        Scalar sin = std::sin( angle );
+        Scalar cos = std::cos( angle );
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        ret.m_elements[0][0] = cos;
+        ret.m_elements[0][2] = sin;
+        ret.m_elements[2][0] = -sin;
+        ret.m_elements[2][2] = cos;
+    } 
+
+    template <typename Scalar, u32 Size = 3>
+    CMatrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
+    {
+        static_assert( Size >= 2, "You can only construct an z axis rotation matrix of size 2 or above");
+
+        Scalar sin = std::sin( angle );
+        Scalar cos = std::cos( angle );
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        ret.m_elements[0][0] = cos;
+        ret.m_elements[0][1] = -sin;
+        ret.m_elements[1][0] = sin;
+        ret.m_elements[1][1] = cos;
+    } 
+
+    template <typename Scalar, u32 Size = 3>
+    CMatrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z )    
+    {
+        static_assert( Size >= 3, "You can only construct an zxy axis rotation matrix of size 3 or above");
+
+        CMatrix<Scalar, 3, 3> rotation = RotateZ( z ) * RotateX( x ) * RotateY( y );
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+        ret.SetSubMatrix<3,3>(rotation);
+        return ret;
+    } 
+
+    template <typename Scalar, u32 Size = 3>
+    CMatrix<Scalar, Size, Size>             Rotate3D        ( const CMatrix<Scalar, 1, 3>& axis, Scalar angle )
+    {
+        static_assert( Size >= 3, "You can only construct a angle axis rotation matrix of size 3 or above");
+        Scalar cos = std::cos( Scalar( angle ) );
+        Scalar sin = std::sin( Scalar( angle ) );
+
+        //
+        // Set the rotation to the cross product matrix * sin
+        //
+        CMatrix<Scalar, 3, 3> rotation ( Scalar(0),      -axis[2], axis[1], 
+                                         axis[2], Scalar(0),      -axis[0],
+                                        -axis[1], axis[0], Scalar(0) );
+        rotation *= sin;
+
+        rotation += cos * Identity<Scalar, 3>( );
+
+        rotation += ( Scalar( 1 ) - cos ) * TensorProduct( axis, axis );
+
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>( );
+
+        ret.SetSubMatrix(rotation);
+
+        return ret;
+    }
+
+    template <typename Scalar, u32 Size>
+    CMatrix<Scalar, Size+1, Size+1>         Translate       ( const CMatrix<Scalar, 1, Size>& position )
+    {
+        CMatrix<Scalar, Size+1, Size+1> ret = Identity<Scalar, Size+1>( );
+
+        ret.SetSubMatrix<1, Size, Size, 0>( position );
+
+        return ret;
+    }
+
+    template <typename Scalar>
+    CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane );
+
+    template <typename Scalar>
+    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar fov, Scalar aspect_ratio, Scalar near, Scalar far );
+
+    template <typename Scalar>
+    CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up );
+
+    template <typename Scalar>
+    CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far);
     
 };
 
