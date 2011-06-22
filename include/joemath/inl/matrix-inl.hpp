@@ -166,7 +166,72 @@ namespace NJoeMath
         
         return ret;
     }          
+    
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetRight        ( )             const
+    {
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][0]);
+    }
 
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetRight        ( )
+    {
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][0]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetForward      ( )             const
+    {
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][1]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetForward      ( )
+    {
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][1]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetUp           ( )             const
+    {
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][2]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension>
+    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetUp           ( )
+    {
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][2]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension,
+              u32 NumRows>
+    typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), const CMatrix<Scalar, 1, 3>&>::type
+                                        CMatrix<Scalar, Rows, Columns>::GetPosition     ( )             const
+    {
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][3]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <u32 MinMatrixDimension,
+              u32 NumRows>
+    typename std::enable_if<(MinMatrixDimension >= 3) && (NumRows >= 4), CMatrix<Scalar, 1, 3>&>::type
+                                         CMatrix<Scalar, Rows, Columns>::GetPosition     ( )
+    {
+        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][3]);
+    }
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector>
