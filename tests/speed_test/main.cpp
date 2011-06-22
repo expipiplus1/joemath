@@ -57,12 +57,38 @@ void TestRandom()
 }
  
 
-float4 AddVec(float4& a, float4& b)
+float4 AddVec(const float4& a, const float4& b)
 {
-    return operator +<float, 1,4,float, float> (a,b);
+    return a+b;
+    //float4 ret;
+    //for(u32 i = 0; i < 4; ++i)
+    //    ret[i] = a[i] + b[i];
+    //return ret;
 }
 
+void DoubleW(float4& a)
+{
+    a[3] = a[0]+a[1];
+}
 
+void DoubleW2(float4& a)
+{
+    a.m_elements[0][3] = a.m_elements[0][0]+a.m_elements[0][1];
+}
+
+float4 GetVector(float a, float b, float c, float d)
+{
+    return float4(a,b,c,d);
+}
+
+float4x4 GetMatrix(float a, float b, float c, float d)
+{
+    return float4x4(a,b,c,d,
+                    a,b,c,d,
+                    a,b,c,d,
+                    a,b,c,d);
+}
+    
 int main( int argc, char** argv )
 {
     TestRandom();
@@ -115,8 +141,17 @@ int main( int argc, char** argv )
     
     float3 y = r[2];
 
+    auto dubs = CMatrix<double, 1, 4>(0.0, 1.0, 2.0, 3.0);
+    float4 flots = float4(0.0f, 1.0f, 2.0f, 3.0f);
+    float4 whats = dubs + flots;
+    
+    DoubleW(flots);
+    
+    std::cout << flots.w();
     
     a = AddVec(a,b);
+    
+    return a[0];
     
     bool myBool = is_matrix<int>::value;
 
