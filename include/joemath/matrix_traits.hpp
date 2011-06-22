@@ -82,7 +82,25 @@ namespace NJoeMath
     struct max_matrix_dimension <CMatrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32, (Rows > Columns) ? Rows : Columns>
     { };
+
+    template <typename T0, typename T1, u32 i, u32 j>
+    struct has_sub_matrix
+    { };
+
+    template <typename Scalar, u32 Rows, u32 Columns, u32 Rows2, u32 Columns2, u32 i, u32 j>
+    struct has_sub_matrix <CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>, i, j>
+    : public std::integral_constant<bool, ((Rows2 + i) <= Rows) && ((Columns2 + j) <= Columns)>
+    { };
+
+    template <typename T0, typename T1>
+    struct has_same_dimensions
+    { };
     
+    template <typename Scalar, u32 Rows, u32 Columns, u32 Rows2, u32 Columns2>
+    struct has_same_dimensions <CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>>
+    : public std::integral_constant<bool, (Rows == Rows2) && (Columns == Columns2)>
+    { };
+
     template <typename T>
     struct is_vector
     : public std::false_type
