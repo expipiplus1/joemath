@@ -211,7 +211,7 @@ namespace NJoeMath
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetRight        ( )             const
     {
         return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[0][0]);
@@ -219,15 +219,15 @@ namespace NJoeMath
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                        CMatrix<Scalar, Rows, Columns>::GetRight        ( )
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                        CMatrix<Scalar, Rows, Columns>::SetRight        ( CMatrix<Scalar, 1, 3>& m )  
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[0][0]);
+        SetSubMatrix<1, 3, 0, 0>( m );
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetForward      ( )             const
     {
         return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[1][0]);
@@ -235,15 +235,15 @@ namespace NJoeMath
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                        CMatrix<Scalar, Rows, Columns>::GetForward      ( )
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                        CMatrix<Scalar, Rows, Columns>::SetForward      ( CMatrix<Scalar, 1, 3>& m )  
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[1][0]);
+        SetSubMatrix<1, 3, 1, 0>( m );
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetUp           ( )             const
     {
         return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(&m_elements[2][0]);
@@ -251,15 +251,15 @@ namespace NJoeMath
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 MinMatrixDimension>
-    typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                        CMatrix<Scalar, Rows, Columns>::GetUp           ( )
+    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                        CMatrix<Scalar, Rows, Columns>::SetUp           ( CMatrix<  Scalar, 1, 3>& m )  
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(&m_elements[2][0]);
+        SetSubMatrix<1, 3, 2, 0>( m );
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsSquare>
-    typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
+    inline  typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
                                         CMatrix<Scalar, Rows, Columns>::GetPosition     ( )             const
     {
         return *reinterpret_cast<const CMatrix<Scalar, 1, Columns-1>*>(&m_elements[Rows-1][0]);
@@ -267,10 +267,10 @@ namespace NJoeMath
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsSquare>
-    typename std::enable_if<IsSquare, CMatrix<Scalar, 1, Columns-1>&>::type
-                                         CMatrix<Scalar, Rows, Columns>::GetPosition     ( )
+    inline  typename std::enable_if<IsSquare, void>::type
+                                        CMatrix<Scalar, Rows, Columns>::SetPosition     ( CMatrix<Scalar, 1, Columns-1>& m )      
     {
-        return *reinterpret_cast<CMatrix<Scalar, 1, Columns-1>*>(&m_elements[Rows-1][0]);
+        SetSubMatrix<1, Columns-1, Size-1, 0>( m );
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -1213,16 +1213,45 @@ namespace NJoeMath
     }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane );
+    CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane )
+    {
+        CMatrix<Scalar, 4, 4> ret = Identity<Scalar, 4>( );
+        ret -= 2 * Outer(plane, plane);
+        return ret;
+    }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar fov, Scalar aspect_ratio, Scalar near, Scalar far );
+    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far )
+    {
+        const Scalar y_scale = Scalar( 1 ) / tan( Scalar( 0.5 ) * vertical_fov );
+        const Scalar x_scale = y_scale / aspect_ratio;
+        const Scalar z_dist  = far / (far - near);
+
+        return CMatrix<Scalar, 4, 4>(x_scale, Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
+                                     Scalar( 0 ), y_scale, Scalar( 0 ), Scalar( 0 ),
+                                     Scalar( 0 ), Scalar( 0 ), z_dist,  Scalar( 1 ),
+                                     Scalar( 0 ), Scalar( 0 ), -near * z_dist, Scalar( 0 ));
+    }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up );
+    CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up )
+    {
+        CMatrix<Scalar, 4, 4> ret;
+        ret.SetPosition( position );
+        ret.SetForward ( direction );
+        ret.SetRight   ( Cross( direction, up ) );
+        ret.SetUp      ( Cross( direction, ret.GetRight( ) ) );
+        return ret;
+    }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far);
+    CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far)
+    {
+        return CMatrix<Scalar, 4, 4>(Scalar( 2 ) / (right - left), Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
+                                     Scalar( 0 ), Scalar( 2 ) / (top - bottom), Scalar( 0 ), Scalar( 0 ),
+                                     Scalar( 0 ), Scalar( 0 ), Scalar( 1 ) / (near - far),  Scalar( 1 ),
+                                     Scalar( 0 ), Scalar( 0 ), near * Scalar( 1 ) / (near - far), Scalar( 0 ));
+    }
     
 };
 

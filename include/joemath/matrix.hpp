@@ -234,7 +234,7 @@ namespace NJoeMath
     CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane );
     
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar fov, Scalar aspect_ratio, Scalar near, Scalar far );
+    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far );
     
     template <typename Scalar>
     CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up );
@@ -320,32 +320,32 @@ namespace NJoeMath
                                             GetRight        ( )             const;
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                            GetRight        ( );
+        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                            SetRight        ( CMatrix<Scalar, 1, 3>& m );
                                             
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                             GetForward      ( )             const;
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                            GetForward      ( );
+        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                            SetForward      ( CMatrix<Scalar, 1, 3>& m );
                                             
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
                                             GetUp           ( )             const;
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), CMatrix<Scalar, 1, 3>&>::type
-                                            GetUp           ( );
+        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
+                                            SetUp           ( CMatrix<Scalar, 1, 3>& m );
                                             
         template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
                                             GetPosition     ( )             const;
                                             
         template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsSquare, CMatrix<Scalar, 1, Columns-1>&>::type
-                                            GetPosition     ( );                  
+        typename std::enable_if<IsSquare, void>::type
+                                            SetPosition     ( CMatrix<Scalar, 1, Columns-1>& m );                  
                                             
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<!IsVector, const CMatrix<Scalar, 1, Columns>&>::type
@@ -741,7 +741,7 @@ namespace NJoeMath
         friend  CMatrix<Scalar_, 4, 4>                  Reflect         ( CMatrix<Scalar_, 1, 4>& plane );
         
         template <typename Scalar_>
-        friend  CMatrix<Scalar_, 4, 4>                  Perspective     ( Scalar_ fov, Scalar_ aspect_ratio, Scalar_ near, Scalar_ far );
+        friend  CMatrix<Scalar_, 4, 4>                  Perspective     ( Scalar_ vertical_fov, Scalar_ aspect_ratio, Scalar_ near, Scalar_ far );
         
         template <typename Scalar_>
         friend  CMatrix<Scalar_, 4, 4>                  View            ( CMatrix<Scalar_, 1, 3>& position, CMatrix<Scalar_, 1, 3>& direction, CMatrix<Scalar_, 1, 3>& up );
