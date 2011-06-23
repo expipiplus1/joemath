@@ -270,7 +270,7 @@ namespace NJoeMath
     inline  typename std::enable_if<IsSquare, void>::type
                                         CMatrix<Scalar, Rows, Columns>::SetPosition     ( CMatrix<Scalar, 1, Columns-1>& m )      
     {
-        SetSubMatrix<1, Columns-1, Size-1, 0>( m );
+        SetSubMatrix<1, Columns-1, Columns-1, 0>( m );
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
