@@ -198,7 +198,7 @@ namespace NJoeMath
               u32      VectorSize0 = vector_size<CMatrix<Scalar, Rows, Columns>>::value,
               u32      VectorSize1 = vector_size<CMatrix<Scalar2, Rows2, Columns2>>::value>
     typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
-                                                    TensorProduct   ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ); 
+                                                    Outer   ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows2, Columns2>& m1 ); 
     //
     // Utility functions
     //
@@ -705,7 +705,7 @@ namespace NJoeMath
                   u32      VectorSize0,
                   u32      VectorSize1>
         friend  typename std::enable_if<IsVector0 && IsVector1, CMatrix<ReturnScalar, VectorSize1, VectorSize0>>::type
-                                                        TensorProduct   ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
+                                                        Outer           ( const CMatrix<Scalar, Rows_, Columns_>& m0, const CMatrix<Scalar2, Rows_, Columns_>& m1 ); 
         //
         // Utility friends
         //
