@@ -234,7 +234,7 @@ namespace NJoeMath
     CMatrix<Scalar, 4, 4>                   Reflect         ( const CMatrix<Scalar, 1, 4>& plane );
     
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far );
+    CMatrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far );
     
     template <typename Scalar>
     CMatrix<Scalar, 4, 4>                   View            ( const CMatrix<Scalar, 1, 3>& position, const CMatrix<Scalar, 1, 3>& direction, const CMatrix<Scalar, 1, 3>& up );
@@ -741,7 +741,7 @@ namespace NJoeMath
         friend  CMatrix<Scalar_, 4, 4>                  Reflect         ( CMatrix<Scalar_, 1, 4>& plane );
         
         template <typename Scalar_>
-        friend  CMatrix<Scalar_, 4, 4>                  Perspective     ( Scalar_ vertical_fov, Scalar_ aspect_ratio, Scalar_ near, Scalar_ far );
+        friend  CMatrix<Scalar_, 4, 4>                  Projection      ( Scalar_ vertical_fov, Scalar_ aspect_ratio, Scalar_ near, Scalar_ far );
         
         template <typename Scalar_>
         friend  CMatrix<Scalar_, 4, 4>                  View            ( CMatrix<Scalar_, 1, 3>& position, CMatrix<Scalar_, 1, 3>& direction, CMatrix<Scalar_, 1, 3>& up );

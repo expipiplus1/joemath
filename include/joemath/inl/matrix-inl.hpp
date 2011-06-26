@@ -1221,7 +1221,7 @@ namespace NJoeMath
     }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Perspective     ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far )
+    CMatrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far )
     {
         const Scalar y_scale = Scalar( 1 ) / tan( Scalar( 0.5 ) * vertical_fov );
         const Scalar x_scale = y_scale / aspect_ratio;
