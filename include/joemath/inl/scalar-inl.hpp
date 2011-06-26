@@ -103,13 +103,13 @@ namespace NJoeMath
     }
 
     template <typename T>
-    inline T    Radians         ( const T degrees )
+    inline T    DegToRad        ( const T degrees )
     {
         return degrees * PI / 180.0f;
     }
 
     template <typename T>
-    inline T    Degrees         ( const T radians )
+    inline T    RadToDeg        ( const T radians )
     {
         return radians * 180.0f / PI;
     }

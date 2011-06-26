@@ -86,10 +86,10 @@ namespace NJoeMath
     T   Max             ( const T v0, const T v1 );
     
     template <typename T>
-    T   Radians         ( const T degrees );
+    T   DegToRad        ( const T degrees );
     
     template <typename T>
-    T   Degrees         ( const T radians );
+    T   RadToDeg        ( const T radians );
     
     template <typename T>
     T   Distance        ( const T v0, const T v1 );
