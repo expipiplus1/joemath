@@ -321,7 +321,7 @@ namespace NJoeMath
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetRight        ( CMatrix<Scalar, 1, 3>& m );
+                                            SetRight        ( const CMatrix<Scalar, 1, 3>& m );
                                             
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
@@ -329,7 +329,7 @@ namespace NJoeMath
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetForward      ( CMatrix<Scalar, 1, 3>& m );
+                                            SetForward      ( const CMatrix<Scalar, 1, 3>& m );
                                             
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), const CMatrix<Scalar, 1, 3>&>::type
@@ -337,7 +337,7 @@ namespace NJoeMath
 
         template <u32 MinMatrixDimension = min_matrix_dimension<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetUp           ( CMatrix<Scalar, 1, 3>& m );
+                                            SetUp           ( const CMatrix<Scalar, 1, 3>& m );
                                             
         template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, const CMatrix<Scalar, 1, Columns-1>&>::type
@@ -345,7 +345,7 @@ namespace NJoeMath
                                             
         template <bool IsSquare = is_square<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, void>::type
-                                            SetPosition     ( CMatrix<Scalar, 1, Columns-1>& m );                  
+                                            SetPosition     ( const CMatrix<Scalar, 1, Columns-1>& m );                  
                                             
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<!IsVector, const CMatrix<Scalar, 1, Columns>&>::type
