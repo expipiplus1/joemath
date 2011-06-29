@@ -1114,7 +1114,7 @@ namespace NJoeMath
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
-        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
         ret.m_elements[0][0] = cos;
         ret.m_elements[0][1] = -sin;
         ret.m_elements[1][0] = sin;
@@ -1130,11 +1130,13 @@ namespace NJoeMath
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
-        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
         ret.m_elements[1][1] = cos;
         ret.m_elements[1][2] = -sin;
         ret.m_elements[2][1] = sin;
         ret.m_elements[2][2] = cos;
+        
+        return ret;
     }
 
     template <typename Scalar, u32 Size = 3>
@@ -1144,11 +1146,13 @@ namespace NJoeMath
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
-        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
         ret.m_elements[0][0] = cos;
         ret.m_elements[0][2] = sin;
         ret.m_elements[2][0] = -sin;
         ret.m_elements[2][2] = cos;
+        
+        return ret;
     } 
 
     template <typename Scalar, u32 Size = 3>
@@ -1158,11 +1162,13 @@ namespace NJoeMath
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
-        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>;
+        CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
         ret.m_elements[0][0] = cos;
         ret.m_elements[0][1] = -sin;
         ret.m_elements[1][0] = sin;
         ret.m_elements[1][1] = cos;
+        
+        return ret;
     } 
 
     template <typename Scalar, u32 Size = 3>
@@ -1172,7 +1178,7 @@ namespace NJoeMath
 
         CMatrix<Scalar, 3, 3> rotation = RotateZ( z ) * RotateX( x ) * RotateY( y );
         CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.SetSubMatrix<3,3>(rotation);
+        ret.template SetSubMatrix<3,3>(rotation);
         return ret;
     } 
 
@@ -1197,7 +1203,7 @@ namespace NJoeMath
 
         CMatrix<Scalar, Size, Size> ret = Identity<Scalar, Size>( );
 
-        ret.SetSubMatrix(rotation);
+        ret.template SetSubMatrix(rotation);
 
         return ret;
     }
