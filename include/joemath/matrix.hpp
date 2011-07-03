@@ -49,6 +49,13 @@ namespace NJoeMath
     //
     // Typedefs
     //
+    typedef CMatrix<s32, 1, 2> int2;
+    typedef CMatrix<s32, 1, 3> int3;
+    typedef CMatrix<s32, 1, 4> int4;
+    
+    typedef CMatrix<u32, 1, 2> uint2;
+    typedef CMatrix<u32, 1, 3> uint3;
+    typedef CMatrix<u32, 1, 4> uint4;
     
     typedef CMatrix<float, 1, 2> float2;
     typedef CMatrix<float, 1, 3> float3;
@@ -56,7 +63,7 @@ namespace NJoeMath
     
     typedef CMatrix<float, 2, 2> float2x2;
     typedef CMatrix<float, 3, 3> float3x3;
-    typedef CMatrix<float, 4, 4> float4x4;
+    typedef CMatrix<float, 4, 4> float4x4 __attribute__ ((aligned (16)));
     
     //
     // Binary operators
