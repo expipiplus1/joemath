@@ -1227,16 +1227,16 @@ namespace NJoeMath
     }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far )
+    CMatrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near_plane, Scalar far_plane )
     {
         const Scalar y_scale = Scalar( 1 ) / tan( Scalar( 0.5 ) * vertical_fov );
         const Scalar x_scale = y_scale / aspect_ratio;
-        const Scalar z_dist  = far / (far - near);
+        const Scalar z_dist  = far_plane / (far_plane - near_plane);
 
         return CMatrix<Scalar, 4, 4>(x_scale, Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
                                      Scalar( 0 ), y_scale, Scalar( 0 ), Scalar( 0 ),
                                      Scalar( 0 ), Scalar( 0 ), z_dist,  Scalar( 1 ),
-                                     Scalar( 0 ), Scalar( 0 ), -near * z_dist, Scalar( 0 ));
+                                     Scalar( 0 ), Scalar( 0 ), -near_plane * z_dist, Scalar( 0 ));
     }
 
     template <typename Scalar>
@@ -1256,12 +1256,12 @@ namespace NJoeMath
     }
 
     template <typename Scalar>
-    CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far)
+    CMatrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near_plane, Scalar far_plane )
     {
         return CMatrix<Scalar, 4, 4>(Scalar( 2 ) / (right - left), Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
                                      Scalar( 0 ), Scalar( 2 ) / (top - bottom), Scalar( 0 ), Scalar( 0 ),
-                                     Scalar( 0 ), Scalar( 0 ), Scalar( 1 ) / (near - far),  Scalar( 1 ),
-                                     Scalar( 0 ), Scalar( 0 ), near * Scalar( 1 ) / (near - far), Scalar( 0 ));
+                                     Scalar( 0 ), Scalar( 0 ), Scalar( 1 ) / (near_plane - far_plane),  Scalar( 1 ),
+                                     Scalar( 0 ), Scalar( 0 ), near_plane * Scalar( 1 ) / (near_plane - far_plane), Scalar( 0 ));
     }
     
 };
