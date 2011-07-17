@@ -401,7 +401,7 @@ namespace NJoeMath
     {
         static_assert(IsVector, "You can only get the xy component of a vector");
         static_assert(VectorSize >= 2, "You can only get the xy component of a vector of size 2 or greater");
-        return *reinterpret_cast<CMatrix<Scalar, 1, 2>*>(this);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 2>*>(this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -423,7 +423,7 @@ namespace NJoeMath
     {
         static_assert(IsVector, "You can only get the xyz component of a vector");
         static_assert(VectorSize >= 3, "You can only get the xyz component of a vector of size 3 or greater");
-        return *reinterpret_cast<CMatrix<Scalar, 1, 3>*>(this);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 3>*>(this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -445,7 +445,7 @@ namespace NJoeMath
     {
         static_assert(IsVector, "You can only get the xyzw component of a vector");
         static_assert(VectorSize >= 4, "You can only get the xyzw component of a vector of size 4 or greater");
-        return *reinterpret_cast<CMatrix<Scalar, 1, 4>*>(this);
+        return *reinterpret_cast<const CMatrix<Scalar, 1, 4>*>(this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
