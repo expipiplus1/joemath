@@ -80,10 +80,10 @@ install(FILES license.txt readme.txt
 #--------------------------------------------------------------------
 # Uninstall operation
 #--------------------------------------------------------------------
-configure_file(${joemath_SOURCE_DIR}/cmake_uninstall.cmake.in
-               ${joemath_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
-
 if( NOT TARGET uninstall )
+    configure_file(${joemath_SOURCE_DIR}/cmake_uninstall.cmake.in
+                   ${joemath_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
+
     add_custom_target(uninstall
                       ${CMAKE_COMMAND} -P
                       ${joemath_BINARY_DIR}/cmake_uninstall.cmake)
