@@ -308,7 +308,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 1, const Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 1 ), const Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::x               ( ) const
     {
         static_assert(IsVector, "You can only get the x component of a vector");
@@ -319,7 +319,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 1, Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 1 ), Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::x               ( )
     {
         static_assert(IsVector, "You can only get the x component of a vector");
@@ -330,7 +330,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 2, const Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::y               ( ) const
     {
         static_assert(IsVector, "You can only get the y component of a vector");
@@ -341,7 +341,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 2, Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::y               ( )
     {
         static_assert(IsVector, "You can only get the y component of a vector");
@@ -352,7 +352,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 3, const Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::z               ( ) const
     {
         static_assert(IsVector, "You can only get the z component of a vector");
@@ -363,7 +363,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 3, Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::z               ( )
     {
         static_assert(IsVector, "You can only get the z component of a vector");
@@ -374,7 +374,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 4, const Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::w               ( ) const
     {
         static_assert(IsVector, "You can only get the w component of a vector");
@@ -385,7 +385,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 4, Scalar&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), Scalar&>::type
                                                 CMatrix<Scalar, Rows, Columns>::w               ( )
     {
         static_assert(IsVector, "You can only get the w component of a vector");
@@ -396,7 +396,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 2, const CMatrix<Scalar, 1, 2>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), const CMatrix<Scalar, 1, 2>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xy              ( ) const
     {
         static_assert(IsVector, "You can only get the xy component of a vector");
@@ -407,7 +407,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 2, CMatrix<Scalar, 1, 2>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), CMatrix<Scalar, 1, 2>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xy              ( )
     {
         static_assert(IsVector, "You can only get the xy component of a vector");
@@ -418,7 +418,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 3, const CMatrix<Scalar, 1, 3>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), const CMatrix<Scalar, 1, 3>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xyz             ( ) const
     {
         static_assert(IsVector, "You can only get the xyz component of a vector");
@@ -429,7 +429,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 3, CMatrix<Scalar, 1, 3>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), CMatrix<Scalar, 1, 3>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xyz             ( )
     {
         static_assert(IsVector, "You can only get the xyz component of a vector");
@@ -440,7 +440,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 4, const CMatrix<Scalar, 1, 4>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), const CMatrix<Scalar, 1, 4>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xyzw            ( ) const
     {
         static_assert(IsVector, "You can only get the xyzw component of a vector");
@@ -451,7 +451,7 @@ namespace NJoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector,
               u32  VectorSize>
-    inline  typename std::enable_if<IsVector && VectorSize >= 4, CMatrix<Scalar, 1, 4>&>::type
+    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), CMatrix<Scalar, 1, 4>&>::type
                                                 CMatrix<Scalar, Rows, Columns>::xyzw            ( )
     {
         static_assert(IsVector, "You can only get the xyxw component of a vector");

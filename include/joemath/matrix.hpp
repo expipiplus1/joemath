@@ -380,72 +380,72 @@ namespace NJoeMath
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 1, const Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 1 ), const Scalar&>::type
                                         x               ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 1, Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 1 ), Scalar&>::type
                                         x               ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 2, const Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Scalar&>::type
                                         y               ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 2, Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 2 ), Scalar&>::type
                                         y               ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 3, const Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Scalar&>::type
                                         z               ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 3, Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 3 ), Scalar&>::type
                                         z               ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 4, const Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Scalar&>::type
                                         w               ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 4, Scalar&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 4 ), Scalar&>::type
                                         w               ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 2, const CMatrix<Scalar, 1, 2>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 2 ), const CMatrix<Scalar, 1, 2>&>::type
                                         xy              ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 2, CMatrix<Scalar, 1, 2>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 2 ), CMatrix<Scalar, 1, 2>&>::type
                                         xy              ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 3, const CMatrix<Scalar, 1, 3>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 3 ), const CMatrix<Scalar, 1, 3>&>::type
                                         xyz             ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 3, CMatrix<Scalar, 1, 3>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 3 ), CMatrix<Scalar, 1, 3>&>::type
                                         xyz             ( );
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 4, const CMatrix<Scalar, 1, 4>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 4 ), const CMatrix<Scalar, 1, 4>&>::type
                                         xyzw            ( ) const;
         
         template <bool IsVector = is_vector<CMatrix<Scalar, Rows, Columns>>::value,
                   u32  VectorSize = vector_size<CMatrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && VectorSize >= 4, CMatrix<Scalar, 1, 4>&>::type
+        typename std::enable_if<IsVector && ( VectorSize >= 4 ), CMatrix<Scalar, 1, 4>&>::type
                                         xyzw            ( );
         
                                         
