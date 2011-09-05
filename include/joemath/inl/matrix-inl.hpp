@@ -64,7 +64,7 @@ namespace NJoeMath
         static_assert(sizeof...(elements) == Rows * Columns, "Wrong number of elements in initializer");
         
         std::array<Scalar, Rows * Columns>& temp = *reinterpret_cast<std::array<Scalar, Rows * Columns>*>(&m_elements[0][0]);
-        temp = std::array<Scalar, Rows * Columns> {{elements...}};
+        temp = std::array<Scalar, Rows * Columns>( {{elements...}} );
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -701,7 +701,7 @@ namespace NJoeMath
               typename ReturnScalar>
     inline  CMatrix<ReturnScalar, Rows, Columns>    operator -      ( const CMatrix<Scalar, Rows, Columns>& m0, const CMatrix<Scalar2, Rows, Columns>& m1 ) 
     {
-        CMatrix<ReturnScalar, Rows, Columns> ret;
+        CMatrix<Scalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -1107,7 +1107,7 @@ namespace NJoeMath
         return ret;
     }
 
-    template <typename Scalar, u32 Size = 2>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle )
     {
         static_assert( Size >= 2, "You can only construct a 2d rotation matrix of size 2 or above");
@@ -1123,7 +1123,7 @@ namespace NJoeMath
         return ret;
     }
 
-    template <typename Scalar, u32 Size = 3>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             RotateX         ( Scalar angle )
     {
         static_assert( Size >= 3, "You can only construct an x axis rotation matrix of size 3 or above");
@@ -1139,7 +1139,7 @@ namespace NJoeMath
         return ret;
     }
 
-    template <typename Scalar, u32 Size = 3>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             RotateY         ( Scalar angle ) 
     {
         static_assert( Size >= 3, "You can only construct an y axis rotation matrix of size 3 or above");
@@ -1155,7 +1155,7 @@ namespace NJoeMath
         return ret;
     } 
 
-    template <typename Scalar, u32 Size = 3>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
     {
         static_assert( Size >= 2, "You can only construct an z axis rotation matrix of size 2 or above");
@@ -1171,7 +1171,7 @@ namespace NJoeMath
         return ret;
     } 
 
-    template <typename Scalar, u32 Size = 3>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z )    
     {
         static_assert( Size >= 3, "You can only construct an zxy axis rotation matrix of size 3 or above");
@@ -1182,7 +1182,7 @@ namespace NJoeMath
         return ret;
     } 
 
-    template <typename Scalar, u32 Size = 3>
+    template <typename Scalar, u32 Size>
     CMatrix<Scalar, Size, Size>             Rotate3D        ( const CMatrix<Scalar, 1, 3>& axis, Scalar angle )
     {
         static_assert( Size >= 3, "You can only construct a angle axis rotation matrix of size 3 or above");
