@@ -38,8 +38,8 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-namespace NJoeMath
-{
+//namespace NJoeMath
+//{
     // Doesn't initialize
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( )
@@ -1264,7 +1264,7 @@ namespace NJoeMath
                                      Scalar( 0 ), Scalar( 0 ), near_plane * Scalar( 1 ) / (near_plane - far_plane), Scalar( 0 ));
     }
     
-};
+//};
 
 
 

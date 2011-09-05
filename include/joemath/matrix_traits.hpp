@@ -31,8 +31,8 @@
 #include <type_traits>
 #include <joemath/config.hpp>
 
-namespace NJoeMath
-{
+//namespace NJoeMath
+//{
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix;
     
@@ -129,4 +129,4 @@ namespace NJoeMath
     struct vector_size <CMatrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32,  (Rows > Columns) ? Rows : Columns>
     { };  
-};
+//};

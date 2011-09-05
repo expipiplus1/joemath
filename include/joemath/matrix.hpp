@@ -41,8 +41,10 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-namespace NJoeMath
-{
+//namespace NJoeMath
+//{
+    //using namespace NJoeMath;
+
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix;
     
@@ -52,7 +54,7 @@ namespace NJoeMath
     typedef CMatrix<s32, 1, 2> int2;
     typedef CMatrix<s32, 1, 3> int3;
     typedef CMatrix<s32, 1, 4> int4;
-    
+   
     typedef CMatrix<u32, 1, 2> uint2;
     typedef CMatrix<u32, 1, 3> uint3;
     typedef CMatrix<u32, 1, 4> uint4;
@@ -757,6 +759,6 @@ namespace NJoeMath
         friend  CMatrix<Scalar_, 4, 4>                  Ortho           ( Scalar_ left, Scalar_ right, Scalar_ top, Scalar_ bottom, Scalar_ near, Scalar_ far);
         
     };    
-};
+//};
 
 #include "inl/matrix-inl.hpp"
