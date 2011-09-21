@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: joemath
 Description: Linear math library
 Version: 0.0.1
-URL: git://lon.eso.me.uk/joemath
+URL: https://github.com/expipiplus1/joemath
 Libs: -L${libdir} -ljoemath
 Cflags: -I${includedir}
