@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <joemath/config.hpp>
 
-//namespace NJoeMath
+//namespace JoeMath
 //{
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix;

@@ -41,9 +41,9 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-//namespace NJoeMath
+//namespace JoeMath
 //{
-    //using namespace NJoeMath;
+    //using namespace JoeMath;
 
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix;

@@ -30,7 +30,7 @@
 #include <joemath/joemath.hpp>
 #include "timer.hpp"
 
-using namespace NJoeMath;
+using namespace JoeMath;
 
 const u32 NUM_ITERATIONS = 10000000;
 
@@ -40,7 +40,7 @@ void TestRandom()
 
     std::cout << "Random U32, ";
 
-    NJoeMath::CRandom random;
+    JoeMath::CRandom random;
     random.Seed( 6 );
 
     u32 acc = 0;
@@ -93,7 +93,7 @@ int main( int argc, char** argv )
 {
     TestRandom();
     
-    NJoeMath::CRandom random;
+    JoeMath::CRandom random;
     NTimer::CTimer time;
     time.Start();
     random.Seed((u32)(time.GetElapsedTime()*0xffffffff));
