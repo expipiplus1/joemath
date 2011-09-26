@@ -67,6 +67,7 @@
         temp = std::array<Scalar, Rows * Columns>( {{elements...}} );
     }
 
+#if __has_feature(cxx_generalized_initializers)
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const std::initializer_list<Scalar>& elements )
     {
@@ -77,6 +78,7 @@
             ++c;
         }
     }
+#endif
     
 #else // _MSC_VER
 
