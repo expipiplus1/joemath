@@ -38,7 +38,7 @@ if(MSVC)
   endif()
 else()
   # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W -std=c++0x -stdlib=libc++ -g3 -O0 -ffast-math -fomit-frame-pointer -finline-functions")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -g3 -O0 -ffast-math -fomit-frame-pointer -finline-functions")
 endif()
 
 add_library(libjoemathStatic    STATIC    ${joemath_SOURCES})
