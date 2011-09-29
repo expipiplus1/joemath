@@ -279,10 +279,10 @@
         template <typename... ElementTypes> 
         explicit CMatrix            ( const ElementTypes&... elements );
 
-#if __has_feature(cxx_generalized_initializers)
+#ifndef __clang__
         CMatrix                     ( const std::initializer_list<Scalar>& elements );
 #endif
-
+	
 #else // _MSC_VER
         explicit CMatrix            ( const Scalar first, ... );
 #endif // _MSC_VER
