@@ -29,6 +29,8 @@ configure_file(${joemath_SOURCE_DIR}/include/joemath/config.hpp.in
 configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
 
+set( CXX11_FLAGS "--std=c++0x " )
+
 if(MSVC)
   # Force to always compile with W4
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]") 
