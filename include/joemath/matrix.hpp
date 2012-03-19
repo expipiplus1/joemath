@@ -28,11 +28,6 @@
 
 #pragma once
 
-#ifdef _MSC_VER
-#pragma warning (1 : 4519)
-#pragma warning (disable : 4519)
-#endif
-
 #include <cmath>
 #include <array>
 #include <initializer_list>
@@ -273,16 +268,11 @@ namespace JoeMath
         // TODO Initialize from vector
         
         // Initialize from variable list
-#ifndef _MSC_VER
         template <typename... ElementTypes> 
         explicit CMatrix            ( const ElementTypes&... elements );
 
         CMatrix                     ( const std::initializer_list<Scalar>& elements );
 	
-#else // _MSC_VER
-        explicit CMatrix            ( const Scalar first, ... );
-#endif // _MSC_VER
-
         template <typename Scalar2>
         CMatrix                     ( const CMatrix<Scalar2, Rows, Columns> m);
 

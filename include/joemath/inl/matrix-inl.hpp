@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifdef _MSC_VER
-#include <cstdarg>
-#endif
 #include <cmath>
 #include <initializer_list>
 #include <type_traits>
@@ -55,8 +52,6 @@ namespace JoeMath
                 m_elements[i][j] = s;
     }
     
-#ifndef _MSC_VER
-
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename... ElementTypes>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const ElementTypes&... elements )
@@ -76,27 +71,6 @@ namespace JoeMath
             m_elements[0][c] = i;
         }
     }
-    
-#else // _MSC_VER
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const Scalar first, ... )
-    {
-        std::va_list list;
-        Scalar i = first;
-        u32    c = 0;
-        va_start( list, first );
-        
-        while( c < Rows * Columns )
-        {
-            m_elements[0][c] = i;
-            ++c;
-            i = va_arg( list, Scalar );
-        }
-        va_end( list );              /* Reset variable arguments.      */
-    }
-    
-#endif // _MSC_VER
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
