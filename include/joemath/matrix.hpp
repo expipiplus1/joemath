@@ -41,23 +41,21 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-//namespace JoeMath
-//{
-    //using namespace JoeMath;
-
+namespace JoeMath
+{
     template <typename Scalar, u32 Rows, u32 Columns>
     class CMatrix;
     
     //
     // Typedefs
     //
-    typedef CMatrix<s32, 1, 2> int2;
-    typedef CMatrix<s32, 1, 3> int3;
-    typedef CMatrix<s32, 1, 4> int4;
+    typedef CMatrix<s32, 1, 2>   int2;
+    typedef CMatrix<s32, 1, 3>   int3;
+    typedef CMatrix<s32, 1, 4>   int4;
    
-    typedef CMatrix<u32, 1, 2> uint2;
-    typedef CMatrix<u32, 1, 3> uint3;
-    typedef CMatrix<u32, 1, 4> uint4;
+    typedef CMatrix<u32, 1, 2>   uint2;
+    typedef CMatrix<u32, 1, 3>   uint3;
+    typedef CMatrix<u32, 1, 4>   uint4;
     
     typedef CMatrix<float, 1, 2> float2;
     typedef CMatrix<float, 1, 3> float3;
@@ -279,9 +277,7 @@
         template <typename... ElementTypes> 
         explicit CMatrix            ( const ElementTypes&... elements );
 
-#ifndef __clang__
         CMatrix                     ( const std::initializer_list<Scalar>& elements );
-#endif
 	
 #else // _MSC_VER
         explicit CMatrix            ( const Scalar first, ... );
@@ -762,6 +758,6 @@
         friend  CMatrix<Scalar_, 4, 4>                  Ortho           ( Scalar_ left, Scalar_ right, Scalar_ top, Scalar_ bottom, Scalar_ near, Scalar_ far);
         
     };    
-//};
+};
 
 #include "inl/matrix-inl.hpp"

@@ -38,8 +38,8 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-//namespace JoeMath
-//{
+namespace JoeMath
+{
     // Doesn't initialize
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( )
@@ -67,7 +67,6 @@
         temp = std::array<Scalar, Rows * Columns>( {{elements...}} );
     }
 
-#ifndef __clang__
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  CMatrix<Scalar, Rows, Columns>::CMatrix                     ( const std::initializer_list<Scalar>& elements )
     {
@@ -75,10 +74,8 @@
         for( auto i = elements.begin(); i < elements.end() && c < Rows * Columns; ++i, ++c)
         {
             m_elements[0][c] = i;
-            ++c;
         }
     }
-#endif
     
 #else // _MSC_VER
 
@@ -1266,7 +1263,7 @@
                                      Scalar( 0 ), Scalar( 0 ), near_plane * Scalar( 1 ) / (near_plane - far_plane), Scalar( 0 ));
     }
     
-//};
+};
 
 
 

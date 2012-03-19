@@ -13,6 +13,7 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
                       ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/scalar-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/matrix.hpp
+                      ${joemath_SOURCE_DIR}/include/joemath/matrix_traits.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/matrix-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/joemath.hpp)
 
