@@ -30,7 +30,7 @@
 #include <cstring>
 #include <joemath/scalar.hpp>
 
-namespace NJoeMath
+namespace JoeMath
 {
     CRandom::CRandom            ( )
     {

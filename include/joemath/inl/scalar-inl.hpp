@@ -30,7 +30,7 @@
 
 #include <joemath/scalar.hpp>
 
-namespace NJoeMath
+namespace JoeMath
 {
     template <typename T>
     inline T    Lerp            ( const T v0, const T v1, const float t )

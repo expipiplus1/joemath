@@ -31,7 +31,7 @@
 #include <joemath/scalar.hpp>
 #include <joemath/config.hpp>
 
-namespace NJoeMath
+namespace JoeMath
 {
     const u32 RANDOM_STATE_VECTOR_SIZE = 3;
     const u32 RANDOM_A = 4294967118U;
