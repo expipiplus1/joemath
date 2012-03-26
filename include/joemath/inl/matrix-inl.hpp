@@ -68,7 +68,7 @@ namespace JoeMath
         u32 c = 0;
         for( auto i = elements.begin(); i < elements.end() && c < Rows * Columns; ++i, ++c)
         {
-            m_elements[0][c] = i;
+            m_elements[0][c] = *i;
         }
     }
 

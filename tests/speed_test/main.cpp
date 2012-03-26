@@ -83,13 +83,13 @@ float4 GetVector(float a, float b, float c, float d)
 
 float4x4 GetMatrix(float a, float b, float c, float d)
 {
-    return float4x4(a,b,c,d,
+    return float4x4{a,b,c,d,
                     a,b,c,d,
                     a,b,c,d,
-                    a,b,c,d);
+                    a,b,c,d};
 }
     
-int main( int argc, char** argv )
+int main()
 {
     TestRandom();
     
@@ -157,8 +157,8 @@ int main( int argc, char** argv )
 
     myBool = is_matrix<CMatrix<float, 1,2>>::value;
     
-    CMatrix<u32,2,2> mat( 1, 0,
-                          0, 1 );
+    CMatrix<u32,2,2> mat( 1u, 0u,
+                          0u, 1u );
     
     u32 det = mat.Determinant();
     
