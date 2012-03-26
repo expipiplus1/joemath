@@ -21,12 +21,6 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
 # Create shared configuration header
 #--------------------------------------------------------------------
 
-OPTION( JOEMATH_SIMD "Enable SIMD support" ON )
-OPTION( JOEMATH_VEC_ASSERTS "Enable vec-op asserts in debug" OFF )
-
-configure_file(${joemath_SOURCE_DIR}/include/joemath/config.hpp.in 
-               ${joemath_SOURCE_DIR}/include/joemath/config.hpp @ONLY)
-
 configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
 
