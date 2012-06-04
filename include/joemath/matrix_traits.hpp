@@ -34,7 +34,7 @@
 namespace JoeMath
 {
     template <typename Scalar, u32 Rows, u32 Columns>
-    class CMatrix;
+    class Matrix;
     
     template <typename T>
     struct is_matrix       
@@ -42,7 +42,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct is_matrix <CMatrix<Scalar, Rows, Columns>> 
+    struct is_matrix <Matrix<Scalar, Rows, Columns>>
     : public std::true_type
     { };
     
@@ -52,7 +52,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct is_square <CMatrix<Scalar, Rows, Columns>>
+    struct is_square <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<bool, Rows == Columns>
     { };
     
@@ -61,7 +61,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct square_matrix_size <CMatrix<Scalar, Rows, Columns>>
+    struct square_matrix_size <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32, Rows>
     { };
     
@@ -70,7 +70,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct min_matrix_dimension <CMatrix<Scalar, Rows, Columns>>
+    struct min_matrix_dimension <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32, (Rows < Columns) ? Rows : Columns>
     { };
      
@@ -79,7 +79,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct max_matrix_dimension <CMatrix<Scalar, Rows, Columns>>
+    struct max_matrix_dimension <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32, (Rows > Columns) ? Rows : Columns>
     { };
 
@@ -88,7 +88,7 @@ namespace JoeMath
     { };
 
     template <typename Scalar, u32 Rows, u32 Columns, u32 Rows2, u32 Columns2, u32 i, u32 j>
-    struct has_sub_matrix <CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>, i, j>
+    struct has_sub_matrix <Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>, i, j>
     : public std::integral_constant<bool, ((Rows2 + i) <= Rows) && ((Columns2 + j) <= Columns)>
     { };
 
@@ -97,7 +97,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns, u32 Rows2, u32 Columns2>
-    struct has_same_dimensions <CMatrix<Scalar, Rows, Columns>, CMatrix<Scalar, Rows2, Columns2>>
+    struct has_same_dimensions <Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>>
     : public std::integral_constant<bool, (Rows == Rows2) && (Columns == Columns2)>
     { };
 
@@ -107,7 +107,7 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct is_vector <CMatrix<Scalar, Rows, Columns>>
+    struct is_vector <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<bool, (Rows == 1) || (Columns == 1)>
     { };
     
@@ -117,8 +117,8 @@ namespace JoeMath
     { };
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    struct is_vector3 <CMatrix<Scalar, Rows, Columns>>
-    : public std::integral_constant<bool, is_vector<CMatrix<Scalar, Rows, Columns>>::value && ((Rows == 3) || (Columns == 3))>
+    struct is_vector3 <Matrix<Scalar, Rows, Columns>>
+    : public std::integral_constant<bool, is_vector<Matrix<Scalar, Rows, Columns>>::value && ((Rows == 3) || (Columns == 3))>
     { };
     
     template <typename T>
@@ -126,7 +126,7 @@ namespace JoeMath
     { };
 
     template<typename Scalar, u32 Rows, u32 Columns>
-    struct vector_size <CMatrix<Scalar, Rows, Columns>>
+    struct vector_size <Matrix<Scalar, Rows, Columns>>
     : public std::integral_constant<u32,  (Rows > Columns) ? Rows : Columns>
     { };  
 };
