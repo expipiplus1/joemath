@@ -31,5 +31,4 @@
 #include <joemath/config.hpp>
 #include <joemath/scalar.hpp>
 #include <joemath/matrix.hpp>
-#include <joemath/random.hpp>
 

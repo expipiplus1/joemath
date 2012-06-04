@@ -8,8 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories(include)
 
-set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
-                      ${joemath_SOURCE_DIR}/include/joemath/random.hpp
+set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/random.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/scalar-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/matrix.hpp
@@ -24,7 +23,7 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/src/random.cpp
 configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
 
-set( CXX11_FLAGS "--std=c++0x " )
+set( CXX11_FLAGS "--std=c++11" )
 
 if(MSVC)
   # Force to always compile with W4
@@ -38,27 +37,6 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -g3 -O0 -ffast-math -fomit-frame-pointer -finline-functions")
 endif()
 
-add_library(libjoemathStatic    STATIC    ${joemath_SOURCES})
-add_library(libjoemathShared    SHARED    ${joemath_SOURCES})
-
-#--------------------------------------------------------------------
-# Set up joemath on windows
-#--------------------------------------------------------------------
-if (WIN32)
-   # set_target_properties(libjoemathShared PROPERTIES 
-   #                         DEFINE_SYMBOL JOEMATH_BUILD_DLL
-   #                         PREFIX ""
-   #                         IMPORT_PREFIX ""
-   #                         IMPORT_SUFFIX "dll.lib")
-endif (WIN32)
-
-set_target_properties(libjoemathStatic libjoemathShared PROPERTIES 
-		      CLEAN_DIRECT_OUTPUT 1
-		      OUTPUT_NAME joemath)
-
-install(TARGETS libjoemathStatic libjoemathShared DESTINATION lib)
-install(FILES ${joemath_BINARY_DIR}/libjoemath.pc DESTINATION lib/pkgconfig)
-  
 #--------------------------------------------------------------------
 # Add example and test programs
 #--------------------------------------------------------------------
