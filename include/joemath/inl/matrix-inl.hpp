@@ -39,13 +39,13 @@ namespace JoeMath
 {
     // Doesn't initialize
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( )
+    inline  Matrix<Scalar, Rows, Columns>::Matrix             ( )
     {
     }
     
     // Initialize every value to s
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( Scalar s )
+    inline  Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar s )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -53,10 +53,13 @@ namespace JoeMath
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const std::initializer_list<Scalar>& elements )
+    inline  Matrix<Scalar, Rows, Columns>::Matrix
+                            ( const std::initializer_list<Scalar>& elements )
     {
         u32 c = 0;
-        for( auto i = elements.begin(); i < elements.end() && c < Rows * Columns; ++i, ++c)
+        for( auto i = elements.begin();
+             i < elements.end() && c < Rows * Columns;
+             ++i, ++c)
         {
             m_elements[0][c] = *i;
         }
@@ -64,7 +67,8 @@ namespace JoeMath
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const Matrix<Scalar2, Rows, Columns> m)
+    inline  Matrix<Scalar, Rows, Columns>::Matrix
+                            ( const Matrix<Scalar2, Rows, Columns> m)
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -73,7 +77,9 @@ namespace JoeMath
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>&   Matrix<Scalar, Rows, Columns>::operator = ( const Matrix<Scalar2, Rows, Columns>& m )
+    inline  Matrix<Scalar, Rows, Columns>&
+    Matrix<Scalar, Rows, Columns>::operator =
+                            ( const Matrix<Scalar2, Rows, Columns>& m )
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
