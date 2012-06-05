@@ -64,80 +64,15 @@ namespace JoeMath
     // Binary operators
     //
         
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2>
-    bool                                    operator ==     ( const Matrix<Scalar, Rows, Columns> m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-    
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2>
-    bool                                    operator !=     ( const Matrix<Scalar, Rows, Columns> m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-    
-    // Scalar addition
+    /**
+      * Mulitplies all elements of a matrix by a scalar value
+      */
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) + std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator +      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s );
-
-    // Scalar subtraction
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) - std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator -      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s );
-
-    // Scalar multiplication
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator *      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s );
-
-    // Scalar multiplication
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator *      ( const Scalar2 s, const Matrix<Scalar, Rows, Columns>& m);
-
-    // Scalar division
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator /      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s );
-
-    // Component wise addition
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) + std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator +      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-    
-    // Component wise subtraction
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) - std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns>    operator -      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-   
-    // Component wise multiplication
-    // Only with vectors
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
-              bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if< IsVector , Matrix<ReturnScalar, Rows, Columns> >::type
-                                            operator *      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-    
-    // Component wise division
-    // Only with vectors
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) / std::declval<Scalar2>( ) ),
-              bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if< IsVector, Matrix<ReturnScalar, Rows, Columns> >::type
-                                            operator /      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-   
-    // Matrix multiplication
-    // Only with Matrices of the right dimensions
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2, u32 Columns2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-    Matrix<ReturnScalar, Rows, Columns2>   operator *      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Columns, Columns2>& m1 );
+              typename ReturnScalar =
+                  decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
+    Matrix<ReturnScalar, Rows, Columns>    operator *
+            ( const Scalar2 s, const Matrix<Scalar, Rows, Columns>& m );
 
     //
     // Misc
@@ -502,83 +437,109 @@ namespace JoeMath
         // Comparison
         //  
         
-        template<typename Scalar2>
-        friend  bool        operator ==     ( const Matrix<Scalar, Rows, Columns> m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-        
-        template<typename Scalar2>
-        friend  bool        operator !=     ( const Matrix<Scalar, Rows, Columns> m0, const Matrix<Scalar2, Rows, Columns>& m1 );
-        
+        /**
+          * Returns true iff all the elements compare equal
+          */
+        template <typename Scalar2>
+        bool    operator == ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
+        /**
+          * Returns false iff all the elements compare equal
+          */
+        template <typename Scalar2>
+        bool    operator != ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
         //
         // Arithmetic
         //
         
-        // Scalar addition
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator +      ( const Matrix<Scalar_, Rows_, Columns_>& m, const Scalar2 s );
+        /**
+          * Increment all elements of the matrix by a scalar value
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()+std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator +
+                            ( const Scalar2 s ) const;
+
+        /**
+          * Decrement all elements of the matrix by a scalar value
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()-std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator -
+                            ( const Scalar2 s ) const;
+
+        /**
+          * Multiply all elements of the matrix by a scalar value
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator *
+                            ( const Scalar2 s ) const;
+
+        /**
+          * Divides all elements of the matrix by a scalar value
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()/std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator /
+                            ( const Scalar2 s ) const;
+
+        /**
+          * Performs component wise addition between two matrices
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()+std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator +
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const;
         
-        // Scalar subtraction
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator -      ( const Matrix<Scalar_, Rows_, Columns_>& m, const Scalar2 s );
-    
-        // Scalar multiplication
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator *      ( const Matrix<Scalar_, Rows_, Columns_>& m, const Scalar2 s );
-        
-        // Scalar multiplication
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator *      ( const Scalar2 s, const Matrix<Scalar_, Rows_, Columns_>& m);
-        
-        // Scalar division
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator /      ( const Matrix<Scalar_, Rows_, Columns_>& m, const Scalar2 s );
-        
-        // Component wise addition
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator +      ( const Matrix<Scalar_, Rows_, Columns_>& m0, const Matrix<Scalar2, Rows_, Columns_>& m1 );
-        
-        // Component wise subtraction
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar>
-        friend Matrix<ReturnScalar, Rows_, Columns_>   operator -      ( const Matrix<Scalar_, Rows_, Columns_>& m0, const Matrix<Scalar2, Rows_, Columns_>& m1 );
-    
-        // Component wise multiplication
-        // Only with vectors
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar,
-                  bool     IsVector>
-        friend  typename std::enable_if<IsVector, Matrix<ReturnScalar, Rows_, Columns_> >::type
-                                                        operator *      ( const Matrix<Scalar_, Rows_, Columns_>& m0, const Matrix<Scalar2, Rows_, Columns_>& m1 );
-        
-        // Component wise division
-        // Only with vectors
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2,
-                  typename ReturnScalar,
-                  bool     IsVector>
-        friend  typename std::enable_if<IsVector, Matrix<ReturnScalar, Rows_, Columns_> >::type
-                                                        operator /      ( const Matrix<Scalar_, Rows_, Columns_>& m0, const Matrix<Scalar2, Rows_, Columns_>& m1 );
-                                                         
-        // Matrix multiplication
-        // Only with Matrices of the right dimensions
-        template <typename Scalar_, u32 Rows_, u32 Columns_,
-                  typename Scalar2, u32 Columns2,
-                  typename ReturnScalar>
-        friend  Matrix<ReturnScalar, Rows_, Columns2>  operator *      ( const Matrix<Scalar_, Rows_, Columns_>& m0, const Matrix<Scalar2, Columns_, Columns2>& m1 );
-                                                         
+        /**
+          * Performs component wise subtraction between two matrices
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()-std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator -
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
+        /**
+          * Performs component wise multiplication between two vectors
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()*std::declval<Scalar2>()),
+                  bool     IsVector =
+                      is_vector<Matrix<Scalar, Rows, Columns> >::value>
+        typename std::enable_if<IsVector,
+                                Matrix<ReturnScalar, Rows, Columns> >::type
+            operator * ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
+        /**
+          * Performs component wise division between two vectors
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()/std::declval<Scalar2>()),
+                  bool     IsVector =
+                      is_vector<Matrix<Scalar, Rows, Columns> >::value>
+        typename std::enable_if<IsVector,
+                                Matrix<ReturnScalar, Rows, Columns> >::type
+            operator / ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
+        /**
+          * Performs matrix multiplication between two matrices
+          */
+        template <typename Scalar2, u32 Columns2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns2>  operator *
+                            ( const Matrix<Scalar2, Columns, Columns2>& m ) const;
+
         //
         // methods
         //

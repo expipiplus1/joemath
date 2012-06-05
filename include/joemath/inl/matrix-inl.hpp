@@ -551,192 +551,239 @@ namespace JoeMath
     //
     // Binary Operators
     //
-    
+
     //
     // Comparison
-    //  
-     
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2>
-    inline  bool                                operator ==    ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+    //
+
+    /**
+      * Returns true iff all the elements compare equal
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    bool    Matrix<Scalar, Rows, Columns>::operator ==
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                if ( m0.m_elements[i][j] != m1.m_elements[i][j] )
+                if ( m_elements[i][j] != m.m_elements[i][j] )
                     return false;
         return true;
     }
-    
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2>
-    inline  bool                                operator !=    ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+
+    /**
+      * Returns false iff all the elements compare equal
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2>
+    bool    Matrix<Scalar, Rows, Columns>::operator !=
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
-        return !( m0 == m1 );
+        return !( *this == m );
     }
-    
+
     //
     // Arithmetic
     //
-    
-    // Scalar addition
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Increment all elements of the matrix by a scalar value
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator +      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator +
+                            ( const Scalar2 s ) const
     {
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] + s;
-            
+                ret.m_elements[i][j] = m_elements[i][j] + s;
+
         return ret;
     }
-    
-    // Scalar subtraction
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Decrement all elements of the matrix by a scalar value
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator -      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator -
+                            ( const Scalar2 s ) const
     {
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] - s;
-            
+                ret.m_elements[i][j] = m_elements[i][j] - s;
+
         return ret;
     }
    
-    // Scalar multiplication
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+    /**
+      * Multiply all elements of the matrix by a scalar value
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator *      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator *
+                            ( const Scalar2 s ) const
     {
         Matrix<ReturnScalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] * s;
+                ret.m_elements[i][j] = m_elements[i][j] * s;
             
         return ret;
     }
     
-    // Scalar multiplication
+    /**
+      * Mulitplies all elements of a matrix by a scalar value
+      */
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator *      ( const Scalar2 s, const Matrix<Scalar, Rows, Columns>& m)
+    Matrix<ReturnScalar, Rows, Columns>    operator *
+                            ( const Scalar2 s,
+                              const Matrix<Scalar, Rows, Columns>& m )
     {
+        return m * s;
+    }
+
+
+    /**
+      * Divides all elements of the matrix by a scalar value
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
+              typename ReturnScalar>
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator /
+                            ( const Scalar2 s ) const
+    {
+        // It would probably be a good idea to cache 1/s here, but what about
+        // no arithmetic types
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] * s;
-            
+                ret.m_elements[i][j] = m_elements[i][j] / s;
+
         return ret;
     }
-    
-    // Scalar division
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Performs component wise addition between two matrices
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator /      ( const Matrix<Scalar, Rows, Columns>& m, const Scalar2 s )
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator +
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m.m_elements[i][j] / s;
-            
-        return ret;
-    } 
-     
-    // Component wise addition
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator +      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-        
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m0.m_elements[i][j] + m1.m_elements[i][j];
-            
+                ret.m_elements[i][j] = m_elements[i][j] + m.m_elements[i][j];
+
         return ret;
     }
-    
-    // Component wise subtraction
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Performs component wise subtraction between two matrices
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns>    operator -      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+    Matrix<ReturnScalar, Rows, Columns>
+    Matrix<Scalar, Rows, Columns>::operator -
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
         Matrix<Scalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m0.m_elements[i][j] - m1.m_elements[i][j];
-            
+                ret.m_elements[i][j] = m_elements[i][j] - m.m_elements[i][j];
+
         return ret;
     }
-   
-    // Component wise multiplication
-    // Only with vectors
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Performs component wise multiplication between two vectors
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar,
               bool     IsVector>
-    inline  typename std::enable_if< IsVector, Matrix<ReturnScalar, Rows, Columns> >::type
-                                                    operator *      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+    typename std::enable_if<IsVector,
+                            Matrix<ReturnScalar, Rows, Columns> >::type
+    Matrix<Scalar, Rows, Columns>::operator *
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
-        static_assert(IsVector, "You can only perform a component wise multiply on vectors");
+        static_assert(IsVector,
+                      "You can only perform a component wise multiply between "
+                      "vectors");
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m0.m_elements[i][j] * m1.m_elements[i][j];
-            
+                ret.m_elements[i][j] = m_elements[i][j] * m.m_elements[i][j];
+
         return ret;
     }
-    
-    // Component wise division
-    // Only with vectors
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
+
+    /**
+      * Performs component wise division between two vectors
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2,
               typename ReturnScalar,
               bool     IsVector>
-    inline  typename std::enable_if< IsVector, Matrix<ReturnScalar, Rows, Columns> >::type
-                                                    operator /      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+    typename std::enable_if<IsVector,
+                            Matrix<ReturnScalar, Rows, Columns> >::type
+    Matrix<Scalar, Rows, Columns>::operator /
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
-        static_assert(IsVector, "You can only perform a component wise divide on vectors");
+        static_assert(IsVector,
+                      "You can only perform a component wise divide between "
+                      "vectors");
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m0.m_elements[i][j] / m1.m_elements[i][j];
-            
+                ret.m_elements[i][j] = m_elements[i][j] / m.m_elements[i][j];
+
         return ret;
     }
-    
-    // Matrix multiplication
-    // Only with Matrices of the right dimensions
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2, u32 Columns2,
+
+    /**
+      * Performs matrix multiplication between two matrices
+      */
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <typename Scalar2, u32 Columns2,
               typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns2>           operator *      ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Columns, Columns2>& m1 )
+    Matrix<ReturnScalar, Rows, Columns2>
+    Matrix<Scalar, Rows, Columns>::operator *
+                           ( const Matrix<Scalar2, Columns, Columns2>& m ) const
     {
+        //TODO
         ReturnScalar ret[Rows][Columns2] = { { 0 } };
-        
+
         for(unsigned i = 0; i < Columns2; ++i)
             for(unsigned j = 0; j < Rows; ++j)
                 for(unsigned k = 0; k < Columns; ++k)
-                    ret[j][i] += m0.m_elements[j][k] * m1.m_elements[k][i];
-                
+                    ret[j][i] += m_elements[j][k] * m.m_elements[k][i];
+
         return Matrix<ReturnScalar, Rows, Columns2>(ret);
-    }                        
+    }
     
     //
     // Methods
