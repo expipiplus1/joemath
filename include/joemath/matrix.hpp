@@ -47,7 +47,7 @@ namespace JoeMath
     typedef Matrix<s32, 1, 2>   int2;
     typedef Matrix<s32, 1, 3>   int3;
     typedef Matrix<s32, 1, 4>   int4;
-   
+
     typedef Matrix<u32, 1, 2>   uint2;
     typedef Matrix<u32, 1, 3>   uint3;
     typedef Matrix<u32, 1, 4>   uint4;
@@ -193,30 +193,36 @@ namespace JoeMath
         //
         // Constructors
         //
+
+        /**
+          * Doesn't initialize the data
+          */
+        Matrix              ( );
         
-        // Doesn't initialize
-        Matrix                     ( );
-        
-        // Initialize every value to s
-        explicit Matrix            ( Scalar s );
-        
+        /**
+          * Initializes every value to s
+          */
+        explicit Matrix     ( Scalar s );
+
         // TODO Initialize from vector
-        
-        // Initialize from variable list
-        template <typename... ElementTypes> 
-        explicit Matrix            ( const ElementTypes&... elements );
 
-        Matrix                     ( const std::initializer_list<Scalar>& elements );
+        /**
+          * Initialize from init list
+          */
+        Matrix              ( const std::initializer_list<Scalar>& elements );
 	
+        /**
+          * Convert from another matrix type
+          */
         template <typename Scalar2>
-        Matrix                     ( const Matrix<Scalar2, Rows, Columns> m);
+        Matrix              ( const Matrix<Scalar2, Rows, Columns> m );
 
-        Matrix                     ( const Scalar(& elements)[Rows * Columns] );
-
-        Matrix                     ( const Scalar(& elements)[Rows][Columns] );
-        
+        /**
+          * Assign from another matrix type
+          */
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>&   operator =  ( const Matrix<Scalar2, Rows, Columns>& m );
+        Matrix<Scalar, Rows, Columns>&   operator =
+                            ( const Matrix<Scalar2, Rows, Columns>& m );
 
         //
         // Setters
@@ -297,9 +303,6 @@ namespace JoeMath
                                             operator    []  ( u32 i );
 
                                             
-        //const   Scalar(&            operator []     ( u32 i ) const)  [Columns];
-        //        Scalar(&            operator []     ( u32 i )      )  [Columns];
-                
         //
         // Get elements of vectors
         //

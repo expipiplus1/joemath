@@ -53,16 +53,6 @@ namespace JoeMath
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename... ElementTypes>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const ElementTypes&... elements )
-    {
-        static_assert(sizeof...(elements) == Rows * Columns, "Wrong number of elements in initializer");
-        
-        std::array<Scalar, Rows * Columns>& temp = *reinterpret_cast<std::array<Scalar, Rows * Columns>*>(&m_elements[0][0]);
-        temp = std::array<Scalar, Rows * Columns>( {{elements...}} );
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const std::initializer_list<Scalar>& elements )
     {
         u32 c = 0;
@@ -81,22 +71,6 @@ namespace JoeMath
                 m_elements[i][j] = m.m_elements[i][j];
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const Scalar(& elements)[Rows * Columns] )
-    {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = elements[i * Columns + j];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix                     ( const Scalar(& elements)[Rows][Columns] )
-    {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = elements[i][j];
-    }
-    
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
     inline  Matrix<Scalar, Rows, Columns>&   Matrix<Scalar, Rows, Columns>::operator = ( const Matrix<Scalar2, Rows, Columns>& m )
