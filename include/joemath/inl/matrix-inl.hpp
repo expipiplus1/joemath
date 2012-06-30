@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <cmath>
 #include <initializer_list>
 #include <type_traits>
@@ -56,9 +57,11 @@ namespace JoeMath
     inline  Matrix<Scalar, Rows, Columns>::Matrix
                             ( const std::initializer_list<Scalar>& elements )
     {
+        assert( elements.size() == Rows * Columns &&
+                "Incorrect number of elements in initizlizer" );
         u32 c = 0;
         for( auto i = elements.begin();
-             i < elements.end() && c < Rows * Columns;
+             i < elements.end();
              ++i, ++c)
         {
             m_elements[0][c] = *i;
