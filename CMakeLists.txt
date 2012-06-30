@@ -24,6 +24,7 @@ configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake
                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
 
 set( CXX11_FLAGS "--std=c++11" )
+#set( CXX11_FLAGS "--stdlib=libc++ --std=c++11" )
 
 if(MSVC)
   # Force to always compile with W4
@@ -34,7 +35,7 @@ if(MSVC)
   endif()
 else()
   # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -g3 -O0 -ffast-math -fomit-frame-pointer -finline-functions")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -O3 -ffast-math -fomit-frame-pointer -finline-functions")
 endif()
 
 #--------------------------------------------------------------------
