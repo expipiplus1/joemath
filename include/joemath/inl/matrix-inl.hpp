@@ -299,35 +299,35 @@ namespace JoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool Enable>
-    inline  typename std::enable_if<Enable,  const Scalar&>::type
+    template <bool IsVector>
+    inline  typename std::enable_if<IsVector,  const Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
         return m_elements[0][i];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool Enable>
-    inline  typename std::enable_if<Enable,  Scalar&>::type
+    template <bool IsVector>
+    inline  typename std::enable_if<IsVector,  Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
         return m_elements[0][i];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool Enable>
-    inline  typename std::enable_if<Enable, const Vector<Scalar, Columns>&>::type
+    template <bool IsVector>
+    inline  typename std::enable_if<!IsVector, const Vector<Scalar, Columns>&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
+        return *reinterpret_cast<const Vector<Scalar, Columns>*>(&m_elements[i]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool Enable>
-    inline  typename std::enable_if<Enable, Vector<Scalar, Columns>&>::type
+    template <bool IsVector>
+    inline  typename std::enable_if<!IsVector, Vector<Scalar, Columns>&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
-        return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
+        return *reinterpret_cast<Vector<Scalar, Columns>*>(&m_elements[i]);
     }
         
     template <typename Scalar, u32 Rows, u32 Columns>

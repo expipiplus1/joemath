@@ -272,10 +272,10 @@ namespace JoeMath
         typename std::enable_if<Fits && HasSameDimensions, const Matrix<Scalar, Rows2, Columns2>&>::type
                                             GetSubMatrix    ( ) const;
         
-        const Vector<Scalar, Columns>&  GetRow          ( u32 row )     const;
-              Vector<Scalar, Columns>&  GetRow          ( u32 row );
+        const Vector<Scalar, Columns>&      GetRow          ( u32 row )     const;
+              Vector<Scalar, Columns>&      GetRow          ( u32 row );
               
-              Matrix<Scalar, Rows, 1 >     GetColumn    ( u32 column )  const;
+              Matrix<Scalar, Rows, 1 >      GetColumn       ( u32 column )  const;
               
         const Vector<Scalar, 3>&            GetRight        ( )         const;
               Vector<Scalar, 3>&            GetRight        ( );
@@ -293,20 +293,20 @@ namespace JoeMath
         Vector<Scalar, Columns-1>&          GetPosition     ( );
         void                                SetPosition     ( const Vector<Scalar, Columns-1>& m );
 
-        template <bool Enable = is_vector>
-        typename std::enable_if<Enable, const Scalar&>::type
+        template <bool IsVector = is_vector>
+        typename std::enable_if<IsVector, const Scalar&>::type
                                             operator    []  ( u32 i )   const;
 
-        template <bool Enable = is_vector>
-        typename std::enable_if<Enable, Scalar&>::type
+        template <bool IsVector = is_vector>
+        typename std::enable_if<IsVector, Scalar&>::type
                                             operator    []  ( u32 i );
 
-        template <bool Enable = !is_vector>
-        typename std::enable_if<Enable, const Vector<Scalar, Columns>&>::type
+        template <bool IsVector = is_vector>
+        typename std::enable_if<!IsVector, const Vector<Scalar, Columns>&>::type
                                             operator    []  ( u32 i )   const;
 
-        template <bool Enable = !is_vector>
-        typename std::enable_if<Enable, Vector<Scalar, Columns>&>::type
+        template <bool IsVector = is_vector>
+        typename std::enable_if<!IsVector, Vector<Scalar, Columns>&>::type
                                             operator    []  ( u32 i );
 
                                             
