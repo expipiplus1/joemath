@@ -230,191 +230,221 @@ namespace JoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<!IsVector, const Matrix<Scalar, 1, Columns>&>::type
+    template <bool Enable>
+    inline  typename std::enable_if<Enable, const Matrix<Scalar, 1, Columns>&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
         return *reinterpret_cast<const Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<!IsVector, Matrix<Scalar, 1, Columns>&>::type
+    template <bool Enable>
+    inline  typename std::enable_if<Enable, Matrix<Scalar, 1, Columns>&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
         return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<IsVector,  const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
+    template <typename Dummy>
+    inline  const Scalar&                       Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
+        static_assert( std::is_same<Dummy, Hidden>::value,
+                       "Trying to access vector element on a matrix" );
         return m_elements[0][i];
     }
                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<IsVector,  Scalar&>::type
+    template <bool Enable>
+    inline  typename std::enable_if<Enable,  Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
         return m_elements[0][i];
     }
         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 1 ), const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::x               ( ) const
+    template <typename Dummy>
+    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::x               ( ) const
     {
-        static_assert(IsVector, "You can only get the x component of a vector");
-        static_assert(VectorSize >= 1, "You can only get the x component of a vector of size 1 or greater");
+        static_assert( is_vector,
+                       "Trying to get the x component of a non-vector");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][0];
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 1 ), Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::x               ( )
+    template <typename Dummy>
+    inline Scalar&                              Matrix<Scalar, Rows, Columns>::x               ( )
     {
-        static_assert(IsVector, "You can only get the x component of a vector");
-        static_assert(VectorSize >= 1, "You can only get the x component of a vector of size 1 or greater");
+        static_assert( is_vector,
+                       "Trying to get the x component of a non-vector");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][0];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::y               ( ) const
+    template <typename Dummy>
+    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::y               ( ) const
     {
-        static_assert(IsVector, "You can only get the y component of a vector");
-        static_assert(VectorSize >= 2, "You can only get the y component of a vector of size 2 or greater");
+        static_assert( is_vector,
+                       "Trying to get the y component of a non-vector");
+        static_assert( vector_size >= 2,
+                       "Trying to get the y component of a vector of size < 2");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][1];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::y               ( )
+    template <typename Dummy>
+    inline Scalar&                              Matrix<Scalar, Rows, Columns>::y               ( )
     {
-        static_assert(IsVector, "You can only get the y component of a vector");
-        static_assert(VectorSize >= 2, "You can only get the y component of a vector of size 2 or greater");
+        static_assert( is_vector,
+                       "Trying to get the y component of a non-vector");
+        static_assert( vector_size >= 2,
+                       "Trying to get the y component of a vector of size < 2");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][1];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::z               ( ) const
+    template <typename Dummy>
+    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::z               ( ) const
     {
-        static_assert(IsVector, "You can only get the z component of a vector");
-        static_assert(VectorSize >= 3, "You can only get the z component of a vector of size 3 or greater");
+        static_assert( is_vector,
+                       "Trying to get the z component of a non-vector");
+        static_assert( vector_size >= 3,
+                       "Trying to get the z component of a vector of size < 3");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][2];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::z               ( )
+    template <typename Dummy>
+    inline Scalar&                              Matrix<Scalar, Rows, Columns>::z               ( )
     {
-        static_assert(IsVector, "You can only get the z component of a vector");
-        static_assert(VectorSize >= 3, "You can only get the z component of a vector of size 3 or greater");
+        static_assert( is_vector,
+                       "Trying to get the z component of a non-vector");
+        static_assert( vector_size >= 3,
+                       "Trying to get the z component of a vector of size < 3");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][2];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::w               ( ) const
+    template <typename Dummy>
+    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::w               ( ) const
     {
-        static_assert(IsVector, "You can only get the w component of a vector");
-        static_assert(VectorSize >= 4, "You can only get the w component of a vector of size 4 or greater");
+        static_assert( is_vector,
+                       "Trying to get the w component of a non-vector");
+        static_assert( vector_size >= 4,
+                       "Trying to get the w component of a vector of size < 4");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][3];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::w               ( )
+    template <typename Dummy>
+    inline Scalar&                              Matrix<Scalar, Rows, Columns>::w               ( )
     {
-        static_assert(IsVector, "You can only get the w component of a vector");
-        static_assert(VectorSize >= 4, "You can only get the w component of a vector of size 4 or greater");
+        static_assert( is_vector,
+                       "Trying to get the w component of a non-vector");
+        static_assert( vector_size >= 4,
+                       "Trying to get the w component of a vector of size < 4");
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         return m_elements[0][3];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Matrix<Scalar, 1, 2>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xy              ( ) const
+    template <typename Dummy>
+    const inline Vector<Scalar, 2>&             Matrix<Scalar, Rows, Columns>::xy              ( ) const
     {
-        static_assert(IsVector, "You can only get the xy component of a vector");
-        static_assert(VectorSize >= 2, "You can only get the xy component of a vector of size 2 or greater");
-        return *reinterpret_cast<const Matrix<Scalar, 1, 2>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xy components of a non-vector");
+        static_assert( vector_size >= 2,
+                       "Trying to get the xy components of a vector of size <"
+                       " 2" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<const Vector<Scalar, 2>*>(this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 2 ), Matrix<Scalar, 1, 2>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xy              ( )
+    template <typename Dummy>
+    inline Vector<Scalar, 2>&                   Matrix<Scalar, Rows, Columns>::xy              ( )
     {
-        static_assert(IsVector, "You can only get the xy component of a vector");
-        static_assert(VectorSize >= 2, "You can only get the xy component of a vector of size 2 or greater");
-        return *reinterpret_cast<Matrix<Scalar, 1, 2>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xy components of a non-vector");
+        static_assert( vector_size >= 2,
+                       "Trying to get the xy components of a vector of size <"
+                       " 2" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<Vector<Scalar, 2>*>(this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Matrix<Scalar, 1, 3>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xyz             ( ) const
+    template <typename Dummy>
+    const inline Vector<Scalar, 3>&             Matrix<Scalar, Rows, Columns>::xyz             ( ) const
     {
-        static_assert(IsVector, "You can only get the xyz component of a vector");
-        static_assert(VectorSize >= 3, "You can only get the xyz component of a vector of size 3 or greater");
-        return *reinterpret_cast<const Matrix<Scalar, 1, 3>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xyx components of a non-vector");
+        static_assert( vector_size >= 3,
+                       "Trying to get the xyz components of a vector of size <"
+                       " 3" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<const Vector<Scalar, 3>*>(this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 3 ), Matrix<Scalar, 1, 3>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xyz             ( )
+    template <typename Dummy>
+    inline Vector<Scalar, 3>&                   Matrix<Scalar, Rows, Columns>::xyz             ( )
     {
-        static_assert(IsVector, "You can only get the xyz component of a vector");
-        static_assert(VectorSize >= 3, "You can only get the xyz component of a vector of size 3 or greater");
-        return *reinterpret_cast<Matrix<Scalar, 1, 3>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xyx components of a non-vector");
+        static_assert( vector_size >= 3,
+                       "Trying to get the xyz components of a vector of size <"
+                       " 3" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<Vector<Scalar, 3>*>(this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Matrix<Scalar, 1, 4>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xyzw            ( ) const
+    template <typename Dummy>
+    const inline Vector<Scalar, 4>&             Matrix<Scalar, Rows, Columns>::xyzw            ( ) const
     {
-        static_assert(IsVector, "You can only get the xyzw component of a vector");
-        static_assert(VectorSize >= 4, "You can only get the xyzw component of a vector of size 4 or greater");
-        return *reinterpret_cast<const Matrix<Scalar, 1, 4>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xyxw components of a non-vector");
+        static_assert( vector_size >= 4,
+                       "Trying to get the xyzw components of a vector of size <"
+                       " 4" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<const Vector<Scalar, 4>*>(this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector,
-              u32  VectorSize>
-    inline  typename std::enable_if<IsVector && ( VectorSize >= 4 ), Matrix<Scalar, 1, 4>&>::type
-                                                Matrix<Scalar, Rows, Columns>::xyzw            ( )
+    template <typename Dummy>
+    inline Vector<Scalar, 4>&                   Matrix<Scalar, Rows, Columns>::xyzw            ( )
     {
-        static_assert(IsVector, "You can only get the xyxw component of a vector");
-        static_assert(VectorSize >= 4, "You can only get the xyzw component of a vector of size 4 or greater");
-        return *reinterpret_cast<Matrix<Scalar, 1, 4>*>(this);
+        static_assert( is_vector,
+                       "Trying to get the xyxw components of a non-vector");
+        static_assert( vector_size >= 4,
+                       "Trying to get the xyzw components of a vector of size <"
+                       " 4" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return *reinterpret_cast<Vector<Scalar, 4>*>(this);
     }
-    
     
     //
     // Unary Operators
@@ -500,11 +530,14 @@ namespace JoeMath
     // Component wise multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              bool IsVector>
-    inline  typename std::enable_if< IsVector, Matrix<Scalar, Rows, Columns>& >::type
-                                            Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Rows, Columns>& m )
+              typename Dummy>
+    inline  Matrix<Scalar, Rows, Columns>&  Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Rows, Columns>& m )
     {
-        static_assert(IsVector, "You can only perform a component wise multiply on vectors");
+        static_assert( is_vector,
+                       "Trying to perform a component wise multiply between two"
+                       " non-vectors" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         *this = *this * m;
         return *this;
     }
@@ -512,11 +545,14 @@ namespace JoeMath
     // Component wise division
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              bool IsVector>
-    inline  typename std::enable_if< IsVector, Matrix<Scalar, Rows, Columns>& >::type
-                                            Matrix<Scalar, Rows, Columns>::operator /=     ( const Matrix<Scalar2, Rows, Columns>& m )
+              typename Dummy>
+    inline  Matrix<Scalar, Rows, Columns>&  Matrix<Scalar, Rows, Columns>::operator /=     ( const Matrix<Scalar2, Rows, Columns>& m )
     {
-        static_assert(IsVector, "You can only perform a component wise divide on vectors");
+        static_assert( is_vector,
+                       "Trying to perform a component wise divide between two "
+                       "non-vectors" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         *this = *this / m;
         return *this;
     }
@@ -705,15 +741,16 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
               typename ReturnScalar,
-              bool     IsVector>
-    typename std::enable_if<IsVector,
-                            Matrix<ReturnScalar, Rows, Columns> >::type
+              typename Dummy>
+    inline Matrix<ReturnScalar, Rows, Columns>
     Matrix<Scalar, Rows, Columns>::operator *
                             ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
-        static_assert(IsVector,
-                      "You can only perform a component wise multiply between "
-                      "vectors");
+        static_assert( is_vector,
+                       "Trying to perform a component wise multiply between two"
+                       " non-vectors" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         Matrix<ReturnScalar, Rows, Columns> ret;
 
         for( u32 i = 0; i < Rows; ++i )
@@ -729,15 +766,16 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
               typename ReturnScalar,
-              bool     IsVector>
-    typename std::enable_if<IsVector,
-                            Matrix<ReturnScalar, Rows, Columns> >::type
+              typename Dummy>
+    inline Matrix<ReturnScalar, Rows, Columns>
     Matrix<Scalar, Rows, Columns>::operator /
                             ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
-        static_assert(IsVector,
-                      "You can only perform a component wise divide between "
-                      "vectors");
+        static_assert( is_vector,
+                       "Trying to perform a component wise divide between two "
+                       "non-vectors" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         Matrix<ReturnScalar, Rows, Columns> ret;
 
         for( u32 i = 0; i < Rows; ++i )
@@ -895,20 +933,24 @@ namespace JoeMath
     }
                                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<IsVector, void>::type
-                            Matrix<Scalar, Rows, Columns>::Normalize       ( )
+    template <typename Dummy>
+    inline  void            Matrix<Scalar, Rows, Columns>::Normalize       ( )
     {
+        static_assert( is_vector, "Trying to normalize a non-vector" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         *this = Normalized(*this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
-              bool     IsVector>
-    inline  typename    std::enable_if<IsVector, ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
+              typename Dummy>
+    inline ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
     {
-        static_assert(IsVector, "You can only take the squared length of a vector");
+        static_assert( is_vector, "Trying to get the squared length of a "
+                       "non-vector" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
         ReturnScalar ret = 0;
         
         for( u32 i = 0; i < Rows; ++i )
@@ -920,12 +962,13 @@ namespace JoeMath
     
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
-              bool     IsVector>
-    inline  typename    std::enable_if<IsVector, ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Length          ( ) const
+              typename Dummy>
+    inline  ReturnScalar    Matrix<Scalar, Rows, Columns>::Length          ( ) const
     {
-        static_assert(IsVector, "You can only take the length of a vector");
-        return std::sqrt( LengthSq( ) );
+        static_assert( is_vector, "Trying to get the length of a non-vector" );
+        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
+                       "I've made a terrible mistake" );
+        return std::sqrt( LengthSq() );
     }
                                                         
     //

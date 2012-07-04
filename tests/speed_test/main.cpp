@@ -26,162 +26,79 @@
     or implied, of Joe Hermaszewski.
 */
 
+#include <chrono>
+#include <functional>
 #include <iostream>
+#include <random>
+
 #include <joemath/joemath.hpp>
-#include "timer.hpp"
 
 using namespace JoeMath;
 
-const u32 NUM_ITERATIONS = 10000000;
+const u32 NUM_ITERATIONS = 50000000;
 
-void TestRandom()
+/** Test all the scalar functions */
+void ScalarTest()
 {
-    NTimer::CTimer timer;
-
-    std::cout << "Random U32, ";
-
-    JoeMath::CRandom random;
-    random.Seed( 6 );
-
-    u32 acc = 0;
-    
-    timer.Start();
-
-    for(u32 i = 0; i < NUM_ITERATIONS; ++i)
-        acc += random.U32();
-
-    timer.Stop();
-
-    std::cout << double(NUM_ITERATIONS) / timer.GetElapsedTime() << ", " << acc << "\n";
-
-}
- 
-
-float4 AddVec(const float4& a, const float4& b)
-{
-    return a+b;
-    //float4 ret;
-    //for(u32 i = 0; i < 4; ++i)
-    //    ret[i] = a[i] + b[i];
-    //return ret;
+    float pi = Pi<float>();
+    pi += 2 * Lerp( 0.0f, pi, 0.5 );
+    pi -= SmoothLerp( 0.0f, pi, 0.5 );
+    pi += 2* SmootherLerp( 0.0f, pi, 0.5 );
+    pi *= Step( 10, 5 );
+    pi += SmoothStep(-0.5, 0.0, 1.0);
+    pi *= SmootherStep(0.5, 0.0, 1.0);
+    pi *= Clamped( 1000, 0, 2);
+    pi *= Saturated( 10 );
+    pi = Length(pi);
+    pi = Min( pi, 0.5f*pi);
+    pi = Max( pi, 2*pi);
+    pi = RadToDeg(pi);
+    pi = DegToRad(pi);
+    pi = Distance( pi*1.5f, pi );
+    std::cout << "pi = " << pi << std::endl;
 }
 
-void DoubleW(float4& a)
+void add1( std::vector<float4>& a, const std::vector<float4>& b )
 {
-    a[3] = a[0]+a[1];
+    for( u32 i = 0; i < NUM_ITERATIONS; ++i )
+        a[i].xyz() = Cross(b[i].xyz(), a[i].xyz());
 }
 
-void DoubleW2(float4& a)
-{
-    a.m_elements[0][3] = a.m_elements[0][0]+a.m_elements[0][1];
-}
-
-float4 GetVector(float a, float b, float c, float d)
-{
-    return float4(a,b,c,d);
-}
-
-float4x4 GetMatrix(float a, float b, float c, float d)
-{
-    return float4x4{a,b,c,d,
-                    a,b,c,d,
-                    a,b,c,d,
-                    a,b,c,d};
-}
-    
 int main()
 {
-    TestRandom();
-    
-    JoeMath::CRandom random;
-    NTimer::CTimer time;
-    time.Start();
-    random.Seed((u32)(time.GetElapsedTime()*0xffffffff));
-    
-    float4 a(1.0f, 0.0f, 0.0f, 0.0f);
-    float4 b(1.0f, 0.0f, 0.0f, 0.0f);
+    ScalarTest();
 
-    CMatrix<float,1,2> c;
-    CMatrix<float,1,2> d;
-    operator /<float, 1,2,float, float, true> (c,d);
+    std::chrono::high_resolution_clock clock;
+    std::minstd_rand r{0};
+    std::uniform_real_distribution<float> re;
+    auto rand = std::bind(re,r);
 
-    float j = a[0];
-    
-    j = j/j;
-    
-    float3x3 r(0.0f, 2.0f, 2.0f,
-               3.0f, 3.0f, 0.0f,
-               1.0f, 0.0f, 1.0f);
-    
-    float ttt = r.Determinant();
-    
-    r.Invert();
-    
-    float fDet = r.Determinant();
-    
-    CMatrix<float,4,4> q(0.0f,1.0f,0.0f,0.0f,
-                       2.0f,0.0f,0.0f,0.0f,
-                       0.0f,0.0f,1.0f,0.0f,
-                       0.0f,0.0f,0.0f,1.0f);
-    
-    q.Invert( );
-    
-    u32 uDet = q.Determinant();
-    
-    CMatrix<double,6,6> dd(0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-                           2.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                           0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
-                           0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-                           0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                           0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-    
-    double dDet = dd.Determinant();
-    
-    dd.Invert();
-    
-    float3 y = r[2];
+    std::vector<float4> a(NUM_ITERATIONS);
+    std::vector<float4> b(NUM_ITERATIONS);
+    std::vector<float4> c(NUM_ITERATIONS);
 
-    auto dubs = CMatrix<double, 1, 4>(0.0, 1.0, 2.0, 3.0);
-    float4 flots = float4(0.0f, 1.0f, 2.0f, 3.0f);
-    float4 whats = dubs + flots;
-    
-    DoubleW(flots);
-    
-    std::cout << flots.w();
-    
-    a = AddVec(a,b);
-    
-    return a[0];
-    
-    bool myBool = is_matrix<int>::value;
+    float4x4 m;
 
-    myBool = is_matrix<CMatrix<float, 1,2>>::value;
-    
-    CMatrix<u32,2,2> mat( 1u, 0u,
-                          0u, 1u );
-    
-    u32 det = mat.Determinant();
-    
-    mat.Transpose();
-    
-    mat.Invert();
-    
-    CMatrix<float,1,1> s(1.0f);
-    s.Invert();
+    m.GetUp().xyz();
 
-    float4 v0(1.0f, 1.0f, 1.0f, 1.0f);
-    float4 v1(1.0f, 1.0f, 1.0f, 1.0f);
-    
-    float3x3 rotation = Rotate3D(float3(1.0f, 1.0f, 1.0f), 0.0f);
+    auto start = clock.now();
 
-    u32 d0 = Dot(v0, v1);
-    
-    float4x4 i = Identity<float, 4>();
+    for( auto& i : a )
+        i = float4{rand(), rand(), rand(), rand()};
+    for( auto& i : b )
+        i = float4{rand(), rand(), rand(), rand()};
 
-    float4x4 f = Scale(i[0]);
+    std::chrono::duration<double, std::nano> duration = clock.now() - start;
+    std::cout << "Time to init: " << duration.count() / NUM_ITERATIONS << std::endl;
 
-    return det - det;
-    
+    start = clock.now();
+
+    add1( a, b );
+
+    duration = clock.now() - start;
+    std::cout << "Time to add1: " << duration.count() / NUM_ITERATIONS << std::endl;
+
+    std::cout << alignof( float4 ) << " " << alignof( float4x4 ) << " " << alignof( float2 ) << std::endl;
     return 0;
 }
 

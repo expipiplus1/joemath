@@ -33,43 +33,48 @@
 namespace JoeMath
 {
     template <typename T>
-    inline T    Lerp            ( const T v0, const T v1, const float t )
+    inline constexpr
+    T Pi()
+    {
+        return T{3.141592653589793238462643383279502884197169399375105};
+    }
+
+    template <typename T, typename U>
+    inline T    Lerp            ( const T v0, const T v1, const U t )
     {
         return v0 + t * (v1 - v0);
     }
     
-    template <typename T>
-    inline T    SmoothLerp      ( const T v0, const T v1, float t )
+    template <typename T, typename U>
+    inline T    SmoothLerp      ( const T v0, const T v1, const U t )
     {
-        t = t*t * (3.0f - 2.0f * t);
-        return Lerp( v0, v1, t );
+        return Lerp( v0, v1, t*t * (U{3} - U{2} * t) );
     }
 
-    template <typename T>
-    inline T    SmootherLerp    ( const T v0, const T v1, float t )
+    template <typename T, typename U>
+    inline T    SmootherLerp    ( const T v0, const T v1, const U t )
     {
-        t = t*t*t * ( t * ( t * 6.0f - 15.0f ) + 10.0f );
-        return Lerp( v0, v1, t );
+        return Lerp( v0, v1, t*t*t * ( t * ( t * U{6} - U{15} ) + U{10} ) );
     }
 
     template <typename T>
     inline T    Step            ( const T v, const T edge )
     {
-        return v < edge ? 0.0f : 1.0f;
+        return v < edge ? T{0} : T{1};
     }    
 
     template <typename T>
     inline T    SmoothStep      ( const T v, const T edge0, const T edge1 )
     {
         T x = Saturated( (v - edge0) / (edge1 - edge0) );
-        return x*x * (3.0f - 2.0f * x);
+        return x*x * (T{3} - T{2} * x);
     }
 
     template <typename T>
     inline T    SmootherStep    ( const T v, const T edge0, const T edge1 )
     {
         T x = Saturated( (v - edge0) / (edge1 - edge0) );
-        return x*x*x * ( x * ( x * 6.0f - 15.0f) + 10.0f);
+        return x*x*x * ( x * ( x * T{6} - T{15}) + T{10});
     }
 
     template <typename T>
@@ -81,13 +86,13 @@ namespace JoeMath
     template <typename T>
     inline T    Saturated       ( const T v )
     {    
-        return Clamped( v, 0.0f, 1.0f ); 
+        return Clamped( v, T{0}, T{1} );
     }
 
     template <typename T>
     inline T    Length          ( const T v )
     {
-        return v > 0 ? v : -v;
+        return v > T{0} ? v : -v;
     }    
 
     template <typename T>
@@ -105,13 +110,13 @@ namespace JoeMath
     template <typename T>
     inline T    DegToRad        ( const T degrees )
     {
-        return degrees * ( PI / 180.0f );
+        return degrees * ( Pi<T>() / T{180} );
     }
 
     template <typename T>
     inline T    RadToDeg        ( const T radians )
     {
-        return radians * ( 180.0f / PI );
+        return radians * ( T{180.0} / Pi<T>() );
     }
 
     template <typename T>

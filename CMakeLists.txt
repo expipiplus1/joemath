@@ -8,8 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories(include)
 
-set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/random.hpp
-                      ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
+set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/scalar-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/matrix.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/matrix_traits.hpp
@@ -37,6 +36,8 @@ else()
   # Update if necessary
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -O3 -ffast-math -fomit-frame-pointer -finline-functions")
 endif()
+
+add_custom_target(JoeMath joemath_SOURCES ${joemath_SOURCES})
 
 #--------------------------------------------------------------------
 # Add example and test programs

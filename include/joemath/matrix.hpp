@@ -54,12 +54,15 @@ namespace JoeMath
     
     typedef Matrix<float, 1, 2> float2;
     typedef Matrix<float, 1, 3> float3;
-    typedef Matrix<float, 1, 4> float4 __attribute__ ((aligned (16)));
+    typedef Matrix<float, 1, 4> float4;
     
     typedef Matrix<float, 2, 2> float2x2;
     typedef Matrix<float, 3, 3> float3x3;
-    typedef Matrix<float, 4, 4> float4x4 __attribute__ ((aligned (16)));
-    
+    typedef Matrix<float, 4, 4> float4x4;
+
+    template <typename Scalar, u32 Size>
+    using Vector = Matrix<Scalar, 1, Size>;
+
     //
     // Binary operators
     //
@@ -186,7 +189,21 @@ namespace JoeMath
     class Matrix
     {
     public:
-        
+        static const bool is_vector =
+            JoeMath::is_vector<Matrix<Scalar, Rows, Columns>>::value;
+
+        static const u32 vector_size =
+            JoeMath::vector_size<Matrix<Scalar, Rows, Columns>>::value;
+
+    private:
+        struct Hidden{};
+
+        using EnableIfIsVector = typename std::enable_if<is_vector, Hidden>;
+
+        template<u32 N>
+        using EnableIfIsAtLeastSizeNVector = typename std::enable_if<is_vector && vector_size >= N, Hidden>;
+
+    public:
         Scalar m_elements[Rows][Columns];
         //std::array<std::array<Scalar, Columns>, Rows> m_elements;
         
@@ -285,100 +302,71 @@ namespace JoeMath
         template <bool IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, void>::type
                                             SetPosition     ( const Matrix<Scalar, 1, Columns-1>& m );
-                                            
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<!IsVector, const Matrix<Scalar, 1, Columns>&>::type
-                                            operator    []  ( u32 i )       const;
-                                            
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<!IsVector, Matrix<Scalar, 1, Columns>&>::type
-                                            operator    []  ( u32 i );
-                                            
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector,  const Scalar&>::type
-                                            operator    []  ( u32 i )       const;
-                                            
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector,  Scalar&>::type
+
+        template <bool Enable = !is_vector>
+        typename std::enable_if<Enable,
+                                const Matrix<Scalar, 1, Columns>&>::type
+                                            operator    []  ( u32 i )   const;
+
+        template <bool Enable = !is_vector>
+        typename std::enable_if<Enable,
+                                Matrix<Scalar, 1, Columns>&>::type
                                             operator    []  ( u32 i );
 
+        template <typename Dummy = EnableIfIsVector>
+        const Scalar&                       operator    []  ( u32 i )   const;
+
+        template <bool Enable = is_vector>
+        typename std::enable_if<Enable,
+                                Scalar&>::type
+                                            operator    []  ( u32 i );
                                             
         //
         // Get elements of vectors
         //
+
+        template <typename Dummy = EnableIfIsVector>
+        const Scalar&                   x               ( ) const;
+
+        template <typename Dummy = EnableIfIsVector>
+        Scalar&                         x               ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
+        const Scalar&                   y               ( ) const;
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
+        Scalar&                         y               ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
+        const Scalar&                   z               ( ) const;
         
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 1 ), const Scalar&>::type
-                                        x               ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 1 ), Scalar&>::type
-                                        x               ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Scalar&>::type
-                                        y               ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 2 ), Scalar&>::type
-                                        y               ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Scalar&>::type
-                                        z               ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 3 ), Scalar&>::type
-                                        z               ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Scalar&>::type
-                                        w               ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 4 ), Scalar&>::type
-                                        w               ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 2 ), const Matrix<Scalar, 1, 2>&>::type
-                                        xy              ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 2 ), Matrix<Scalar, 1, 2>&>::type
-                                        xy              ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 3 ), const Matrix<Scalar, 1, 3>&>::type
-                                        xyz             ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 3 ), Matrix<Scalar, 1, 3>&>::type
-                                        xyz             ( );
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 4 ), const Matrix<Scalar, 1, 4>&>::type
-                                        xyzw            ( ) const;
-        
-        template <bool IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-                  u32  VectorSize = vector_size<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector && ( VectorSize >= 4 ), Matrix<Scalar, 1, 4>&>::type
-                                        xyzw            ( );
-        
-                                        
-        
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
+        Scalar&                         z               ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
+        const Scalar&                   w               ( ) const;
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
+        Scalar&                         w               ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
+        const Vector<Scalar, 2>&        xy              ( ) const;
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
+        Vector<Scalar, 2>&              xy              ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
+        const Vector<Scalar, 3>&        xyz             ( ) const;
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
+        Vector<Scalar, 3>&              xyz             ( );
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
+        const Vector<Scalar, 4>&        xyzw            ( ) const;
+
+        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
+        Vector<Scalar, 4>&              xyzw            ( );
+
         //
         // Unary Operators
         //
@@ -418,15 +406,13 @@ namespace JoeMath
         
         // Component wise multiplication
         template <typename Scalar2,
-                  bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if< IsVector, Matrix<Scalar, Rows, Columns>& >::type
-                                        operator *=     ( const Matrix<Scalar2, Rows, Columns>& m );
+                  typename Dummy = EnableIfIsVector>
+        Matrix<Scalar, Rows, Columns>& operator *=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise division
         template <typename Scalar2,
-                  bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if< IsVector, Matrix<Scalar, Rows, Columns>& >::type
-                                        operator /=     ( const Matrix<Scalar2, Rows, Columns>& m );
+                  typename Dummy = EnableIfIsVector>
+        Matrix<Scalar, Rows, Columns>& operator /=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Matrix multiplication
         template <typename Scalar2>
@@ -516,10 +502,8 @@ namespace JoeMath
         template <typename Scalar2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()*std::declval<Scalar2>()),
-                  bool     IsVector =
-                      is_vector<Matrix<Scalar, Rows, Columns> >::value>
-        typename std::enable_if<IsVector,
-                                Matrix<ReturnScalar, Rows, Columns> >::type
+                  typename Dummy = EnableIfIsVector>
+        inline Matrix<ReturnScalar, Rows, Columns>
             operator * ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -528,10 +512,8 @@ namespace JoeMath
         template <typename Scalar2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()/std::declval<Scalar2>()),
-                  bool     IsVector =
-                      is_vector<Matrix<Scalar, Rows, Columns> >::value>
-        typename std::enable_if<IsVector,
-                                Matrix<ReturnScalar, Rows, Columns> >::type
+                  typename Dummy = EnableIfIsVector>
+        inline Matrix<ReturnScalar, Rows, Columns>
             operator / ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -591,20 +573,17 @@ namespace JoeMath
         // 
         // Vector only
         //
-                                                        
-        template <bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector, void>::type
-                                                        Normalize       ( );
+
+        template <typename Dummy = EnableIfIsVector>
+        inline void                                     Normalize       ( );
         
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector, ReturnScalar>::type
-                                                        LengthSq        ( ) const;
+                  typename Dummy = EnableIfIsVector>
+        inline ReturnScalar                             LengthSq        ( ) const;
         
         template <typename ReturnScalar = decltype( std::sqrt( std::declval<Scalar>() * std::declval<Scalar>() ) ),
-                  bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsVector, ReturnScalar>::type
-                                                        Length          ( ) const;
+                  typename Dummy = EnableIfIsVector>
+        inline ReturnScalar                             Length          ( ) const;
                                                         
         //
         // Friends
