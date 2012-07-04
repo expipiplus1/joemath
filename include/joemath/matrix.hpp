@@ -189,6 +189,9 @@ namespace JoeMath
     class Matrix
     {
     public:
+        Scalar m_elements[Rows][Columns];
+        //std::array<std::array<Scalar, Columns>, Rows> m_elements;
+
         static const bool is_vector =
             JoeMath::is_vector<Matrix<Scalar, Rows, Columns>>::value;
 
@@ -201,18 +204,7 @@ namespace JoeMath
         static const bool is_square =
             JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value;
 
-    private:
-        struct Hidden{};
 
-        using EnableIfIsVector = typename std::enable_if<is_vector, Hidden>;
-
-        template<u32 N>
-        using EnableIfIsAtLeastSizeNVector = typename std::enable_if<is_vector && vector_size >= N, Hidden>;
-
-    public:
-        Scalar m_elements[Rows][Columns];
-        //std::array<std::array<Scalar, Columns>, Rows> m_elements;
-        
         //
         // Constructors
         //
@@ -373,28 +365,35 @@ namespace JoeMath
         
         // Component wise addition
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>&  operator +=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        Matrix<Scalar, Rows, Columns>&  operator +=     (
+                                    const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise subtraction
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>&  operator -=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        Matrix<Scalar, Rows, Columns>&  operator -=     (
+                                    const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise multiplication
         template <typename Scalar2,
                   bool IsVector = is_vector,
                   bool IsSizeGreaterThan1 = (vector_size > 1)>
-        typename std::enable_if<IsVector && IsSizeGreaterThan1, Matrix<Scalar, Rows, Columns>&>::type
-                                        operator *=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        inline typename std::enable_if<IsVector && IsSizeGreaterThan1,
+                                       Matrix<Scalar, Rows, Columns>&>::type
+                                        operator *=     (
+                                    const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise division
         template <typename Scalar2,
                   bool IsVector = is_vector>
-        inline typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>&>::type
-                                        operator /=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        inline typename std::enable_if<IsVector,
+                                       Matrix<Scalar, Rows, Columns>&>::type
+                                        operator /=     (
+                                    const Matrix<Scalar2, Rows, Columns>& m );
         
         // Matrix multiplication
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator *=     ( const Matrix<Scalar2, Columns, Columns>& m );
+        Matrix<Scalar, Rows, Columns>& operator *=      (
+                                    const Matrix<Scalar2, Columns, Columns>& m);
     
         //
         // Binary Operators
@@ -480,8 +479,9 @@ namespace JoeMath
         template <typename Scalar2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()*std::declval<Scalar2>()),
-                  typename Dummy = EnableIfIsVector>
-        inline Matrix<ReturnScalar, Rows, Columns>
+                  bool IsVector = is_vector>
+        inline typename std::enable_if<IsVector,
+                                       Matrix<ReturnScalar, Rows, Columns>>::type
             operator * ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -490,8 +490,9 @@ namespace JoeMath
         template <typename Scalar2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()/std::declval<Scalar2>()),
-                  typename Dummy = EnableIfIsVector>
-        inline Matrix<ReturnScalar, Rows, Columns>
+                  bool IsVector = is_vector>
+        inline typename std::enable_if<IsVector,
+                                       Matrix<ReturnScalar, Rows, Columns>>::type
             operator / ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -552,15 +553,12 @@ namespace JoeMath
         // Vector only
         //
 
-        template <typename Dummy = EnableIfIsVector>
         inline void                                     Normalize       ( );
         
-        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  typename Dummy = EnableIfIsVector>
+        template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() )>
         inline ReturnScalar                             LengthSq        ( ) const;
         
-        template <typename ReturnScalar = decltype( std::sqrt( std::declval<Scalar>() * std::declval<Scalar>() ) ),
-                  typename Dummy = EnableIfIsVector>
+        template <typename ReturnScalar = decltype( std::sqrt( std::declval<Scalar>() * std::declval<Scalar>() ) )>
         inline ReturnScalar                             Length          ( ) const;
                                                         
         //

@@ -766,16 +766,15 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
               typename ReturnScalar,
-              typename Dummy>
-    inline Matrix<ReturnScalar, Rows, Columns>
+              bool IsVector>
+    inline typename std::enable_if<IsVector,
+                                   Matrix<ReturnScalar, Rows, Columns>>::type
     Matrix<Scalar, Rows, Columns>::operator *
                             ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
         static_assert( is_vector,
                        "Trying to perform a component wise multiply between two"
                        " non-vectors" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         Matrix<ReturnScalar, Rows, Columns> ret;
 
         for( u32 i = 0; i < Rows; ++i )
@@ -791,16 +790,15 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
               typename ReturnScalar,
-              typename Dummy>
-    inline Matrix<ReturnScalar, Rows, Columns>
+              bool IsVector>
+    inline typename std::enable_if<IsVector,
+                                   Matrix<ReturnScalar, Rows, Columns>>::type
     Matrix<Scalar, Rows, Columns>::operator /
                             ( const Matrix<Scalar2, Rows, Columns>& m ) const
     {
         static_assert( is_vector,
                        "Trying to perform a component wise divide between two "
                        "non-vectors" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         Matrix<ReturnScalar, Rows, Columns> ret;
 
         for( u32 i = 0; i < Rows; ++i )
@@ -821,14 +819,14 @@ namespace JoeMath
                            ( const Matrix<Scalar2, Columns, Columns2>& m ) const
     {
         //TODO
-        ReturnScalar ret[Rows][Columns2] = { { 0 } };
+        Matrix<ReturnScalar, Rows, Columns2> ret(0);
 
         for(unsigned i = 0; i < Columns2; ++i)
             for(unsigned j = 0; j < Rows; ++j)
                 for(unsigned k = 0; k < Columns; ++k)
-                    ret[j][i] += m_elements[j][k] * m.m_elements[k][i];
+                    ret.m_elements[j][i] += m_elements[j][k] * m.m_elements[k][i];
 
-        return Matrix<ReturnScalar, Rows, Columns2>(ret);
+        return ret;
     }
     
     //
@@ -958,24 +956,18 @@ namespace JoeMath
     }
                                                         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline  void            Matrix<Scalar, Rows, Columns>::Normalize       ( )
     {
         static_assert( is_vector, "Trying to normalize a non-vector" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         *this = Normalized(*this);
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              typename Dummy>
+    template <typename ReturnScalar>
     inline ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
     {
         static_assert( is_vector, "Trying to get the squared length of a "
                        "non-vector" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         ReturnScalar ret = 0;
         
         for( u32 i = 0; i < Rows; ++i )
@@ -986,13 +978,10 @@ namespace JoeMath
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              typename Dummy>
+    template <typename ReturnScalar>
     inline  ReturnScalar    Matrix<Scalar, Rows, Columns>::Length          ( ) const
     {
         static_assert( is_vector, "Trying to get the length of a non-vector" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return std::sqrt( LengthSq() );
     }
                                                         
