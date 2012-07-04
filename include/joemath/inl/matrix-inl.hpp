@@ -556,14 +556,14 @@ namespace JoeMath
     // Component wise multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              typename Dummy>
-    inline  Matrix<Scalar, Rows, Columns>&  Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Rows, Columns>& m )
+              bool IsVector,
+              bool IsSizeGreaterThan1>
+    inline  typename std::enable_if<IsVector && IsSizeGreaterThan1, Matrix<Scalar, Rows, Columns>&>::type
+                         Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Rows, Columns>& m )
     {
         static_assert( is_vector,
                        "Trying to perform a component wise multiply between two"
                        " non-vectors" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         *this = *this * m;
         return *this;
     }
@@ -571,14 +571,13 @@ namespace JoeMath
     // Component wise division
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
-              typename Dummy>
-    inline  Matrix<Scalar, Rows, Columns>&  Matrix<Scalar, Rows, Columns>::operator /=     ( const Matrix<Scalar2, Rows, Columns>& m )
+              bool IsVector>
+    inline typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>&>::type
+        Matrix<Scalar, Rows, Columns>::operator /=     ( const Matrix<Scalar2, Rows, Columns>& m )
     {
         static_assert( is_vector,
                        "Trying to perform a component wise divide between two "
                        "non-vectors" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         *this = *this / m;
         return *this;
     }

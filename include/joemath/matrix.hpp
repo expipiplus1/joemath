@@ -357,37 +357,40 @@ namespace JoeMath
         
         // Scalar addition
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator +=     ( const Scalar2 s );
+        Matrix<Scalar, Rows, Columns>&  operator +=     ( const Scalar2 s );
         
         // Scalar subtraction
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator -=     ( const Scalar2 s );
+        Matrix<Scalar, Rows, Columns>&  operator -=     ( const Scalar2 s );
         
         // Scalar multiplication
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator *=     ( const Scalar2 s );
+        Matrix<Scalar, Rows, Columns>&  operator *=     ( const Scalar2 s );
         
         // Scalar division
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator /=     ( const Scalar2 s );
+        Matrix<Scalar, Rows, Columns>&  operator /=     ( const Scalar2 s );
         
         // Component wise addition
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator +=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        Matrix<Scalar, Rows, Columns>&  operator +=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise subtraction
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator -=     ( const Matrix<Scalar2, Rows, Columns>& m );
+        Matrix<Scalar, Rows, Columns>&  operator -=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise multiplication
         template <typename Scalar2,
-                  typename Dummy = EnableIfIsVector>
-        Matrix<Scalar, Rows, Columns>& operator *=     ( const Matrix<Scalar2, Rows, Columns>& m );
+                  bool IsVector = is_vector,
+                  bool IsSizeGreaterThan1 = (vector_size > 1)>
+        typename std::enable_if<IsVector && IsSizeGreaterThan1, Matrix<Scalar, Rows, Columns>&>::type
+                                        operator *=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Component wise division
         template <typename Scalar2,
-                  typename Dummy = EnableIfIsVector>
-        Matrix<Scalar, Rows, Columns>& operator /=     ( const Matrix<Scalar2, Rows, Columns>& m );
+                  bool IsVector = is_vector>
+        inline typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>&>::type
+                                        operator /=     ( const Matrix<Scalar2, Rows, Columns>& m );
         
         // Matrix multiplication
         template <typename Scalar2>
