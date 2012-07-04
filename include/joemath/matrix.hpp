@@ -195,6 +195,12 @@ namespace JoeMath
         static const u32 vector_size =
             JoeMath::vector_size<Matrix<Scalar, Rows, Columns>>::value;
 
+        static const u32 min_dimension_size =
+            JoeMath::min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value;
+
+        static const bool is_square =
+            JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value;
+
     private:
         struct Hidden{};
 
@@ -266,105 +272,74 @@ namespace JoeMath
         typename std::enable_if<Fits && HasSameDimensions, const Matrix<Scalar, Rows2, Columns2>&>::type
                                             GetSubMatrix    ( ) const;
         
-        const Matrix<Scalar, 1, Columns>&  GetRow          ( u32 row )     const;
-              Matrix<Scalar, 1, Columns>&  GetRow          ( u32 row );
+        const Vector<Scalar, Columns>&  GetRow          ( u32 row )     const;
+              Vector<Scalar, Columns>&  GetRow          ( u32 row );
               
-              Matrix<Scalar, Rows, 1 >     GetColumn       ( u32 column )  const;
+              Matrix<Scalar, Rows, 1 >     GetColumn    ( u32 column )  const;
               
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                            GetRight        ( )             const;
+        const Vector<Scalar, 3>&            GetRight        ( )         const;
+              Vector<Scalar, 3>&            GetRight        ( );
+        void                                SetRight        ( const Vector<Scalar, 3>& m );
 
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetRight        ( const Matrix<Scalar, 1, 3>& m );
-                                            
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                            GetForward      ( )             const;
+        const Vector<Scalar, 3>&            GetForward      ( )         const;
+              Vector<Scalar, 3>&            GetForward      ( );
+        void                                SetForward      ( const Vector<Scalar, 3>& m );
 
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetForward      ( const Matrix<Scalar, 1, 3>& m );
-                                            
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                            GetUp           ( )             const;
+        const Vector<Scalar, 3>&            GetUp           ( )         const;
+              Vector<Scalar, 3>&            GetUp           ( );
+        void                                SetUp           ( const Vector<Scalar, 3>& m );
 
-        template <u32 MinMatrixDimension = min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                            SetUp           ( const Matrix<Scalar, 1, 3>& m );
-                                            
-        template <bool IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsSquare, const Matrix<Scalar, 1, Columns-1>&>::type
-                                            GetPosition     ( )             const;
-                                            
-        template <bool IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value>
-        typename std::enable_if<IsSquare, void>::type
-                                            SetPosition     ( const Matrix<Scalar, 1, Columns-1>& m );
+        const Vector<Scalar, Columns-1>&    GetPosition     ( )         const;
+        Vector<Scalar, Columns-1>&          GetPosition     ( );
+        void                                SetPosition     ( const Vector<Scalar, Columns-1>& m );
+
+        template <bool Enable = is_vector>
+        typename std::enable_if<Enable, const Scalar&>::type
+                                            operator    []  ( u32 i )   const;
+
+        template <bool Enable = is_vector>
+        typename std::enable_if<Enable, Scalar&>::type
+                                            operator    []  ( u32 i );
 
         template <bool Enable = !is_vector>
-        typename std::enable_if<Enable,
-                                const Matrix<Scalar, 1, Columns>&>::type
+        typename std::enable_if<Enable, const Vector<Scalar, Columns>&>::type
                                             operator    []  ( u32 i )   const;
 
         template <bool Enable = !is_vector>
-        typename std::enable_if<Enable,
-                                Matrix<Scalar, 1, Columns>&>::type
+        typename std::enable_if<Enable, Vector<Scalar, Columns>&>::type
                                             operator    []  ( u32 i );
 
-        template <typename Dummy = EnableIfIsVector>
-        const Scalar&                       operator    []  ( u32 i )   const;
-
-        template <bool Enable = is_vector>
-        typename std::enable_if<Enable,
-                                Scalar&>::type
-                                            operator    []  ( u32 i );
                                             
         //
         // Get elements of vectors
         //
 
-        template <typename Dummy = EnableIfIsVector>
         const Scalar&                   x               ( ) const;
 
-        template <typename Dummy = EnableIfIsVector>
         Scalar&                         x               ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
         const Scalar&                   y               ( ) const;
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
         Scalar&                         y               ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
         const Scalar&                   z               ( ) const;
         
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
         Scalar&                         z               ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
         const Scalar&                   w               ( ) const;
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
         Scalar&                         w               ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
         const Vector<Scalar, 2>&        xy              ( ) const;
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<2>>
         Vector<Scalar, 2>&              xy              ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
         const Vector<Scalar, 3>&        xyz             ( ) const;
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<3>>
         Vector<Scalar, 3>&              xyz             ( );
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
         const Vector<Scalar, 4>&        xyzw            ( ) const;
 
-        template <typename Dummy = EnableIfIsAtLeastSizeNVector<4>>
         Vector<Scalar, 4>&              xyzw            ( );
 
         //
@@ -531,42 +506,42 @@ namespace JoeMath
         
         void                                            Transpose       ( );        
         
-        template <bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value>
+        template <bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, void>::type
                                                         Invert          ( );
         
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value,
                   u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
                                                         Determinant     ( ) const;
                                                         
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value,
                   u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
                                                         Determinant     ( ) const;
     
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value,
                   u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
                                                         Determinant     ( ) const;
     
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value,
                   u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
                                                         Determinant     ( ) const;
     
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value,
                   u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
                                                         Determinant     ( ) const;
     
         template <typename ReturnScalar = decltype( std::declval<Scalar>() * std::declval<Scalar>() ),
-                  bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value>
+                  bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, ReturnScalar>::type
                                                         Minor           ( u32 row, u32 column ) const;
         

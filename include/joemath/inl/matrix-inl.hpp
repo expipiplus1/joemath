@@ -164,96 +164,148 @@ namespace JoeMath
         
         return ret;
     }          
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                        Matrix<Scalar, Rows, Columns>::GetRight        ( )             const
+    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetRight        ( )  const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, 3>*>(&m_elements[0][0]);
+        static_assert( !is_vector,
+                       "Trying to get the 'Right' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Right' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][0]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                        Matrix<Scalar, Rows, Columns>::SetRight        ( const Matrix<Scalar, 1, 3>& m )
+    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetRight        ( )
     {
+        static_assert( !is_vector,
+                       "Trying to get the 'Right' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Right' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][0]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  void                Matrix<Scalar, Rows, Columns>::SetRight        ( const Vector<Scalar, 3>& m )
+    {
+        static_assert( !is_vector,
+                       "Trying to set the 'Right' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to set the 'Right' vector of a matrix which "
+                       " isn't at least 3x3" );
         SetSubMatrix<1, 3, 0, 0>( m );
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                        Matrix<Scalar, Rows, Columns>::GetForward      ( )             const
+    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetForward        ( )  const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, 3>*>(&m_elements[2][0]);
+        static_assert( !is_vector,
+                       "Trying to get the 'Forward' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Forward' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[2][0]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                        Matrix<Scalar, Rows, Columns>::SetForward      ( const Matrix<Scalar, 1, 3>& m )
+    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetForward        ( )
     {
+        static_assert( !is_vector,
+                       "Trying to get the 'Forward' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Forward' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[2][0]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  void                Matrix<Scalar, Rows, Columns>::SetForward        ( const Vector<Scalar, 3>& m )
+    {
+        static_assert( !is_vector,
+                       "Trying to set the 'Forward' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to set the 'Forward' vector of a matrix which "
+                       " isn't at least 3x3" );
         SetSubMatrix<1, 3, 2, 0>( m );
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), const Matrix<Scalar, 1, 3>&>::type
-                                        Matrix<Scalar, Rows, Columns>::GetUp           ( )             const
+    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetUp        ( )  const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, 3>*>(&m_elements[1][0]);
+        static_assert( !is_vector,
+                       "Trying to get the 'Up' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Up' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][1]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 MinMatrixDimension>
-    inline  typename std::enable_if<(MinMatrixDimension >= 3), void>::type
-                                        Matrix<Scalar, Rows, Columns>::SetUp           ( const Matrix<  Scalar, 1, 3>& m )
+    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetUp        ( )
     {
+        static_assert( !is_vector,
+                       "Trying to get the 'Up' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to get the 'Up' vector of a matrix which "
+                       " isn't at least 3x3" );
+        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][1]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  void                Matrix<Scalar, Rows, Columns>::SetUp        ( const Vector<Scalar, 3>& m )
+    {
+        static_assert( !is_vector,
+                       "Trying to set the 'Up' vector of a vector" );
+        static_assert( min_dimension_size >= 3,
+                       "Trying to set the 'Up' vector of a matrix which "
+                       " isn't at least 3x3" );
         SetSubMatrix<1, 3, 1, 0>( m );
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsSquare>
-    inline  typename std::enable_if<IsSquare, const Matrix<Scalar, 1, Columns-1>&>::type
+    inline  const Vector<Scalar, Columns-1>&
                                         Matrix<Scalar, Rows, Columns>::GetPosition     ( )             const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, Columns-1>*>(&m_elements[Rows-1][0]);
+        static_assert( is_square,
+                       "Trying to get the 'Position' vector of a non-square "
+                       "matrix" );
+        static_assert( min_dimension_size != 1,
+                       "Trying to get the position vector of a 1x1 matrix" );
+        return *reinterpret_cast<const Vector<Scalar, Columns-1>*>(&m_elements[Rows-1][0]);
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsSquare>
-    inline  typename std::enable_if<IsSquare, void>::type
-                                        Matrix<Scalar, Rows, Columns>::SetPosition     ( const Matrix<Scalar, 1, Columns-1>& m )
+    inline  Vector<Scalar, Columns-1>&  Matrix<Scalar, Rows, Columns>::GetPosition     ( )
     {
-        SetSubMatrix<1, Columns-1, Columns-1, 0>( m );
+        static_assert( is_square,
+                       "Trying to get the 'Position' vector of a non-square "
+                       "matrix" );
+        static_assert( min_dimension_size != 1,
+                       "Trying to get the position vector of a 1x1 matrix" );
+        return *reinterpret_cast<Vector<Scalar, Columns-1>*>(&m_elements[Rows-1][0]);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline  void                        Matrix<Scalar, Rows, Columns>::SetPosition     ( const Vector<Scalar, Columns-1>& m )
+    {
+        static_assert( is_square,
+                       "Trying to set the 'Position' vector of a non-square "
+                       "matrix" );
+        static_assert( min_dimension_size != 1,
+                       "Trying to set the position vector of a 1x1 matrix" );
+        SetSubMatrix<1, Columns-1, Rows-1, 0>( m );
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool Enable>
-    inline  typename std::enable_if<Enable, const Matrix<Scalar, 1, Columns>&>::type
+    inline  typename std::enable_if<Enable,  const Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
-        return *reinterpret_cast<const Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
-    }
-                                        
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool Enable>
-    inline  typename std::enable_if<Enable, Matrix<Scalar, 1, Columns>&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
-    {
-        return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
-    }
-                                        
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
-    inline  const Scalar&                       Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
-    {
-        static_assert( std::is_same<Dummy, Hidden>::value,
-                       "Trying to access vector element on a matrix" );
         return m_elements[0][i];
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool Enable>
     inline  typename std::enable_if<Enable,  Scalar&>::type
@@ -261,109 +313,100 @@ namespace JoeMath
     {
         return m_elements[0][i];
     }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool Enable>
+    inline  typename std::enable_if<Enable, const Vector<Scalar, Columns>&>::type
+                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
+    {
+        return *reinterpret_cast<const Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
+    }
+                                        
+    template <typename Scalar, u32 Rows, u32 Columns>
+    template <bool Enable>
+    inline  typename std::enable_if<Enable, Vector<Scalar, Columns>&>::type
+                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
+    {
+        return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(&m_elements[i]);
+    }
         
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline const Scalar&                        Matrix<Scalar, Rows, Columns>::x               ( ) const
     {
         static_assert( is_vector,
                        "Trying to get the x component of a non-vector");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][0];
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Scalar&                              Matrix<Scalar, Rows, Columns>::x               ( )
     {
         static_assert( is_vector,
                        "Trying to get the x component of a non-vector");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][0];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline const Scalar&                        Matrix<Scalar, Rows, Columns>::y               ( ) const
     {
         static_assert( is_vector,
                        "Trying to get the y component of a non-vector");
         static_assert( vector_size >= 2,
                        "Trying to get the y component of a vector of size < 2");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][1];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Scalar&                              Matrix<Scalar, Rows, Columns>::y               ( )
     {
         static_assert( is_vector,
                        "Trying to get the y component of a non-vector");
         static_assert( vector_size >= 2,
                        "Trying to get the y component of a vector of size < 2");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][1];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline const Scalar&                        Matrix<Scalar, Rows, Columns>::z               ( ) const
     {
         static_assert( is_vector,
                        "Trying to get the z component of a non-vector");
         static_assert( vector_size >= 3,
                        "Trying to get the z component of a vector of size < 3");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][2];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Scalar&                              Matrix<Scalar, Rows, Columns>::z               ( )
     {
         static_assert( is_vector,
                        "Trying to get the z component of a non-vector");
         static_assert( vector_size >= 3,
                        "Trying to get the z component of a vector of size < 3");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][2];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline const Scalar&                        Matrix<Scalar, Rows, Columns>::w               ( ) const
     {
         static_assert( is_vector,
                        "Trying to get the w component of a non-vector");
         static_assert( vector_size >= 4,
                        "Trying to get the w component of a vector of size < 4");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][3];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Scalar&                              Matrix<Scalar, Rows, Columns>::w               ( )
     {
         static_assert( is_vector,
                        "Trying to get the w component of a non-vector");
         static_assert( vector_size >= 4,
                        "Trying to get the w component of a vector of size < 4");
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return m_elements[0][3];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     const inline Vector<Scalar, 2>&             Matrix<Scalar, Rows, Columns>::xy              ( ) const
     {
         static_assert( is_vector,
@@ -371,13 +414,10 @@ namespace JoeMath
         static_assert( vector_size >= 2,
                        "Trying to get the xy components of a vector of size <"
                        " 2" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<const Vector<Scalar, 2>*>(this);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Vector<Scalar, 2>&                   Matrix<Scalar, Rows, Columns>::xy              ( )
     {
         static_assert( is_vector,
@@ -385,13 +425,10 @@ namespace JoeMath
         static_assert( vector_size >= 2,
                        "Trying to get the xy components of a vector of size <"
                        " 2" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<Vector<Scalar, 2>*>(this);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     const inline Vector<Scalar, 3>&             Matrix<Scalar, Rows, Columns>::xyz             ( ) const
     {
         static_assert( is_vector,
@@ -399,13 +436,10 @@ namespace JoeMath
         static_assert( vector_size >= 3,
                        "Trying to get the xyz components of a vector of size <"
                        " 3" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<const Vector<Scalar, 3>*>(this);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Vector<Scalar, 3>&                   Matrix<Scalar, Rows, Columns>::xyz             ( )
     {
         static_assert( is_vector,
@@ -413,13 +447,10 @@ namespace JoeMath
         static_assert( vector_size >= 3,
                        "Trying to get the xyz components of a vector of size <"
                        " 3" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<Vector<Scalar, 3>*>(this);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     const inline Vector<Scalar, 4>&             Matrix<Scalar, Rows, Columns>::xyzw            ( ) const
     {
         static_assert( is_vector,
@@ -427,13 +458,10 @@ namespace JoeMath
         static_assert( vector_size >= 4,
                        "Trying to get the xyzw components of a vector of size <"
                        " 4" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<const Vector<Scalar, 4>*>(this);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Dummy>
     inline Vector<Scalar, 4>&                   Matrix<Scalar, Rows, Columns>::xyzw            ( )
     {
         static_assert( is_vector,
@@ -441,8 +469,6 @@ namespace JoeMath
         static_assert( vector_size >= 4,
                        "Trying to get the xyzw components of a vector of size <"
                        " 4" );
-        static_assert( std::is_same<typename Dummy::type, Hidden>::value,
-                       "I've made a terrible mistake" );
         return *reinterpret_cast<Vector<Scalar, 4>*>(this);
     }
     
