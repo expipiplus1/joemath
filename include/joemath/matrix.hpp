@@ -83,41 +83,42 @@ namespace JoeMath
     //
             
     template <typename Scalar, u32 Rows, u32 Columns>
-    Matrix<Scalar, Columns, Rows>   Transposed  (
+    inline Matrix<Scalar, Columns, Rows>   Transposed  (
                                     const Matrix<Scalar, Rows, Columns>& m );
     
     template <typename Scalar, u32 Rows, u32 Columns>
     inline Matrix<Scalar, Rows, Columns>    Inverted        (
                                     const Matrix<Scalar, Rows, Columns>& m );
-    
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>>::type
-                                            Normalized      ( const Matrix<Scalar, Rows, Columns>& m );
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline Matrix<Scalar, Rows, Columns>    Normalized      (
+                                    const Matrix<Scalar, Rows, Columns>& m );
                                             
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
-              bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsVector, ReturnScalar>::type
-                                            Dot             ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
+              typename ReturnScalar =
+                decltype( std::declval<Scalar>() * std::declval<Scalar2>() )>
+    inline ReturnScalar                     Dot             (
+                                    const Matrix<Scalar, Rows, Columns>& m0,
+                                    const Matrix<Scalar2, Rows, Columns>& m1 );
                                             
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
-              bool     IsVector3 = is_vector3<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsVector3, Matrix<ReturnScalar, Rows, Columns>>::type
-                                            Cross           ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 );
+              typename ReturnScalar =
+                decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
+    inline Matrix<ReturnScalar, Rows, Columns> Cross        (
+                                    const Matrix<Scalar, Rows, Columns>& m0,
+                                    const Matrix<Scalar2, Rows, Columns>& m1 );
 
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Rows2, u32 Columns2,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) ),
-              bool     IsVector0 = is_vector<Matrix<Scalar, Rows, Columns>>::value,
-              bool     IsVector1 = is_vector<Matrix<Scalar2, Rows2, Columns2>>::value,
-              u32      VectorSize0 = vector_size<Matrix<Scalar, Rows, Columns>>::value,
-              u32      VectorSize1 = vector_size<Matrix<Scalar2, Rows2, Columns2>>::value>
-    typename std::enable_if<IsVector0 && IsVector1, Matrix<ReturnScalar, VectorSize1, VectorSize0>>::type
-                                                    Outer   ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows2, Columns2>& m1 );
+              typename ReturnScalar =
+                decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
+    inline Matrix<ReturnScalar, Matrix<Scalar2, Rows2, Columns2>::vector_size,
+                                Matrix<Scalar, Rows, Columns>::vector_size>
+                                            Outer   (
+                                    const Matrix<Scalar, Rows, Columns>& m0,
+                                    const Matrix<Scalar2, Rows2, Columns2>& m1 );
     //
     // Utility functions
     //
@@ -170,6 +171,9 @@ namespace JoeMath
     public:
         Scalar m_elements[Rows][Columns];
         //std::array<std::array<Scalar, Columns>, Rows> m_elements;
+
+        static const u32 rows = Rows;
+        static const u32 columns = Columns;
 
         static const bool is_vector =
             JoeMath::is_vector<Matrix<Scalar, Rows, Columns>>::value;

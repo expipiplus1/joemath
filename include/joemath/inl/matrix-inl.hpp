@@ -1062,24 +1062,25 @@ namespace JoeMath
         return ret / det;
     }
     
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsVector>
-    inline  typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>>::type
-                                                            Normalized      ( const Matrix<Scalar, Rows, Columns>& m )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline Matrix<Scalar, Rows, Columns>    Normalized      (
+                                    const Matrix<Scalar, Rows, Columns>& m )
     {
-        static_assert(IsVector, "You can only normalize a vector");
+        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                      "Trying to normalize a non-vector" );
         return m / m.Length();
     }
    
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar,
-              bool     IsVector>
-    inline  typename std::enable_if<IsVector, ReturnScalar>::type
-                                                            Dot             ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+              typename ReturnScalar>
+    inline ReturnScalar Dot ( const Matrix<Scalar, Rows, Columns>& m0,
+                              const Matrix<Scalar2, Rows, Columns>& m1 )
     {
-        static_assert(IsVector, "You can only take the Dot product of vectors");
-        ReturnScalar ret = 0;
+        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                       "Trying to take the dot product of non-vectors" );
+
+        ReturnScalar ret{0};
         
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
@@ -1090,13 +1091,17 @@ namespace JoeMath
     
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
-              typename ReturnScalar,
-              bool     IsVector3>
-    inline  typename std::enable_if<IsVector3, Matrix<ReturnScalar, Rows, Columns>>::type
-                                                            Cross           ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows, Columns>& m1 )
+              typename ReturnScalar>
+    inline  Matrix<ReturnScalar, Rows, Columns> Cross   (
+                                const Matrix<Scalar, Rows, Columns>& m0,
+                                const Matrix<Scalar2, Rows, Columns>& m1 )
     {
-        static_assert(IsVector3, "You can only take the cross product of Vector3s");
-        
+        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                       "Trying to take the Cross Product between non-vectors" );
+        static_assert( Matrix<Scalar, Rows, Columns>::vector_size == 3,
+                       "Trying to take the Cross Product between vectors of "
+                       "size != 3" );
+
         Matrix<ReturnScalar, Rows, Columns> ret;
         
         ret.x() = m0.y() * m1.z() - m0.z() * m1.y();
@@ -1108,18 +1113,23 @@ namespace JoeMath
     
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Rows2, u32 Columns2,
-              typename ReturnScalar,
-              bool     IsVector0,
-              bool     IsVector1,
-              u32      VectorSize0,
-              u32      VectorSize1>
-    typename std::enable_if<IsVector0 && IsVector1, Matrix<ReturnScalar, VectorSize1, VectorSize0>>::type
-                                                            Outer           ( const Matrix<Scalar, Rows, Columns>& m0, const Matrix<Scalar2, Rows2, Columns2>& m1 )
+              typename ReturnScalar>
+    inline Matrix<ReturnScalar, Matrix<Scalar2, Rows2, Columns2>::vector_size,
+                                Matrix<Scalar, Rows, Columns>::vector_size>
+                                            Outer           (
+                                    const Matrix<Scalar, Rows, Columns>& m0,
+                                    const Matrix<Scalar2, Rows2, Columns2>& m1 )
     {
-        Matrix<ReturnScalar, VectorSize0, VectorSize1> ret;
+        static_assert( Matrix<Scalar,Rows,Columns>::is_vector &&
+                       Matrix<Scalar2,Rows2,Columns2>::is_vector,
+                       "Trying to take the outer product between one or more "
+                       "non-vectors" );
+        Matrix<ReturnScalar,
+               Matrix<Scalar2,Rows2,Columns2>::vector_size,
+               Matrix<Scalar,Rows,Columns>::vector_size> ret;
 
-        for( u32 i = 0; i < VectorSize1; ++i )
-            for( u32 j = 0; j < VectorSize0; ++j )
+        for( u32 i = 0; i < m1.vector_size; ++i )
+            for( u32 j = 0; j < m0.vector_size; ++j )
                 ret.m_elements[i][j] = m0.m_elements[0][j] * m1.m_elements[0][i];
 
         return ret;
