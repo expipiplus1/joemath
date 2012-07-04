@@ -1001,42 +1001,23 @@ namespace JoeMath
         return ret;
     }
    
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), Matrix<Scalar, Rows, Columns>>::type
-                                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m )
+    template <typename Scalar>
+    inline Matrix<Scalar, 1, 1> Inverted    ( const Matrix<Scalar, 1, 1>& m )
     {
-        static_assert(IsSquare, "You can only invert a square matrix");
-        static_assert(SquareMatrixSize == 1, "This function can only be used on square matrices of size 1");
-        
-        return Matrix<Scalar, Columns, Rows>(Scalar(1)/m.m_elements[0][0]);
+        return Matrix<Scalar, 1, 1>(Scalar{1}/m.m_elements[0][0]);
     }
     
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), Matrix<Scalar, Rows, Columns>>::type
-                                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m )
+    template <typename Scalar>
+    inline Matrix<Scalar, 2, 2> Inverted    ( const Matrix<Scalar, 2, 2>& m )
     {
-        static_assert(IsSquare, "You can only invert a square matrix");
-        static_assert(SquareMatrixSize == 2, "This function can only be used on square matrices of size 2");
-        
-        return Matrix<Scalar, Columns, Rows>( m.m_elements[1][1], -m.m_elements[0][1],
-                                              -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
+        return Matrix<Scalar, 2, 2>( m.m_elements[1][1], -m.m_elements[0][1],
+                                     -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
     }
     
     /*
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), Matrix<ReturnScalar, Rows, Columns>>::type
-                                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m )
+    template <typename Scalar>
+    inline Matrix<ReturnScalar, 3, 3> Inverted ( const Matrix<Scalar, 3, 3>& m )
     {
-        static_assert(IsSquare, "You can only invert a square matrix");
-        static_assert(SquareMatrixSize == 3, "This function can only be used on square matrices of size 3");
-        
         Matrix<ReturnScalar, Rows, Columns> ret;
         ret.m_elements[0][0] = m.m_elements[1][1] * m.m_elements[2][2] - m.m_elements[2][1] * m.m_elements[1][2];
         ret.m_elements[0][1] = m.m_elements[1][2] * m.m_elements[2][0] - m.m_elements[2][2] * m.m_elements[1][0];
@@ -1056,13 +1037,12 @@ namespace JoeMath
     }
     */
     
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 2), Matrix<Scalar, Rows, Columns>>::type
-                                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline Matrix<Scalar, Rows, Columns>    Inverted    (
+                                        const Matrix<Scalar, Rows, Columns>& m )
     {
-        static_assert(IsSquare, "You can only invert a square matrix");
+        static_assert( Matrix<Scalar, Rows, Columns>::is_square,
+                       "Trying to invert a non-square matrix" );
         
         Matrix<Scalar, Columns, Rows> ret;
         

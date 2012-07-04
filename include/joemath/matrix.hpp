@@ -73,43 +73,22 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar =
-                  decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
-    Matrix<ReturnScalar, Rows, Columns>    operator *
-            ( const Scalar2 s, const Matrix<Scalar, Rows, Columns>& m );
+                      decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
+    Matrix<ReturnScalar, Rows, Columns> operator * (
+                                    const Scalar2 s,
+                                    const Matrix<Scalar, Rows, Columns>& m );
 
     //
     // Misc
     //
             
     template <typename Scalar, u32 Rows, u32 Columns>
-    Matrix<Scalar, Columns, Rows>          Transposed      ( const Matrix<Scalar, Rows, Columns>& m );
+    Matrix<Scalar, Columns, Rows>   Transposed  (
+                                    const Matrix<Scalar, Rows, Columns>& m );
     
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
-              u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsSquare && (SquareMatrixSize == 1), Matrix<Scalar, Rows, Columns>>::type
-                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m );
-    
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
-              u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsSquare && (SquareMatrixSize == 2), Matrix<Scalar, Rows, Columns>>::type
-                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m );
-                                            
-    /*
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename ReturnScalar = decltype( std::declval<Scalar>( ) * std::declval<Scalar>( ) ),
-              bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
-              u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsSquare && (SquareMatrixSize == 3), Matrix<ReturnScalar, Rows, Columns>>::type
-                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m );
-    */
-        
-    template <typename Scalar, u32 Rows, u32 Columns,
-              bool     IsSquare = is_square<Matrix<Scalar, Rows, Columns>>::value,
-              u32      SquareMatrixSize = square_matrix_size<Matrix<Scalar, Rows, Columns>>::value>
-    typename std::enable_if<IsSquare && (SquareMatrixSize > 2), Matrix<Scalar, Rows, Columns>>::type
-                                            Inverted        ( const Matrix<Scalar, Rows, Columns>& m );
+    template <typename Scalar, u32 Rows, u32 Columns>
+    inline Matrix<Scalar, Rows, Columns>    Inverted        (
+                                    const Matrix<Scalar, Rows, Columns>& m );
     
     template <typename Scalar, u32 Rows, u32 Columns,
               bool     IsVector = is_vector<Matrix<Scalar, Rows, Columns>>::value>
@@ -481,7 +460,7 @@ namespace JoeMath
                       decltype(std::declval<Scalar>()*std::declval<Scalar2>()),
                   bool IsVector = is_vector>
         inline typename std::enable_if<IsVector,
-                                       Matrix<ReturnScalar, Rows, Columns>>::type
+                                       Matrix<ReturnScalar, Rows,Columns>>::type
             operator * ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -492,7 +471,7 @@ namespace JoeMath
                       decltype(std::declval<Scalar>()/std::declval<Scalar2>()),
                   bool IsVector = is_vector>
         inline typename std::enable_if<IsVector,
-                                       Matrix<ReturnScalar, Rows, Columns>>::type
+                                       Matrix<ReturnScalar, Rows,Columns>>::type
             operator / ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
@@ -501,8 +480,8 @@ namespace JoeMath
         template <typename Scalar2, u32 Columns2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
-        Matrix<ReturnScalar, Rows, Columns2>  operator *
-                            ( const Matrix<Scalar2, Columns, Columns2>& m ) const;
+        Matrix<ReturnScalar, Rows, Columns2>  operator * (
+                            const Matrix<Scalar2, Columns, Columns2>& m ) const;
 
         //
         // methods
