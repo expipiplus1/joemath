@@ -6,6 +6,8 @@
 project(joemath)
 cmake_minimum_required(VERSION 2.8)
 
+option( joemath_build_tests "Build the tests for JoeMath" OFF )
+
 include_directories(include)
 
 set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
@@ -53,6 +55,73 @@ install(DIRECTORY include/joemath DESTINATION include
 
 install(FILES license.txt readme.txt 
         DESTINATION share/doc/joemath/)
+
+#--------------------------------------------------------------------
+# Testing
+#--------------------------------------------------------------------
+
+if( joemath_build_tests )
+    # Enable ExternalProject CMake module
+    include(ExternalProject)
+
+    # Set default ExternalProject root directory
+    SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/ThirdParty)
+    # Add gtest
+    ExternalProject_Add(
+        googletest
+        SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk/
+        TIMEOUT 10
+        # Force separate output paths for debug and release builds to allow easy
+        # identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
+        CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
+                   -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
+                   -Dgtest_force_shared_crt=ON
+        # Disable install step
+        INSTALL_COMMAND ""
+        # Wrap download, configure and build steps in a script to log output
+        LOG_DOWNLOAD ON
+        LOG_CONFIGURE ON
+        LOG_BUILD ON)
+    # Specify include dir
+    ExternalProject_Get_Property(googletest source_dir)
+    include_directories(${source_dir}/include)
+
+    # C++ tests
+    enable_testing()
+    set( tests  tests/scalar.cpp
+                tests/vector.cpp
+                tests/matrix.cpp )
+    add_executable( tester ${tests} )
+
+    # Specify tester's link libraries
+    ExternalProject_Get_Property(googletest binary_dir)
+    #find_library( googletest_gtest gtest HINTS ${binary_dir} NO_DEFAULT_PATH )
+    #find_library( googletest_gtest_main gtest_main HINTS ${binary_dir} NO_DEFAULT_PATH )
+    add_library( gtest UNKNOWN IMPORTED )
+    add_library( gtest_main UNKNOWN IMPORTED )
+    set_target_properties( gtest PROPERTIES IMPORTED_LOCATION
+                                            ${binary_dir}/libgtest.a )
+    set_target_properties( gtest_main PROPERTIES IMPORTED_LOCATION
+                                                 ${binary_dir}/libgtest_main.a )
+    target_link_libraries( tester gtest gtest_main )
+
+    # Create dependency of MainTest on googletest
+    add_dependencies( tester googletest )
+
+    macro(ADD_GOOGLE_TESTS executable)
+      foreach ( source ${ARGN} )
+        file(READ "${source}" contents)
+        string(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
+        foreach(hit ${found_tests})
+          string(REGEX REPLACE ".*\\(([A-Za-z_0-9]+)[, ]*([A-Za-z_0-9]+)\\).*" "\\1.\\2" test_name ${hit})
+          add_test(${test_name} ${executable} --gtest_filter=${test_name} ${MI3CTestingDir})
+        endforeach(hit)
+      endforeach()
+    endmacro()
+
+    # Add all tests found in the source code, calling the executable to run them
+    add_google_tests ( ${EXECUTABLE_OUTPUT_PATH}/tester ${tests})
+endif()
 
 #--------------------------------------------------------------------
 # Uninstall operation

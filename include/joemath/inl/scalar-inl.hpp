@@ -30,6 +30,8 @@
 
 #include <joemath/scalar.hpp>
 
+#include <cassert>
+
 namespace JoeMath
 {
     template <typename T>
@@ -66,6 +68,7 @@ namespace JoeMath
     template <typename T>
     inline T    SmoothStep      ( const T v, const T edge0, const T edge1 )
     {
+        assert( edge0 != edge1 && "Can't SmoothStep between identical edges" );
         T x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x * (T{3} - T{2} * x);
     }
@@ -73,6 +76,7 @@ namespace JoeMath
     template <typename T>
     inline T    SmootherStep    ( const T v, const T edge0, const T edge1 )
     {
+        assert( edge0 != edge1 && "Can't SmootherStep between identical edges");
         T x = Saturated( (v - edge0) / (edge1 - edge0) );
         return x*x*x * ( x * ( x * T{6} - T{15}) + T{10});
     }
