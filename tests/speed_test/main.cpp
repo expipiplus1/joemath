@@ -35,7 +35,7 @@
 
 using namespace JoeMath;
 
-const u32 NUM_ITERATIONS = 50000000;
+const u32 NUM_ITERATIONS = 5000;
 
 /** Test all the scalar functions */
 void ScalarTest()
@@ -77,9 +77,30 @@ int main()
     std::vector<float4> b(NUM_ITERATIONS);
     std::vector<float4> c(NUM_ITERATIONS);
 
-    float4x4 m;
+    float4x4 m(1);
 
-    m.GetUp().xyz();
+    float4 v{1,2,3,4};
+
+    for( int i = 0; i < 4; ++i)
+    {
+        for( int j = 0; j < 4; ++j )
+            std::cout << m[i][j] << " ";
+        std::cout << std::endl;
+    }
+
+    m.GetRight() = v.xyz();
+
+    m.SetPosition({1,2,3});
+
+    auto m3 = Outer(v,v);
+    m = m3;
+    auto m9 = Outer(Vector<double,5>{1,2,3,4,5}*Pi<float>(), Vector<int,3>{1,2,3});
+    for( u32 i = 0; i < m9.rows; ++i)
+    {
+        for( u32 j = 0; j < m9.columns; ++j )
+            std::cout << m9[i][j] << " ";
+        std::cout << std::endl;
+    }
 
     auto start = clock.now();
 
@@ -87,6 +108,13 @@ int main()
         i = float4{rand(), rand(), rand(), rand()};
     for( auto& i : b )
         i = float4{rand(), rand(), rand(), rand()};
+
+    Matrix<float,1,1> m1;
+    Matrix<float,1,1> m2;
+    m1 *= m2;
+
+    Inverted(m);
+    Inverted(m1);
 
     std::chrono::duration<double, std::nano> duration = clock.now() - start;
     std::cout << "Time to init: " << duration.count() / NUM_ITERATIONS << std::endl;
