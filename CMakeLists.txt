@@ -112,16 +112,18 @@ if( joemath_build_tests )
     macro(ADD_GOOGLE_TESTS executable)
       foreach ( source ${ARGN} )
         file(READ "${source}" contents)
-        string(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
+        string(REGEX MATCHALL "TYPED_TEST *\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
         foreach(hit ${found_tests})
-          string(REGEX REPLACE ".*\\(([A-Za-z_0-9]+)[, ]*([A-Za-z_0-9]+)\\).*" "\\1.\\2" test_name ${hit})
-          add_test(${test_name} ${executable} --gtest_filter=${test_name} ${MI3CTestingDir})
+          string(REGEX REPLACE ".*\\(([A-Za-z_0-9]+)[, ]*([A-Za-z_0-9]+) *\\).*" "\\1.\\2" test_name ${hit})
+          message(STATUS ${test_name} )
+          add_test(${test_name} ${executable} --gtest_repeat=1000 --gtest_filter=${test_name})
         endforeach(hit)
       endforeach()
     endmacro()
 
     # Add all tests found in the source code, calling the executable to run them
-    add_google_tests ( ${EXECUTABLE_OUTPUT_PATH}/tester ${tests})
+    # add_google_tests ( ${EXECUTABLE_OUTPUT_PATH}/tester ${tests})
+    add_test( all_tests tester --gtest_repeat=1000 )
 endif()
 
 #--------------------------------------------------------------------
