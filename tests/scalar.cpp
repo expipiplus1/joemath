@@ -17,8 +17,6 @@ auto ran = std::bind(re,r);
 template <typename T>
 class ScalarTest : public testing::Test
 {
-protected:
-
 };
 
 using testing::Types;
