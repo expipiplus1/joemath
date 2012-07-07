@@ -90,6 +90,7 @@ if( joemath_build_tests )
     enable_testing()
     set( tests  tests/scalar.cpp
                 tests/vector.cpp
+                tests/vector_instantiation.cpp
                 tests/matrix.cpp )
     add_executable( tester ${tests} )
 

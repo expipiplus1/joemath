@@ -6,27 +6,31 @@
 
 using namespace JoeMath;
 
-template <typename T>
-T GetRandomVector()
+namespace
 {
-    static std::minstd_rand r{0};
-    static std::uniform_real_distribution<typename T::scalar_type> re;
-    static auto ran = std::bind(re,std::minstd_rand());
-    T ret;
-    for( u32 i = 0; i < T::vector_size; ++i )
+    template <typename T>
+    T GetRandomVector()
     {
-        ret[i] = ran();
+        static std::minstd_rand r{0};
+        static std::uniform_real_distribution<typename T::scalar_type> re(-10000,
+                                                                          10000);
+        static auto ran = std::bind(re,std::minstd_rand());
+        T ret;
+        for( u32 i = 0; i < T::vector_size; ++i )
+        {
+            ret[i] = ran();
+        }
+        return ret;
     }
-    return ret;
-}
 
-template <typename T>
-T GetRandomScalar()
-{
-    static std::minstd_rand r{0};
-    static std::uniform_real_distribution<T> re;
-    static auto ran = std::bind(re,std::minstd_rand());
-    return ran();
+    template <typename T>
+    T GetRandomScalar()
+    {
+        static std::minstd_rand r{0};
+        static std::uniform_real_distribution<T> re(-10000, 10000);
+        static auto ran = std::bind(re,std::minstd_rand());
+        return ran();
+    }
 }
 
 template <typename T>
@@ -147,177 +151,252 @@ TYPED_TEST_CASE(Vector3Test, Vector3Types);
 TYPED_TEST_CASE(Vector4Test, Vector4Types);
 TYPED_TEST_CASE(VectorManyTest, VectorManyTypes);
 
-TYPED_TEST(VectorTest, InstantiateTransposed )
+TYPED_TEST(VectorTest, NormalizedReturnsLength1Vector )
 {
-    Transposed(TypeParam());
-    SUCCEED();
+    TypeParam v = GetRandomVector<TypeParam>();
+    ASSERT_FLOAT_EQ( Normalized(v).LengthSq(), 1 );
 }
 
-TYPED_TEST(VectorTest, InstantiateNormalized )
+TYPED_TEST(VectorTest, DotWith0 )
 {
-    Normalized(TypeParam());
-    SUCCEED();
+    TypeParam v = GetRandomVector<TypeParam>();
+    ASSERT_EQ( Dot(v, TypeParam(0)), 0 );
 }
 
-TYPED_TEST(VectorTest, InstantiateDot )
+TYPED_TEST(VectorTest, DotWithSelf )
 {
-    Dot(TypeParam(), TypeParam());
-    SUCCEED();
+    TypeParam v = GetRandomVector<TypeParam>();
+    ASSERT_FLOAT_EQ( Dot(v, v), v.LengthSq() );
 }
 
-TYPED_TEST(Vector3Test, InstantiateDot )
+TYPED_TEST(VectorTest, DotWithNegation )
 {
-    Cross(TypeParam(), TypeParam());
-    SUCCEED();
+    TypeParam v = GetRandomVector<TypeParam>();
+    ASSERT_FLOAT_EQ( Dot(v, -v), -v.LengthSq() );
 }
 
-TYPED_TEST(VectorTest, InstantiateOuter )
+TYPED_TEST(VectorTest, CauchySchwarz )
 {
-    Outer(TypeParam(), TypeParam());
-    SUCCEED();
+    TypeParam v0 = GetRandomVector<TypeParam>();
+    TypeParam v1 = GetRandomVector<TypeParam>();
+    ASSERT_LE( Length(Dot(v0,v1)), v0.Length() * v1.Length() );
 }
 
-TYPED_TEST(VectorTest, InstantiateSplatConstructor )
+TYPED_TEST(VectorTest, OuterWorks )
 {
-    TypeParam a = TypeParam(GetRandomScalar<typename TypeParam::scalar_type>());
-    (void)a;
-    SUCCEED();
+    // TODO, this only tests square matrices
+    // What a pain to test every combination
+    TypeParam v0 = GetRandomVector<TypeParam>();
+    TypeParam v1 = GetRandomVector<TypeParam>();
+    Matrix<typename TypeParam::scalar_type,
+            v0.vector_size,
+            v1.vector_size> m = Outer(v0,v1);
+    for( u32 i = 0; i < v0.vector_size; ++i )
+        for( u32 j = 0; j < v1.vector_size; ++j )
+            //Accessing m with elements for 1x1 matrixes
+            ASSERT_FLOAT_EQ( m.m_elements[i][j], v0[i] * v1[j] );
 }
 
-TYPED_TEST(VectorTest, InstantiateConvertConstructor )
+TYPED_TEST(VectorTest, ElementAccessX )
 {
-    TypeParam(TypeParam());
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto x = v.x();
+    ASSERT_EQ( x, v[0] );
+    x = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.x() = x;
+    ASSERT_EQ( x, v[0] );
 }
 
-TYPED_TEST(VectorTest, InstantiateAssignmentOperator )
+TYPED_TEST(Vector2Test, ElementAccessY )
 {
-    TypeParam x;
-    TypeParam y;
-    x = y;
-    (void)x;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto y = v.y();
+    ASSERT_EQ( y, v[1] );
+    y = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.y() = y;
+    ASSERT_EQ( y, v[1] );
 }
 
-TYPED_TEST(VectorTest, InstantiateIndexOperator )
+TYPED_TEST(Vector2Test, ElementAccessXY )
 {
-    TypeParam a(1);
-    a[0] = a[0];
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xy = v.xy();
+    ASSERT_EQ( xy, (Vector<typename TypeParam::scalar_type,
+                           2>{v[0],v[1]}));
+    xy = GetRandomVector<decltype(xy)>();
+    v.xy() = xy;
+    ASSERT_EQ( xy, v.xy() );
 }
 
-TYPED_TEST(VectorTest, InstantiateElementAccessX )
+TYPED_TEST(Vector3Test, ElementAccessY )
 {
-    TypeParam a(1);
-    a.x() = a.x();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto y = v.y();
+    ASSERT_EQ( y, v[1] );
+    y = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.y() = y;
+    ASSERT_EQ( y, v[1] );
 }
 
-TYPED_TEST(Vector2Test, InstantiateElementAccessY )
+TYPED_TEST(Vector3Test, ElementAccessXY )
 {
-    TypeParam a(1);
-    a.y() = a.y();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xy = v.xy();
+    ASSERT_EQ( xy, (Vector<typename TypeParam::scalar_type,
+                           2>{v[0],v[1]}));
+    xy = GetRandomVector<decltype(xy)>();
+    v.xy() = xy;
+    ASSERT_EQ( xy, v.xy() );
 }
 
-TYPED_TEST(Vector3Test, InstantiateElementAccessY )
+TYPED_TEST(Vector4Test, ElementAccessY )
 {
-    TypeParam a(1);
-    a.y() = a.y();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto y = v.y();
+    ASSERT_EQ( y, v[1] );
+    y = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.y() = y;
+    ASSERT_EQ( y, v[1] );
 }
 
-TYPED_TEST(Vector4Test, InstantiateElementAccessY )
+TYPED_TEST(Vector4Test, ElementAccessXY )
 {
-    TypeParam a(1);
-    a.y() = a.y();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xy = v.xy();
+    ASSERT_EQ( xy, (Vector<typename TypeParam::scalar_type,
+                           2>{v[0],v[1]}));
+    xy = GetRandomVector<decltype(xy)>();
+    v.xy() = xy;
+    ASSERT_EQ( xy, v.xy() );
 }
 
-TYPED_TEST(VectorManyTest, InstantiateElementAccessY )
+TYPED_TEST(VectorManyTest, ElementAccessY )
 {
-    TypeParam a(1);
-    a.y() = a.y();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto y = v.y();
+    ASSERT_EQ( y, v[1] );
+    y = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.y() = y;
+    ASSERT_EQ( y, v[1] );
 }
 
-TYPED_TEST(Vector3Test, InstantiateElementAccessZ )
+TYPED_TEST(VectorManyTest, ElementAccessXY )
 {
-    TypeParam a(1);
-    a.z() = a.z();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xy = v.xy();
+    ASSERT_EQ( xy, (Vector<typename TypeParam::scalar_type,
+                           2>{v[0],v[1]}));
+    xy = GetRandomVector<decltype(xy)>();
+    v.xy() = xy;
+    ASSERT_EQ( xy, v.xy() );
 }
 
-TYPED_TEST(Vector4Test, InstantiateElementAccessZ )
+TYPED_TEST(Vector3Test, ElementAccessZ )
 {
-    TypeParam a(1);
-    a.z() = a.z();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto z = v.z();
+    ASSERT_EQ( z, v[2] );
+    z = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.z() = z;
+    ASSERT_EQ( z, v[2] );
 }
 
-TYPED_TEST(VectorManyTest, InstantiateElementAccessZ )
+TYPED_TEST(Vector3Test, ElementAccessXYZ )
 {
-    TypeParam a(1);
-    a.z() = a.z();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xyz = v.xyz();
+    ASSERT_EQ( xyz, (Vector<typename TypeParam::scalar_type,
+                            3>{v[0],v[1],v[2]}));
+    xyz = GetRandomVector<decltype(xyz)>();
+    v.xyz() = xyz;
+    ASSERT_EQ( xyz, v.xyz() );
 }
 
-TYPED_TEST(Vector4Test, InstantiateElementAccessW )
+TYPED_TEST(Vector4Test, ElementAccessZ )
 {
-    TypeParam a(1);
-    a.w() = a.w();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto z = v.z();
+    ASSERT_EQ( z, v[2] );
+    z = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.z() = z;
+    ASSERT_EQ( z, v[2] );
 }
 
-TYPED_TEST(VectorManyTest, InstantiateElementAccessW )
+TYPED_TEST(Vector4Test, ElementAccessXYZ )
 {
-    TypeParam a(1);
-    a.w() = a.w();
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xyz = v.xyz();
+    ASSERT_EQ( xyz, (Vector<typename TypeParam::scalar_type,
+                            3>{v[0],v[1],v[2]}));
+    xyz = GetRandomVector<decltype(xyz)>();
+    v.xyz() = xyz;
+    ASSERT_EQ( xyz, v.xyz() );
 }
 
-TYPED_TEST(VectorTest, InstantiateUnaryOperatorPlus )
+TYPED_TEST(VectorManyTest, ElementAccessZ )
 {
-    TypeParam a(1);
-    +a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto z = v.z();
+    ASSERT_EQ( z, v[2] );
+    z = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.z() = z;
+    ASSERT_EQ( z, v[2] );
 }
 
-TYPED_TEST(VectorTest, InstantiateUnaryOperatorMinus )
+TYPED_TEST(VectorManyTest, ElementAccessXYZ )
 {
-    TypeParam a(1);
-    -a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xyz = v.xyz();
+    ASSERT_EQ( xyz, (Vector<typename TypeParam::scalar_type,
+                            3>{v[0],v[1],v[2]}));
+    xyz = GetRandomVector<decltype(xyz)>();
+    v.xyz() = xyz;
+    ASSERT_EQ( xyz, v.xyz() );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorScalarPlusEquals )
+TYPED_TEST(Vector4Test, ElementAccessW )
 {
-    TypeParam a(1);
-    a += typename TypeParam::scalar_type{1};
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto w = v.w();
+    ASSERT_EQ( w, v[3] );
+    w = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.w() = w;
+    ASSERT_EQ( w, v[3] );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorScalarMinusEquals )
+TYPED_TEST(Vector4Test, ElementAccessXYZW )
 {
-    TypeParam a(1);
-    a -= typename TypeParam::scalar_type{1};
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xyzw = v.xyzw();
+    ASSERT_EQ( xyzw, (Vector<typename TypeParam::scalar_type,
+                             4>{v[0],v[1],v[2],v[3]}));
+    xyzw = GetRandomVector<decltype(xyzw)>();
+    v.xyzw() = xyzw;
+    ASSERT_EQ( xyzw, v.xyzw() );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorScalarMultiplyEquals )
+TYPED_TEST(VectorManyTest, ElementAccessW )
 {
-    TypeParam a(1);
-    a *= typename TypeParam::scalar_type{1};
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto w = v.w();
+    ASSERT_EQ( w, v[3] );
+    w = GetRandomScalar<typename TypeParam::scalar_type>();
+    v.w() = w;
+    ASSERT_EQ( w, v[3] );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorScalarDivideEquals )
+TYPED_TEST(VectorManyTest, ElementAccessXYZW )
 {
-    TypeParam a(1);
-    a /= typename TypeParam::scalar_type{1};
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto xyzw = v.xyzw();
+    ASSERT_EQ( xyzw, (Vector<typename TypeParam::scalar_type,
+                             4>{v[0],v[1],v[2],v[3]}));
+    xyzw = GetRandomVector<decltype(xyzw)>();
+    v.xyzw() = xyzw;
+    ASSERT_EQ( xyzw, v.xyzw() );
 }
 
+/*
 TYPED_TEST(VectorTest, InstantiateOperatorPlusEquals )
 {
     TypeParam a(1);
@@ -436,3 +515,4 @@ TYPED_TEST(VectorTest, InstantiateLength )
     a.Length();
     SUCCEED();
 }
+*/
