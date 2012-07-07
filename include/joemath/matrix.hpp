@@ -114,8 +114,8 @@ namespace JoeMath
               typename Scalar2, u32 Rows2, u32 Columns2,
               typename ReturnScalar =
                 decltype( std::declval<Scalar>( ) * std::declval<Scalar2>( ) )>
-    inline Matrix<ReturnScalar, Matrix<Scalar2, Rows2, Columns2>::vector_size,
-                                Matrix<Scalar, Rows, Columns>::vector_size>
+    inline Matrix<ReturnScalar, Matrix<Scalar, Rows, Columns>::vector_size,
+                                Matrix<Scalar2, Rows2, Columns2>::vector_size>
                                             Outer   (
                                     const Matrix<Scalar, Rows, Columns>& m0,
                                     const Matrix<Scalar2, Rows2, Columns2>& m1 );
@@ -291,7 +291,6 @@ namespace JoeMath
         //
 
         const Scalar&                   x               ( ) const;
-
         Scalar&                         x               ( );
 
         const Scalar&                   y               ( ) const;
@@ -651,6 +650,6 @@ namespace JoeMath
         friend  Matrix<Scalar_, 4, 4>                  Ortho           ( Scalar_ left, Scalar_ right, Scalar_ top, Scalar_ bottom, Scalar_ near, Scalar_ far);
         
     };    
-};
+}
 
 #include "inl/matrix-inl.hpp"

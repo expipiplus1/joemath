@@ -1116,8 +1116,8 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Rows2, u32 Columns2,
               typename ReturnScalar>
-    inline Matrix<ReturnScalar, Matrix<Scalar2, Rows2, Columns2>::vector_size,
-                                Matrix<Scalar, Rows, Columns>::vector_size>
+    inline Matrix<ReturnScalar, Matrix<Scalar, Rows, Columns>::vector_size,
+                                Matrix<Scalar2, Rows2, Columns2>::vector_size>
                                             Outer           (
                                     const Matrix<Scalar, Rows, Columns>& m0,
                                     const Matrix<Scalar2, Rows2, Columns2>& m1 )
@@ -1127,8 +1127,8 @@ namespace JoeMath
                        "Trying to take the outer product between one or more "
                        "non-vectors" );
         Matrix<ReturnScalar,
-               Matrix<Scalar2,Rows2,Columns2>::vector_size,
-               Matrix<Scalar,Rows,Columns>::vector_size> ret;
+               Matrix<Scalar,Rows,Columns>::vector_size,
+               Matrix<Scalar2,Rows2,Columns2>::vector_size> ret;
 
         for( u32 i = 0; i < m0.vector_size; ++i )
             for( u32 j = 0; j < m1.vector_size; ++j )
