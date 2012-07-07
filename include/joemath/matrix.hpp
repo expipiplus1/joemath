@@ -172,6 +172,7 @@ namespace JoeMath
         Scalar m_elements[Rows][Columns];
         //std::array<std::array<Scalar, Columns>, Rows> m_elements;
 
+        typedef Scalar scalar_type;
         static const u32 rows = Rows;
         static const u32 columns = Columns;
 
