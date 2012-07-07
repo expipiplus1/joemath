@@ -303,7 +303,7 @@ namespace JoeMath
     inline  typename std::enable_if<IsVector,  const Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
-        return m_elements[0][i];
+        return *(m_elements[0]+i);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -311,7 +311,7 @@ namespace JoeMath
     inline  typename std::enable_if<IsVector,  Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
-        return m_elements[0][i];
+        return *(m_elements[0]+i);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -489,7 +489,7 @@ namespace JoeMath
         Matrix<Scalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Rows; ++j )
+            for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[i][j] = -m_elements[i][j];
             
         return ret;
@@ -1130,9 +1130,9 @@ namespace JoeMath
                Matrix<Scalar2,Rows2,Columns2>::vector_size,
                Matrix<Scalar,Rows,Columns>::vector_size> ret;
 
-        for( u32 i = 0; i < m1.vector_size; ++i )
-            for( u32 j = 0; j < m0.vector_size; ++j )
-                ret.m_elements[i][j] = m0.m_elements[0][j] * m1.m_elements[0][i];
+        for( u32 i = 0; i < m0.vector_size; ++i )
+            for( u32 j = 0; j < m1.vector_size; ++j )
+                ret.m_elements[i][j] = m0[i] * m1[j];
 
         return ret;
     }
