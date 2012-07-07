@@ -12,8 +12,8 @@ namespace
     T GetRandomVector()
     {
         static std::minstd_rand r{0};
-        static std::uniform_real_distribution<typename T::scalar_type> re(-10000,
-                                                                          10000);
+        static std::uniform_real_distribution<typename T::scalar_type> re(-1000,
+                                                                          1000);
         static auto ran = std::bind(re,std::minstd_rand());
         T ret;
         for( u32 i = 0; i < T::vector_size; ++i )
@@ -27,7 +27,7 @@ namespace
     T GetRandomScalar()
     {
         static std::minstd_rand r{0};
-        static std::uniform_real_distribution<T> re(-10000, 10000);
+        static std::uniform_real_distribution<T> re(-1000, 1000);
         static auto ran = std::bind(re,std::minstd_rand());
         return ran();
     }
@@ -396,123 +396,43 @@ TYPED_TEST(VectorManyTest, ElementAccessXYZW )
     ASSERT_EQ( xyzw, v.xyzw() );
 }
 
-/*
-TYPED_TEST(VectorTest, InstantiateOperatorPlusEquals )
+TYPED_TEST(VectorTest, ComponentWiseMultiplication )
 {
-    TypeParam a(1);
-    a += a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto u = GetRandomVector<TypeParam>();
+    auto w = v*u;
+    for( u32 i = 0; i < v.vector_size; ++i )
+        ASSERT_EQ( w[i], v[i]*u[i] );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorMinusEquals )
+TYPED_TEST(VectorTest, ComponentWiseDivision )
 {
-    TypeParam a(1);
-    a -= a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto u = GetRandomVector<TypeParam>();
+    auto w = v/u;
+    for( u32 i = 0; i < v.vector_size; ++i )
+        ASSERT_FLOAT_EQ( w[i], v[i]/u[i] );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorMultiplyEquals )
+TYPED_TEST(VectorTest, Normalize )
 {
-    TypeParam a(1);
-    a *= a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto u = v;
+    u.Normalize();
+    ASSERT_EQ( u, Normalized(v) );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorDivideEquals )
+TYPED_TEST(VectorTest, LengthIsNonNegative )
 {
-    TypeParam a(1);
-    a /= a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto l = v.Length();
+    ASSERT_GE( l, 0 );
 }
 
-TYPED_TEST(VectorTest, InstantiateOperatorEquality )
+TYPED_TEST(VectorTest, LengthSq )
 {
-    TypeParam a(1);
-    a == a;
-    SUCCEED();
+    auto v = GetRandomVector<TypeParam>();
+    auto l = v.Length();
+    auto s = v.LengthSq();
+    ASSERT_FLOAT_EQ( l*l, s );
 }
-
-TYPED_TEST(VectorTest, InstantiateOperatorNEquality )
-{
-    TypeParam a(1);
-    a != a;
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorScalarPlus )
-{
-    TypeParam a(1);
-    a + typename TypeParam::scalar_type{1};
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorScalarMinus )
-{
-    TypeParam a(1);
-    a - typename TypeParam::scalar_type{1};
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorScalarMultiply )
-{
-    TypeParam a(1);
-    a * typename TypeParam::scalar_type{1};
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorScalarDivide )
-{
-    TypeParam a(1);
-    a / typename TypeParam::scalar_type{1};
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorPlus )
-{
-    TypeParam a(1);
-    a + a;
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorMinus )
-{
-    TypeParam a(1);
-    a - a;
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorMultiply )
-{
-    TypeParam a(1);
-    a * a;
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateOperatorDivide )
-{
-    TypeParam a(1);
-    a / a;
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateNormalize )
-{
-    TypeParam a(1);
-    a.Normalize();
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateLengthSq )
-{
-    TypeParam a(1);
-    a.LengthSq();
-    SUCCEED();
-}
-
-TYPED_TEST(VectorTest, InstantiateLength )
-{
-    TypeParam a(1);
-    a.Length();
-    SUCCEED();
-}
-*/
