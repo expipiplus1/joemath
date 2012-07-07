@@ -844,6 +844,8 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  void            Matrix<Scalar, Rows, Columns>::Transpose       ( )
     {
+        static_assert( is_square,
+                       "Trying to transpose a non-square matrix into itself" );
         *this = Transposed(*this);
     }
     
