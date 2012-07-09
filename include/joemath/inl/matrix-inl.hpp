@@ -64,7 +64,7 @@ namespace JoeMath
              i < elements.end();
              ++i, ++c)
         {
-            m_elements[0][c] = *i;
+            *(m_elements[0]+c) = *i;
         }
     }
 
@@ -101,8 +101,12 @@ namespace JoeMath
     inline  typename std::enable_if<Fits, void>::type
                                                 Matrix<Scalar, Rows, Columns>::SetSubMatrix    ( const Matrix<Scalar, Rows2, Columns2>& m )
     {
-        static_assert(Rows2 + i <= Rows, "The target Matrix doesn't have enough rows to set the submatrix");
-        static_assert(Columns2 + j <= Columns, "The target Matrix doesn't have enough columns to set the submatrix");
+        static_assert(Rows2 + i <= Rows,
+                      "The target Matrix doesn't have enough rows to set the "
+                      "submatrix");
+        static_assert(Columns2 + j <= Columns,
+                      "The target Matrix doesn't have enough columns to set the"
+                      " submatrix");
 
         for( u32 row = 0; row < Rows2; ++row )
             for( u32 column = 0; column < Columns2; ++column )
@@ -303,7 +307,7 @@ namespace JoeMath
     inline  typename std::enable_if<IsVector,  const Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
     {
-        return m_elements[0][i];
+        return *(m_elements[0]+i);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -311,7 +315,7 @@ namespace JoeMath
     inline  typename std::enable_if<IsVector,  Scalar&>::type
                                                 Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
     {
-        return m_elements[0][i];
+        return *(m_elements[0]+i);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -489,7 +493,7 @@ namespace JoeMath
         Matrix<Scalar, Rows, Columns> ret;
         
         for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Rows; ++j )
+            for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[i][j] = -m_elements[i][j];
             
         return ret;
@@ -711,13 +715,12 @@ namespace JoeMath
     Matrix<Scalar, Rows, Columns>::operator /
                             ( const Scalar2 s ) const
     {
-        // It would probably be a good idea to cache 1/s here, but what about
-        // no arithmetic types
         Matrix<ReturnScalar, Rows, Columns> ret;
+        auto inv = Scalar{1} / s;
 
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] / s;
+                ret.m_elements[i][j] = m_elements[i][j] * inv;
 
         return ret;
     }
@@ -818,7 +821,6 @@ namespace JoeMath
     Matrix<Scalar, Rows, Columns>::operator *
                            ( const Matrix<Scalar2, Columns, Columns2>& m ) const
     {
-        //TODO
         Matrix<ReturnScalar, Rows, Columns2> ret(0);
 
         for(unsigned i = 0; i < Columns2; ++i)
@@ -844,6 +846,8 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  void            Matrix<Scalar, Rows, Columns>::Transpose       ( )
     {
+        static_assert( is_square,
+                       "Trying to transpose a non-square matrix into itself" );
         *this = Transposed(*this);
     }
     
@@ -854,8 +858,10 @@ namespace JoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
                             Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-        static_assert(IsSquare, "You can only take the determinant of a square matrix");
-        static_assert(SquareMatrixSize == 1, "This function is for square matrices of size 1 only");
+        static_assert( IsSquare,
+                       "Trying to take the determinant of a non-square matrix");
+        static_assert( SquareMatrixSize == 1,
+                       "This function is for square matrices of size 1 only" );
         return m_elements[0][0];
     }
     
@@ -866,9 +872,12 @@ namespace JoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
                             Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-        static_assert(IsSquare, "You can only take the determinant of a square matrix");
-        static_assert(SquareMatrixSize == 2, "This function is for square matrices of size 2 only");
-       return m_elements[0][0]*m_elements[1][1] - m_elements[0][1]*m_elements[1][0];
+        static_assert( IsSquare,
+                       "Trying to take the determinant of a non-square matrix");
+        static_assert( SquareMatrixSize == 2,
+                       "This function is for square matrices of size 2 only" );
+       return m_elements[0][0]*m_elements[1][1] -
+              m_elements[0][1]*m_elements[1][0];
     }
     
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -878,8 +887,10 @@ namespace JoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
                             Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-        static_assert(IsSquare, "You can only take the determinant of a square matrix");
-        static_assert(SquareMatrixSize == 3, "This function is for square matrices of size 3 only");
+        static_assert( IsSquare,
+                       "Trying to take the determinant of a non-square matrix");
+        static_assert( SquareMatrixSize == 3,
+                       "This function is for square matrices of size 3 only" );
         return m_elements[0][0] * (m_elements[1][1]*m_elements[2][2] - m_elements[1][2]*m_elements[2][1])
              - m_elements[1][0] * (m_elements[0][1]*m_elements[2][2] - m_elements[0][2]*m_elements[2][1])
              + m_elements[2][0] * (m_elements[0][1]*m_elements[1][2] - m_elements[0][2]*m_elements[1][1]);
@@ -892,8 +903,10 @@ namespace JoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
                             Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-        static_assert(IsSquare, "You can only take the determinant of a square matrix");
-        static_assert(SquareMatrixSize == 4, "This function is for square matrices of size 4 only");
+        static_assert( IsSquare,
+                       "Trying to take the determinant of a non-square matrix");
+        static_assert( SquareMatrixSize == 4,
+                       "This function is for square matrices of size 4 only" );
                 
         return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0] 
              - m_elements[0][2] * m_elements[1][3] * m_elements[2][1] * m_elements[3][0]
@@ -928,7 +941,8 @@ namespace JoeMath
     inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
                             Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
     {
-        static_assert(IsSquare, "You can only take the determinant of a square matrix");
+        static_assert( IsSquare,
+                       "Trying to take the determinant of a non-square matrix");
         
         ReturnScalar det = ReturnScalar(0);
         
@@ -950,9 +964,10 @@ namespace JoeMath
         
         for( u32 x = 0; x < Rows-1; ++x )
             for( u32 y = 0; y < Columns-1; ++y )
-                    minor_matrix[x][y] = m_elements[x < row ? x : x+1][y < column ? y : y+1];
+                    minor_matrix[x][y] =
+                            m_elements[x < row ? x : x+1][y < column ? y : y+1];
             
-        return minor_matrix.Determinant( );
+        return minor_matrix.Determinant();
     }
                                                         
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -966,8 +981,8 @@ namespace JoeMath
     template <typename ReturnScalar>
     inline ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
     {
-        static_assert( is_vector, "Trying to get the squared length of a "
-                       "non-vector" );
+        static_assert( is_vector,
+                       "Trying to get the squared length of a non-vector" );
         ReturnScalar ret = 0;
         
         for( u32 i = 0; i < Rows; ++i )
@@ -1114,8 +1129,8 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Rows2, u32 Columns2,
               typename ReturnScalar>
-    inline Matrix<ReturnScalar, Matrix<Scalar2, Rows2, Columns2>::vector_size,
-                                Matrix<Scalar, Rows, Columns>::vector_size>
+    inline Matrix<ReturnScalar, Matrix<Scalar, Rows, Columns>::vector_size,
+                                Matrix<Scalar2, Rows2, Columns2>::vector_size>
                                             Outer           (
                                     const Matrix<Scalar, Rows, Columns>& m0,
                                     const Matrix<Scalar2, Rows2, Columns2>& m1 )
@@ -1125,12 +1140,12 @@ namespace JoeMath
                        "Trying to take the outer product between one or more "
                        "non-vectors" );
         Matrix<ReturnScalar,
-               Matrix<Scalar2,Rows2,Columns2>::vector_size,
-               Matrix<Scalar,Rows,Columns>::vector_size> ret;
+               Matrix<Scalar,Rows,Columns>::vector_size,
+               Matrix<Scalar2,Rows2,Columns2>::vector_size> ret;
 
-        for( u32 i = 0; i < m1.vector_size; ++i )
-            for( u32 j = 0; j < m0.vector_size; ++j )
-                ret.m_elements[i][j] = m0.m_elements[0][j] * m1.m_elements[0][i];
+        for( u32 i = 0; i < m0.vector_size; ++i )
+            for( u32 j = 0; j < m1.vector_size; ++j )
+                ret.m_elements[i][j] = m0[i] * m1[j];
 
         return ret;
     }
@@ -1151,16 +1166,17 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             Scale           ( const Matrix<Scalar, 1, Size>& s )
     {
-        Matrix<Scalar, Size, Size> ret( Scalar(0) );
+        Matrix<Scalar, Size, Size> ret( Scalar{0} );
         for( u32 i = 0; i < Size; ++i )
-                ret.m_elements[i][i] = s[i];
+            ret.m_elements[i][i] = s[i];
         return ret;
     }
 
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle )
     {
-        static_assert( Size >= 2, "You can only construct a 2d rotation matrix of size 2 or above");
+        static_assert( Size >= 2,
+                       "Trying to construct a 2d rotation matrix of size 1" );
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
@@ -1176,7 +1192,9 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateX         ( Scalar angle )
     {
-        static_assert( Size >= 3, "You can only construct an x axis rotation matrix of size 3 or above");
+        static_assert( Size >= 3,
+                       "Trying to construct an x axis rotation matrix of size <"
+                       " 3" );
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
@@ -1192,7 +1210,9 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateY         ( Scalar angle )
     {
-        static_assert( Size >= 3, "You can only construct an y axis rotation matrix of size 3 or above");
+        static_assert( Size >= 3,
+                       "Trying to construct an y axis rotation matrix of size <"
+                       " 3" );
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
@@ -1208,7 +1228,9 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
     {
-        static_assert( Size >= 2, "You can only construct an z axis rotation matrix of size 2 or above");
+        static_assert( Size >= 3,
+                       "Trying to construct an z axis rotation matrix of size <"
+                       " 2" );
 
         Scalar sin = std::sin( angle );
         Scalar cos = std::cos( angle );
@@ -1224,7 +1246,9 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z )
     {
-        static_assert( Size >= 3, "You can only construct an zxy axis rotation matrix of size 3 or above");
+        static_assert( Size >= 3,
+                       "Trying to construct an zxy axis rotation matrix of size"
+                        "< 3" );
 
         Matrix<Scalar, 3, 3> rotation = RotateZ( z ) * RotateX( x ) * RotateY( y );
         Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
@@ -1235,7 +1259,9 @@ namespace JoeMath
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             Rotate3D        ( const Matrix<Scalar, 1, 3>& axis, Scalar angle )
     {
-        static_assert( Size >= 3, "You can only construct a angle axis rotation matrix of size 3 or above");
+        static_assert( Size >= 3,
+                       "Trying to construct a angle axis rotation matrix of "
+                       "size < 3" );
         Scalar cos = std::cos( Scalar( angle ) );
         Scalar sin = std::sin( Scalar( angle ) );
 
@@ -1308,13 +1334,9 @@ namespace JoeMath
     template <typename Scalar>
     Matrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near_plane, Scalar far_plane )
     {
-        return Matrix<Scalar, 4, 4>(Scalar( 2 ) / (right - left), Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
+        return Matrix<Scalar, 4, 4>( Scalar( 2 ) / (right - left), Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
                                      Scalar( 0 ), Scalar( 2 ) / (top - bottom), Scalar( 0 ), Scalar( 0 ),
                                      Scalar( 0 ), Scalar( 0 ), Scalar( 1 ) / (near_plane - far_plane),  Scalar( 1 ),
                                      Scalar( 0 ), Scalar( 0 ), near_plane * Scalar( 1 ) / (near_plane - far_plane), Scalar( 0 ));
     }
-    
-};
-
-
-
+}
