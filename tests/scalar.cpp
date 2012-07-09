@@ -1,9 +1,10 @@
 #include "gtest/gtest.h"
-#include <cmath>
 #include <random>
 #include <limits>
 #include <functional>
 #include <joemath/joemath.hpp>
+
+const double pi = std::acos(-1);
 
 using namespace JoeMath;
 
@@ -30,7 +31,7 @@ TYPED_TEST_CASE(ScalarTest, ScalarTypes);
 
 TYPED_TEST(ScalarTest, PiReturnsPi )
 {
-    ASSERT_EQ( Pi<TypeParam>(), TypeParam{M_PI} );
+    ASSERT_EQ( Pi<TypeParam>(), TypeParam{pi} );
 }
 
 TYPED_TEST(ScalarTest, LerpWorks1 )
