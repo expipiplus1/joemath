@@ -29,7 +29,6 @@
 #pragma once
 
 #include <cstdint>
-#include <joemath/config.hpp>
 
 namespace JoeMath
 {

@@ -34,7 +34,6 @@
 #include <type_traits>
 #include <joemath/matrix_traits.hpp>
 #include <joemath/scalar.hpp>
-#include <joemath/config.hpp>
 
 namespace JoeMath
 {
