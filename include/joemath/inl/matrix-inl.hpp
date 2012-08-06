@@ -42,7 +42,7 @@ namespace JoeMath
     inline  Matrix<Scalar, Rows, Columns>::Matrix             ( )
     {
     }
-    
+
     // Initialize every value to s
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar s )
@@ -51,7 +51,7 @@ namespace JoeMath
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = s;
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Rows, Columns>::Matrix
                             ( const std::initializer_list<Scalar>& elements )
@@ -86,7 +86,7 @@ namespace JoeMath
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 m_elements[i][j] = m.m_elements[i][j];
-            
+
         return *this;
     }
 
@@ -104,8 +104,8 @@ namespace JoeMath
                       "The target Matrix doesn't have enough rows to set the "
                       "submatrix");
         static_assert(Columns2 + j <= Columns,
-                      "The target Matrix doesn't have enough columns to set the"
-                      " submatrix");
+                      "The target Matrix doesn't have enough columns to set "
+                      "the submatrix");
 
         for( u32 row = 0; row < Rows2; ++row )
             for( u32 column = 0; column < Columns2; ++column )
@@ -114,7 +114,7 @@ namespace JoeMath
 
     //
     // Getters
-    // 
+    //
 
     template <typename Scalar, u32 Rows, u32 Columns>
     template <u32 Rows2, u32 Columns2, u32 i, u32 j,
@@ -150,23 +150,23 @@ namespace JoeMath
     {
         return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(m_elements[row]);
     }
-        
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline        Matrix<Scalar, 1, Columns>&  Matrix<Scalar, Rows, Columns>::GetRow          ( u32 row )
     {
         return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(m_elements[row]);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline        Matrix<Scalar, Rows, 1>      Matrix<Scalar, Rows, Columns>::GetColumn       ( u32 column ) const
     {
         Matrix<Scalar, Rows, 1> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             ret.m_elements[i][0] = m_elements[i][column];
-        
+
         return ret;
-    }          
+    }
 
     template <typename Scalar, u32 Rows, u32 Columns>
     inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetRight        ( )  const
@@ -175,7 +175,7 @@ namespace JoeMath
                        "Trying to get the 'Right' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Right' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][0]);
     }
 
@@ -186,7 +186,7 @@ namespace JoeMath
                        "Trying to get the 'Right' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Right' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][0]);
     }
 
@@ -197,7 +197,7 @@ namespace JoeMath
                        "Trying to set the 'Right' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to set the 'Right' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         SetSubMatrix<1, 3, 0, 0>( m );
     }
 
@@ -208,7 +208,7 @@ namespace JoeMath
                        "Trying to get the 'Forward' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Forward' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[2][0]);
     }
 
@@ -219,7 +219,7 @@ namespace JoeMath
                        "Trying to get the 'Forward' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Forward' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[2][0]);
     }
 
@@ -230,7 +230,7 @@ namespace JoeMath
                        "Trying to set the 'Forward' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to set the 'Forward' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         SetSubMatrix<1, 3, 2, 0>( m );
     }
 
@@ -241,7 +241,7 @@ namespace JoeMath
                        "Trying to get the 'Up' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Up' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][1]);
     }
 
@@ -252,7 +252,7 @@ namespace JoeMath
                        "Trying to get the 'Up' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to get the 'Up' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][1]);
     }
 
@@ -263,7 +263,7 @@ namespace JoeMath
                        "Trying to set the 'Up' vector of a vector" );
         static_assert( min_dimension_size >= 3,
                        "Trying to set the 'Up' vector of a matrix which "
-                       " isn't at least 3x3" );
+                       "isn't at least 3x3" );
         SetSubMatrix<1, 3, 1, 0>( m );
     }
 
@@ -324,7 +324,7 @@ namespace JoeMath
     {
         return *reinterpret_cast<const Vector<Scalar, Columns>*>(&m_elements[i]);
     }
-                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsVector>
     inline  typename std::enable_if<!IsVector, Vector<Scalar, Columns>&>::type
@@ -332,7 +332,7 @@ namespace JoeMath
     {
         return *reinterpret_cast<Vector<Scalar, Columns>*>(&m_elements[i]);
     }
-        
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline const Scalar&                        Matrix<Scalar, Rows, Columns>::x               ( ) const
     {
@@ -340,7 +340,7 @@ namespace JoeMath
                        "Trying to get the x component of a non-vector");
         return m_elements[0][0];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline Scalar&                              Matrix<Scalar, Rows, Columns>::x               ( )
     {
@@ -415,8 +415,8 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the xy components of a non-vector");
         static_assert( vector_size >= 2,
-                       "Trying to get the xy components of a vector of size <"
-                       " 2" );
+                       "Trying to get the xy components of a vector of size < "
+                       "2" );
         return *reinterpret_cast<const Vector<Scalar, 2>*>(this);
     }
 
@@ -426,8 +426,8 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the xy components of a non-vector");
         static_assert( vector_size >= 2,
-                       "Trying to get the xy components of a vector of size <"
-                       " 2" );
+                       "Trying to get the xy components of a vector of size < "
+                       "2" );
         return *reinterpret_cast<Vector<Scalar, 2>*>(this);
     }
 
@@ -437,8 +437,8 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the xyx components of a non-vector");
         static_assert( vector_size >= 3,
-                       "Trying to get the xyz components of a vector of size <"
-                       " 3" );
+                       "Trying to get the xyz components of a vector of size < "
+                       "3" );
         return *reinterpret_cast<const Vector<Scalar, 3>*>(this);
     }
 
@@ -448,8 +448,8 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the xyx components of a non-vector");
         static_assert( vector_size >= 3,
-                       "Trying to get the xyz components of a vector of size <"
-                       " 3" );
+                       "Trying to get the xyz components of a vector of size < "
+                       "3" );
         return *reinterpret_cast<Vector<Scalar, 3>*>(this);
     }
 
@@ -459,8 +459,8 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the xyxw components of a non-vector");
         static_assert( vector_size >= 4,
-                       "Trying to get the xyzw components of a vector of size <"
-                       " 4" );
+                       "Trying to get the xyzw components of a vector of size "
+                       "< 4" );
         return *reinterpret_cast<const Vector<Scalar, 4>*>(this);
     }
 
@@ -471,37 +471,37 @@ namespace JoeMath
                        "Trying to get the xyxw components of a non-vector");
         static_assert( vector_size >= 4,
                        "Trying to get the xyzw components of a vector of size <"
-                       " 4" );
+                       "4" );
         return *reinterpret_cast<Vector<Scalar, 4>*>(this);
     }
-    
+
     //
     // Unary Operators
     //
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Rows, Columns>      Matrix<Scalar, Rows, Columns>::operator +     ( ) const
     {
         return *this;
     }
-    
+
     // the negated vertion of this vector
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Rows, Columns>      Matrix<Scalar, Rows, Columns>::operator -     ( ) const
     {
         Matrix<Scalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[i][j] = -m_elements[i][j];
-            
+
         return ret;
     }
-    
+
     //
     // Assignment operators
     //
-    
+
     // Scalar addition
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -510,7 +510,7 @@ namespace JoeMath
         *this = *this + s;
         return *this;
     }
-    
+
     // Scalar subtraction
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -519,7 +519,7 @@ namespace JoeMath
         *this = *this - s;
         return *this;
     }
-    
+
     // Scalar multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -528,7 +528,7 @@ namespace JoeMath
         *this = *this * s;
         return *this;
     }
-    
+
     // Scalar division
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -537,7 +537,7 @@ namespace JoeMath
         *this = *this / s;
         return *this;
     }
-    
+
     // Component wise addition
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -546,7 +546,7 @@ namespace JoeMath
         *this = *this + m;
         return *this;
     }
-    
+
     // Component wise subtraction
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -555,7 +555,7 @@ namespace JoeMath
         *this = *this - m;
         return *this;
     }
-    
+
     // Component wise multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
@@ -570,7 +570,7 @@ namespace JoeMath
         *this = *this * m;
         return *this;
     }
-    
+
     // Component wise division
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2,
@@ -584,7 +584,7 @@ namespace JoeMath
         *this = *this / m;
         return *this;
     }
-    
+
     // Matrix multiplication
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
@@ -593,8 +593,8 @@ namespace JoeMath
         *this = *this * m;
         return *this;
     }
-    
-    
+
+
     //
     // Binary Operators
     //
@@ -670,7 +670,7 @@ namespace JoeMath
 
         return ret;
     }
-   
+
     /**
       * Multiply all elements of the matrix by a scalar value
       */
@@ -682,14 +682,14 @@ namespace JoeMath
                             ( const Scalar2 s ) const
     {
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[i][j] = m_elements[i][j] * s;
-            
+
         return ret;
     }
-    
+
     /**
       * Mulitplies all elements of a matrix by a scalar value
       */
@@ -829,11 +829,11 @@ namespace JoeMath
 
         return ret;
     }
-    
+
     //
     // Methods
     //
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <bool IsSquare>
     inline  typename std::enable_if<IsSquare, void>::type
@@ -841,7 +841,7 @@ namespace JoeMath
     {
         *this = Inverted(*this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  void            Matrix<Scalar, Rows, Columns>::Transpose       ( )
     {
@@ -849,7 +849,7 @@ namespace JoeMath
                        "Trying to transpose a non-square matrix into itself" );
         *this = Transposed(*this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
               bool     IsSquare,
@@ -863,7 +863,7 @@ namespace JoeMath
                        "This function is for square matrices of size 1 only" );
         return m_elements[0][0];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
               bool     IsSquare,
@@ -878,7 +878,7 @@ namespace JoeMath
        return m_elements[0][0]*m_elements[1][1] -
               m_elements[0][1]*m_elements[1][0];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
               bool     IsSquare,
@@ -894,7 +894,7 @@ namespace JoeMath
              - m_elements[1][0] * (m_elements[0][1]*m_elements[2][2] - m_elements[0][2]*m_elements[2][1])
              + m_elements[2][0] * (m_elements[0][1]*m_elements[1][2] - m_elements[0][2]*m_elements[1][1]);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
               bool     IsSquare,
@@ -906,8 +906,8 @@ namespace JoeMath
                        "Trying to take the determinant of a non-square matrix");
         static_assert( SquareMatrixSize == 4,
                        "This function is for square matrices of size 4 only" );
-                
-        return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0] 
+
+        return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0]
              - m_elements[0][2] * m_elements[1][3] * m_elements[2][1] * m_elements[3][0]
              - m_elements[0][3] * m_elements[1][1] * m_elements[2][2] * m_elements[3][0]
              + m_elements[0][1] * m_elements[1][3] * m_elements[2][2] * m_elements[3][0]
@@ -932,7 +932,7 @@ namespace JoeMath
              - m_elements[0][1] * m_elements[1][0] * m_elements[2][2] * m_elements[3][3]
              + m_elements[0][0] * m_elements[1][1] * m_elements[2][2] * m_elements[3][3];
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar,
               bool     IsSquare,
@@ -942,14 +942,14 @@ namespace JoeMath
     {
         static_assert( IsSquare,
                        "Trying to take the determinant of a non-square matrix");
-        
+
         ReturnScalar det = ReturnScalar(0);
-        
+
         for( u32 i = 0; i < Columns; ++i )
         {
             det += ((i & 0x1) ? -1 : 1) * m_elements[0][i] * Minor(0, i);
         }
-        
+
         return det;
     }
 
@@ -960,22 +960,22 @@ namespace JoeMath
                             Matrix<Scalar, Rows, Columns>::Minor           ( u32 row, u32 column ) const
     {
         Matrix<Scalar, Rows-1, Columns-1> minor_matrix;
-        
+
         for( u32 x = 0; x < Rows-1; ++x )
             for( u32 y = 0; y < Columns-1; ++y )
                     minor_matrix[x][y] =
                             m_elements[x < row ? x : x+1][y < column ? y : y+1];
-            
+
         return minor_matrix.Determinant();
     }
-                                                        
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  void            Matrix<Scalar, Rows, Columns>::Normalize       ( )
     {
         static_assert( is_vector, "Trying to normalize a non-vector" );
         *this = Normalized(*this);
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar>
     inline ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
@@ -983,14 +983,14 @@ namespace JoeMath
         static_assert( is_vector,
                        "Trying to get the squared length of a non-vector" );
         ReturnScalar ret = 0;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret += m_elements[i][j] * m_elements[i][j];
-            
+
         return ret;
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     template <typename ReturnScalar>
     inline  ReturnScalar    Matrix<Scalar, Rows, Columns>::Length          ( ) const
@@ -998,36 +998,36 @@ namespace JoeMath
         static_assert( is_vector, "Trying to get the length of a non-vector" );
         return std::sqrt( LengthSq() );
     }
-                                                        
+
     //
     // Misc
     //
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline  Matrix<Scalar, Columns, Rows>                  Transposed      ( const Matrix<Scalar, Rows, Columns>& m )
     {
         Matrix<Scalar, Columns, Rows> ret;
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret.m_elements[j][i] = m.m_elements[i][j];
-        
+
         return ret;
     }
-   
+
     template <typename Scalar>
     inline Matrix<Scalar, 1, 1> Inverted    ( const Matrix<Scalar, 1, 1>& m )
     {
         return Matrix<Scalar, 1, 1>(Scalar{1}/m.m_elements[0][0]);
     }
-    
+
     template <typename Scalar>
     inline Matrix<Scalar, 2, 2> Inverted    ( const Matrix<Scalar, 2, 2>& m )
     {
         return Matrix<Scalar, 2, 2>( m.m_elements[1][1], -m.m_elements[0][1],
                                      -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
     }
-    
+
     /*
     template <typename Scalar>
     inline Matrix<ReturnScalar, 3, 3> Inverted ( const Matrix<Scalar, 3, 3>& m )
@@ -1046,36 +1046,36 @@ namespace JoeMath
         ReturnScalar det = m.m_elements[0][0] * ret.m_elements[0][0]
                          - m.m_elements[0][1] * ret.m_elements[0][1]
                          + m.m_elements[0][2] * ret.m_elements[0][2];
-                         
+
         return ret / det;
     }
     */
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline Matrix<Scalar, Rows, Columns>    Inverted    (
                                         const Matrix<Scalar, Rows, Columns>& m )
     {
         static_assert( Matrix<Scalar, Rows, Columns>::is_square,
                        "Trying to invert a non-square matrix" );
-        
+
         Matrix<Scalar, Columns, Rows> ret;
-        
+
         //
         // Compute the cofactors
         //
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[j][i] = (((i + j) & 0x1) ? -1 : 1) * m.Minor(i,j);     
-            
+                ret.m_elements[j][i] = (((i + j) & 0x1) ? -1 : 1) * m.Minor(i,j);
+
         Scalar det = Scalar(0);
-        
+
         for( u32 i = 0; i < Columns; ++i )
             det += m.m_elements[0][i] * ret.m_elements[i][0];
-        
+
         return ret / det;
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns>
     inline Matrix<Scalar, Rows, Columns>    Normalized      (
                                     const Matrix<Scalar, Rows, Columns>& m )
@@ -1084,7 +1084,7 @@ namespace JoeMath
                       "Trying to normalize a non-vector" );
         return m / m.Length();
     }
-   
+
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
@@ -1095,14 +1095,14 @@ namespace JoeMath
                        "Trying to take the dot product of non-vectors" );
 
         ReturnScalar ret{0};
-        
+
         for( u32 i = 0; i < Rows; ++i )
             for( u32 j = 0; j < Columns; ++j )
                 ret += m0.m_elements[i][j] * m1.m_elements[i][j];
-        
+
         return ret;
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar>
@@ -1117,14 +1117,14 @@ namespace JoeMath
                        "size != 3" );
 
         Matrix<ReturnScalar, Rows, Columns> ret;
-        
+
         ret.x() = m0.y() * m1.z() - m0.z() * m1.y();
         ret.y() = m0.z() * m1.x() - m0.x() * m1.z();
         ret.z() = m0.x() * m1.y() - m0.y() * m1.x();
-        
+
         return ret;
     }
-    
+
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2, u32 Rows2, u32 Columns2,
               typename ReturnScalar>
@@ -1150,8 +1150,8 @@ namespace JoeMath
     }
 
     //
-    // Utility functions    
-    //     
+    // Utility functions
+    //
 
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             Identity        ( )
@@ -1202,7 +1202,7 @@ namespace JoeMath
         ret.m_elements[1][2] = -sin;
         ret.m_elements[2][1] = sin;
         ret.m_elements[2][2] = cos;
-        
+
         return ret;
     }
 
@@ -1220,9 +1220,9 @@ namespace JoeMath
         ret.m_elements[0][2] = sin;
         ret.m_elements[2][0] = -sin;
         ret.m_elements[2][2] = cos;
-        
+
         return ret;
-    } 
+    }
 
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
@@ -1238,9 +1238,9 @@ namespace JoeMath
         ret.m_elements[0][1] = -sin;
         ret.m_elements[1][0] = sin;
         ret.m_elements[1][1] = cos;
-        
+
         return ret;
-    } 
+    }
 
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z )
@@ -1253,7 +1253,7 @@ namespace JoeMath
         Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
         ret.template SetSubMatrix<3,3>(rotation);
         return ret;
-    } 
+    }
 
     template <typename Scalar, u32 Size>
     Matrix<Scalar, Size, Size>             Rotate3D        ( const Matrix<Scalar, 1, 3>& axis, Scalar angle )
