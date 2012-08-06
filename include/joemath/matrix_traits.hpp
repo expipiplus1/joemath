@@ -29,7 +29,6 @@
 #pragma once
 
 #include <type_traits>
-#include <joemath/config.hpp>
 
 namespace JoeMath
 {
