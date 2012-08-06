@@ -1,14 +1,14 @@
-#--------------------------------------------------------------------
+#
 # CMakeLists.txt for joemath
 # Adapted from glfw (http://glfw.org)
-#--------------------------------------------------------------------
+#
+project( joemath )
 
-project(joemath)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required( VERSION 2.8 )
 
 option( joemath_build_tests "Build the tests for JoeMath" OFF )
 
-include_directories(include)
+include_directories( ${joemath_SOURCE_DIR}/include )
 
 set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/scalar-inl.hpp
@@ -17,48 +17,33 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/inl/matrix-inl.hpp
                       ${joemath_SOURCE_DIR}/include/joemath/joemath.hpp)
 
-#--------------------------------------------------------------------
+#
 # Create shared configuration header
-#--------------------------------------------------------------------
+#
 
-configure_file(${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
-               ${joemath_BINARY_DIR}/libjoemath.pc @ONLY)
+configure_file( ${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
+                ${joemath_BINARY_DIR}/libjoemath.pc @ONLY )
 
-set( CXX11_FLAGS "--std=c++11" )
-#set( CXX11_FLAGS "--stdlib=libc++ --std=c++11" )
+set( joemath_CXX_FLAGS         "-std=c++0x -Wall" CACHE STRING "joemath compiler flags" )
+set( joemath_CXX_FLAGS_RELEASE "-std=c++0x -Wall -O4 -ffast-math -fomit-frame-pointer -finline-functions" CACHE STRING "joelang release compiler flags" )
 
-if(MSVC)
-  # Force to always compile with W4
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]") 
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-else()
-  # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W ${CXX11_FLAGS} -O3 -ffast-math -fomit-frame-pointer -finline-functions")
-endif()
+add_custom_target( joemath joemath_SOURCES ${joemath_SOURCES} )
 
-add_custom_target(JoeMath joemath_SOURCES ${joemath_SOURCES})
-
-#--------------------------------------------------------------------
+#
 # Add example and test programs
-#--------------------------------------------------------------------
-add_subdirectory(tests)
+#
+add_subdirectory( tests )
 
-#--------------------------------------------------------------------
-# Install standard files 
-#--------------------------------------------------------------------
+#
+# Install files 
+#
 
-install(DIRECTORY include/joemath DESTINATION include 
-        FILES_MATCHING REGEX "(.*\\.hpp$|.*\\.inl$)")
+install( DIRECTORY include/joemath DESTINATION include 
+         FILES_MATCHING REGEX "(.*\\.hpp$)" )
 
-install(FILES license.txt readme.txt 
-        DESTINATION share/doc/joemath/)
-
-#--------------------------------------------------------------------
+#
 # Testing
-#--------------------------------------------------------------------
+#
 
 if( joemath_build_tests )
     # Enable ExternalProject CMake module
@@ -126,9 +111,9 @@ if( joemath_build_tests )
     add_test( all_tests tester --gtest_repeat=1000 )
 endif()
 
-#--------------------------------------------------------------------
+#
 # Uninstall operation
-#--------------------------------------------------------------------
+#
 if( NOT TARGET uninstall )
     configure_file(${joemath_SOURCE_DIR}/cmake_uninstall.cmake.in
                    ${joemath_BINARY_DIR}/cmake_uninstall.cmake IMMEDIATE @ONLY)
