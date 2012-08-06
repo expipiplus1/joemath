@@ -21,11 +21,11 @@ set(joemath_SOURCES   ${joemath_SOURCE_DIR}/include/joemath/scalar.hpp
 # Create shared configuration header
 #
 
-configure_file( ${joemath_SOURCE_DIR}/libjoemath.pc.cmake 
+configure_file( ${joemath_SOURCE_DIR}/libjoemath.pc.cmake
                 ${joemath_BINARY_DIR}/libjoemath.pc @ONLY )
 
-set( joemath_CXX_FLAGS         "-std=c++0x -Wall" CACHE STRING "joemath compiler flags" )
-set( joemath_CXX_FLAGS_RELEASE "-std=c++0x -Wall -O4 -ffast-math -fomit-frame-pointer -finline-functions" CACHE STRING "joelang release compiler flags" )
+set( joemath_CXX_FLAGS         "-std=c++11 -Wall" CACHE STRING "joemath compiler flags" )
+set( joemath_CXX_FLAGS_RELEASE "-std=c++11 -Wall -O4 -ffast-math -fomit-frame-pointer -finline-functions" CACHE STRING "joelang release compiler flags" )
 
 add_custom_target( joemath joemath_SOURCES ${joemath_SOURCES} )
 
@@ -35,10 +35,10 @@ add_custom_target( joemath joemath_SOURCES ${joemath_SOURCES} )
 add_subdirectory( tests )
 
 #
-# Install files 
+# Install files
 #
 
-install( DIRECTORY include/joemath DESTINATION include 
+install( DIRECTORY include/joemath DESTINATION include
          FILES_MATCHING REGEX "(.*\\.hpp$)" )
 
 #
