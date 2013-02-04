@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <joemath/types.hpp>
 #include <joemath/scalar.hpp>
 #include <joemath/matrix.hpp>
 

@@ -32,36 +32,13 @@
 #include <array>
 #include <initializer_list>
 #include <type_traits>
+
+#include <joemath/types.hpp>
 #include <joemath/matrix_traits.hpp>
 #include <joemath/scalar.hpp>
 
 namespace JoeMath
 {
-    template <typename Scalar, u32 Rows, u32 Columns>
-    class Matrix;
-
-    //
-    // Typedefs
-    //
-    typedef Matrix<s32, 1, 2>   int2;
-    typedef Matrix<s32, 1, 3>   int3;
-    typedef Matrix<s32, 1, 4>   int4;
-
-    typedef Matrix<u32, 1, 2>   uint2;
-    typedef Matrix<u32, 1, 3>   uint3;
-    typedef Matrix<u32, 1, 4>   uint4;
-
-    typedef Matrix<float, 1, 2> float2;
-    typedef Matrix<float, 1, 3> float3;
-    typedef Matrix<float, 1, 4> float4;
-
-    typedef Matrix<float, 2, 2> float2x2;
-    typedef Matrix<float, 3, 3> float3x3;
-    typedef Matrix<float, 4, 4> float4x4;
-
-    template <typename Scalar, u32 Size>
-    using Vector = Matrix<Scalar, 1, Size>;
-
     //
     // Binary operators
     //
@@ -141,9 +118,6 @@ namespace JoeMath
     Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z );
-
-    template <typename Scalar, u32 Size = 3>
     Matrix<Scalar, Size, Size>             Rotate3D        ( const Matrix<Scalar, 1, 3>& axis, Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
@@ -168,8 +142,8 @@ namespace JoeMath
     class Matrix
     {
     public:
-        Scalar m_elements[Rows][Columns];
-        //std::array<std::array<Scalar, Columns>, Rows> m_elements;
+        //Scalar m_elements[Columns][Rows];
+        std::array<std::array<Scalar, Rows>, Columns> m_elements;
 
         typedef Scalar   scalar_type;
         static const u32 rows = Rows;
