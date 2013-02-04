@@ -68,6 +68,16 @@ namespace JoeMath
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
+    inline  Matrix<Scalar, Rows, Columns>::Matrix
+                 ( const std::initializer_list<Vector<Scalar, Rows>>& vectors )
+    {
+        assert( elements.size() == Columns &&
+                "Incorrect number of vectors in initizlizer" );
+        for( auto i = elements.begin(); i < elements.end(); ++i )
+            SetColumn(*i);
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
     template <typename Scalar2>
     inline  Matrix<Scalar, Rows, Columns>::Matrix
                             ( const Matrix<Scalar2, Rows, Columns> m)

@@ -32,6 +32,7 @@
 #include <array>
 #include <initializer_list>
 #include <type_traits>
+
 #include <joemath/matrix_traits.hpp>
 #include <joemath/scalar.hpp>
 
@@ -43,24 +44,24 @@ namespace JoeMath
     //
     // Typedefs
     //
-    typedef Matrix<s32, 1, 2>   int2;
-    typedef Matrix<s32, 1, 3>   int3;
-    typedef Matrix<s32, 1, 4>   int4;
-
-    typedef Matrix<u32, 1, 2>   uint2;
-    typedef Matrix<u32, 1, 3>   uint3;
-    typedef Matrix<u32, 1, 4>   uint4;
-
-    typedef Matrix<float, 1, 2> float2;
-    typedef Matrix<float, 1, 3> float3;
-    typedef Matrix<float, 1, 4> float4;
-
-    typedef Matrix<float, 2, 2> float2x2;
-    typedef Matrix<float, 3, 3> float3x3;
-    typedef Matrix<float, 4, 4> float4x4;
-
     template <typename Scalar, u32 Size>
-    using Vector = Matrix<Scalar, 1, Size>;
+    using Vector = Matrix<Scalar, Size, 1>;
+
+    using int2   = Vector<s32, 2>;
+    using int3   = Vector<s32, 3>;
+    using int4   = Vector<s32, 4>;
+
+    using int2   = Vector<s32, 2>;
+    using int3   = Vector<s32, 3>;
+    using int4   = Vector<s32, 4>;
+
+    using float2 = Vector<float, 2>;
+    using float3 = Vector<float, 3>;
+    using float4 = Vector<float, 4>;
+
+    using float2x2 = Matrix<float, 2, 2>;
+    using float3x3 = Matrix<float, 3, 3>;
+    using float4x4 = Matrix<float, 4, 4>;
 
     //
     // Binary operators
@@ -72,7 +73,7 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns,
               typename Scalar2,
               typename ReturnScalar =
-                      decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
+                   decltype( std::declval<Scalar>() * std::declval<Scalar2>() )>
     Matrix<ReturnScalar, Rows, Columns> operator * (
                                     const Scalar2 s,
                                     const Matrix<Scalar, Rows, Columns>& m );
@@ -82,7 +83,7 @@ namespace JoeMath
     //
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline Matrix<Scalar, Columns, Rows>   Transposed  (
+    inline Matrix<Scalar, Columns, Rows>    Transposed      (
                                     const Matrix<Scalar, Rows, Columns>& m );
 
     template <typename Scalar, u32 Rows, u32 Columns>
@@ -123,43 +124,59 @@ namespace JoeMath
     //
 
     template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Identity        ( );
+    Matrix<Scalar, Size, Size>             Identity  ( );
 
     template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Scale           ( const Matrix<Scalar, 1, Size>& s );
+    Matrix<Scalar, Size, Size>             Scale     (
+                                             const Matrix<Scalar, 1, Size>& s );
 
     template <typename Scalar, u32 Size = 2>
-    Matrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle );
+    Matrix<Scalar, Size, Size>             Rotate2D  ( Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             RotateX         ( Scalar angle );
+    Matrix<Scalar, Size, Size>             RotateX   ( Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             RotateY         ( Scalar angle );
+    Matrix<Scalar, Size, Size>             RotateY   ( Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle );
+    Matrix<Scalar, Size, Size>             RotateZ   ( Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z );
+    Matrix<Scalar, Size, Size>             RotateAxisAngle  (
+                                                  const Vector<Scalar, 3>& axis,
+                                                  Scalar angle );
 
     template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size, Size>             Rotate3D        ( const Matrix<Scalar, 1, 3>& axis, Scalar angle );
+    Matrix<Scalar, Size+1, Size+1>         Translate (
+                                            const Vector<Scalar, 3>& position );
 
-    template <typename Scalar, u32 Size = 3>
-    Matrix<Scalar, Size+1, Size+1>         Translate       ( const Matrix<Scalar, 1, Size>& position );
+    //
+    // Todo make this take a Plane object
+    //
+    template <typename Scalar>
+    Matrix<Scalar, 4, 4>                   Reflect   (
+                                               const Vector<Scalar, 4>& plane );
 
     template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Reflect         ( const Matrix<Scalar, 1, 4>& plane );
+    Matrix<Scalar, 4, 4>                   Projection( Scalar vertical_fov,
+                                                       Scalar aspect_ratio,
+                                                       Scalar near_plane,
+                                                       Scalar far_plane );
 
     template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near, Scalar far );
+    Matrix<Scalar, 4, 4>                   View      (
+                                             const Vector<Scalar, 3>& position,
+                                             const Vector<Scalar, 3>& direction,
+                                             const Vector<Scalar, 3>& up );
 
     template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   View            ( const Matrix<Scalar, 1, 3>& position, const Matrix<Scalar, 1, 3>& direction, const Matrix<Scalar, 1, 3>& up );
-
-    template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near, Scalar far);
+    Matrix<Scalar, 4, 4>                   Ortho     ( Scalar left,
+                                                       Scalar right,
+                                                       Scalar top,
+                                                       Scalar bottom,
+                                                       Scalar near_plane,
+                                                       Scalar far_plane );
 
     //
     // The class
@@ -168,24 +185,29 @@ namespace JoeMath
     class Matrix
     {
     public:
-        Scalar m_elements[Rows][Columns];
-        //std::array<std::array<Scalar, Columns>, Rows> m_elements;
+        //Scalar m_elements[Columns][Rows];
+        std::array<std::array<Scalar, Rows>, Columns> m_elements;
 
-        typedef Scalar   scalar_type;
         static const u32 rows = Rows;
         static const u32 columns = Columns;
 
+        using scalar_type    = Scalar;
+        using column_type    = Matrix<scalar_type, rows, 1>;
+        using row_type       = Matrix<scalar_type, 1, columns>;
+        using type           = Matrix<scalar_type, rows, columns>;
+        using transpose_type = Matrix<scalar_type, columns, rows>;
+
         static const bool is_vector =
-            JoeMath::is_vector<Matrix<Scalar, Rows, Columns>>::value;
+            JoeMath::is_vector<type>::value;
 
         static const u32 vector_size =
-            JoeMath::vector_size<Matrix<Scalar, Rows, Columns>>::value;
+            JoeMath::vector_size<type>::value;
 
         static const u32 min_dimension_size =
-            JoeMath::min_matrix_dimension<Matrix<Scalar, Rows, Columns>>::value;
+            JoeMath::min_matrix_dimension<type>::value;
 
         static const bool is_square =
-            JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value;
+            JoeMath::is_square<type>::value;
 
 
         //
@@ -202,12 +224,22 @@ namespace JoeMath
           */
         explicit Matrix     ( Scalar s );
 
-        // TODO Initialize from vector
+        /**
+          * Initialize a matrix diagonal from a vector
+          */
+        explicit Matrix     ( Vector<Scalar, min_dimension_size> v );
 
         /**
-          * Initialize from init list
+          * Initialize from initializer list of scalars
           */
-        Matrix              ( const std::initializer_list<Scalar>& elements );
+        Matrix              (
+                           const std::initializer_list<scalar_type>& elements );
+
+        /**
+          * Initialize from initializer list of vectors
+          */
+        Matrix              (
+                            const std::initializer_list<column_type>& vectors );
 
         /**
           * Convert from another matrix type
@@ -219,49 +251,51 @@ namespace JoeMath
           * Assign from another matrix type
           */
         template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>&   operator =
-                            ( const Matrix<Scalar2, Rows, Columns>& m );
+        type&   operator = ( const Matrix<Scalar2, Rows, Columns>& m );
 
         //
-        // Setters
+        // Setters and Getters
         //
 
         template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
-                  bool Fits = has_sub_matrix<Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>, i, j>::value>
+                  bool Fits = has_sub_matrix<type,
+                                             Matrix<Scalar, Rows2, Columns2>,
+                                             i, j>::value>
         typename std::enable_if<Fits, void>::type
-                                            SetSubMatrix    ( const Matrix<Scalar, Rows2, Columns2>& m );
-
-        //
-        // Getters
-        //
+                                            SetSubMatrix    (
+                                     const Matrix<Scalar, Rows2, Columns2>& m );
 
         template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
-                  bool Fits = has_sub_matrix<Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>, i, j>::value,
+                  bool Fits = has_sub_matrix<type,
+                                             Matrix<Scalar, Rows2, Columns2>,
+                                             i, j>::value,
                   bool HasSameDimensions = has_same_dimensions<Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>>::value>
         typename std::enable_if<Fits && !HasSameDimensions, Matrix<Scalar, Rows2, Columns2>>::type
                                             GetSubMatrix    ( ) const;
 
         template <u32 Rows2, u32 Columns2, u32 i = 0, u32 j = 0,
-                  bool Fits = has_sub_matrix<Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>, i, j>::value,
+                  bool Fits = has_sub_matrix<type,
+                                             Matrix<Scalar, Rows2, Columns2>,
+                                             i, j>::value,
                   bool HasSameDimensions = has_same_dimensions<Matrix<Scalar, Rows, Columns>, Matrix<Scalar, Rows2, Columns2>>::value>
-        typename std::enable_if<Fits && HasSameDimensions, const Matrix<Scalar, Rows2, Columns2>&>::type
+        typename std::enable_if<Fits && HasSameDimensions, const type&>::type
                                             GetSubMatrix    ( ) const;
 
-        const Vector<Scalar, Columns>&      GetRow          ( u32 row )     const;
-              Vector<Scalar, Columns>&      GetRow          ( u32 row );
+              row_type                      GetRow          ( u32 row )     const;
 
-              Matrix<Scalar, Rows, 1 >      GetColumn       ( u32 column )  const;
+        const column_type&                  GetColumn       ( u32 column )  const;
+              column_type&                  GetColumn       ( u32 column );
 
-        const Vector<Scalar, 3>&            GetRight        ( )         const;
-              Vector<Scalar, 3>&            GetRight        ( );
+        const column_type&                  GetRight        ( )         const;
+              column_type&                  GetRight        ( );
         void                                SetRight        ( const Vector<Scalar, 3>& m );
 
-        const Vector<Scalar, 3>&            GetForward      ( )         const;
-              Vector<Scalar, 3>&            GetForward      ( );
+        const column_type&                  GetForward      ( )         const;
+              column_type&                  GetForward      ( );
         void                                SetForward      ( const Vector<Scalar, 3>& m );
 
-        const Vector<Scalar, 3>&            GetUp           ( )         const;
-              Vector<Scalar, 3>&            GetUp           ( );
+        const column_type&                  GetUp           ( )         const;
+              column_type&                  GetUp           ( );
         void                                SetUp           ( const Vector<Scalar, 3>& m );
 
         const Vector<Scalar, Columns-1>&    GetPosition     ( )         const;
@@ -277,11 +311,11 @@ namespace JoeMath
                                             operator    []  ( u32 i );
 
         template <bool IsVector = is_vector>
-        typename std::enable_if<!IsVector, const Vector<Scalar, Columns>&>::type
+        typename std::enable_if<!IsVector, const Vector<Scalar, Rows>&>::type
                                             operator    []  ( u32 i )   const;
 
         template <bool IsVector = is_vector>
-        typename std::enable_if<!IsVector, Vector<Scalar, Columns>&>::type
+        typename std::enable_if<!IsVector, Vector<Scalar, Rows>&>::type
                                             operator    []  ( u32 i );
 
 
@@ -356,26 +390,15 @@ namespace JoeMath
                                     const Matrix<Scalar2, Rows, Columns>& m );
 
         // Component wise multiplication
-        template <typename Scalar2,
-                  bool IsVector = is_vector,
-                  bool IsSizeGreaterThan1 = (vector_size > 1)>
-        inline typename std::enable_if<IsVector && IsSizeGreaterThan1,
-                                       Matrix<Scalar, Rows, Columns>&>::type
-                                        operator *=     (
+        template <typename Scalar2>
+        Matrix<Scalar, Rows, Columns>&  operator *=     (
                                     const Matrix<Scalar2, Rows, Columns>& m );
 
         // Component wise division
-        template <typename Scalar2,
-                  bool IsVector = is_vector>
-        inline typename std::enable_if<IsVector,
-                                       Matrix<Scalar, Rows, Columns>&>::type
-                                        operator /=     (
+        template <typename Scalar2>
+        Matrix<Scalar, Rows, Columns>&  operator /=     (
                                     const Matrix<Scalar2, Rows, Columns>& m );
 
-        // Matrix multiplication
-        template <typename Scalar2>
-        Matrix<Scalar, Rows, Columns>& operator *=      (
-                                    const Matrix<Scalar2, Columns, Columns>& m);
 
         //
         // Binary Operators
@@ -456,41 +479,30 @@ namespace JoeMath
                             ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         /**
-          * Performs component wise multiplication between two vectors
+          * Performs component wise multiplication between two matrices
           */
         template <typename Scalar2,
-                  typename ReturnScalar =
-                      decltype(std::declval<Scalar>()*std::declval<Scalar2>()),
-                  bool IsVector = is_vector>
-        inline typename std::enable_if<IsVector,
-                                       Matrix<ReturnScalar, Rows,Columns>>::type
-            operator * ( const Matrix<Scalar2, Rows, Columns>& m ) const;
-
-        /**
-          * Performs component wise division between two vectors
-          */
-        template <typename Scalar2,
-                  typename ReturnScalar =
-                      decltype(std::declval<Scalar>()/std::declval<Scalar2>()),
-                  bool IsVector = is_vector>
-        inline typename std::enable_if<IsVector,
-                                       Matrix<ReturnScalar, Rows,Columns>>::type
-            operator / ( const Matrix<Scalar2, Rows, Columns>& m ) const;
-
-        /**
-          * Performs matrix multiplication between two matrices
-          */
-        template <typename Scalar2, u32 Columns2,
                   typename ReturnScalar =
                       decltype(std::declval<Scalar>()*std::declval<Scalar2>())>
-        Matrix<ReturnScalar, Rows, Columns2>  operator * (
-                            const Matrix<Scalar2, Columns, Columns2>& m ) const;
+        Matrix<ReturnScalar, Rows, Columns>   operator *
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const;
+
+        /**
+          * Performs component wise division between two matrices
+          */
+        template <typename Scalar2,
+                  typename ReturnScalar =
+                      decltype(std::declval<Scalar>()/std::declval<Scalar2>())>
+        Matrix<ReturnScalar, Rows, Columns>   operator /
+                            ( const Matrix<Scalar2, Rows, Columns>& m ) const;
 
         //
-        // methods
+        // non operators
         //
 
-        void                                            Transpose       ( );
+        template <bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value>
+        typename std::enable_if<IsSquare, void>::type
+                                                        Transpose       ( );
 
         template <bool     IsSquare = JoeMath::is_square<Matrix<Scalar, Rows, Columns>>::value>
         typename std::enable_if<IsSquare, void>::type
@@ -626,9 +638,6 @@ namespace JoeMath
 
         template <typename Scalar_, u32 Size>
         friend  Matrix<Scalar_, Size, Size>            RotateZ         ( Scalar_ angle );
-
-        template <typename Scalar_, u32 Size>
-        friend  Matrix<Scalar_, Size, Size>            RotateZXY       ( Scalar_ x, Scalar_ y, Scalar_ z );
 
         template <typename Scalar_, u32 Size>
         friend  Matrix<Scalar_, Size, Size>            Rotate3D        ( Matrix<Scalar_, 1, 3>& axis, Scalar_ angle );
