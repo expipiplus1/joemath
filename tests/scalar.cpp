@@ -4,7 +4,7 @@
 #include <functional>
 #include <joemath/joemath.hpp>
 
-const double pi = std::acos(-1);
+constexpr double pi = 3.14159265359;
 
 using namespace JoeMath;
 
