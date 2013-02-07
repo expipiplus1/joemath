@@ -34,7 +34,7 @@
 
 namespace JoeMath
 {
-    template <typename T>
+    template <typename T = float>
     inline constexpr
     T Pi()
     {

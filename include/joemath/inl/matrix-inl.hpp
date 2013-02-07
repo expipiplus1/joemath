@@ -32,1043 +32,283 @@
 #include <cmath>
 #include <initializer_list>
 #include <type_traits>
+
 #include <joemath/matrix.hpp>
 #include <joemath/scalar.hpp>
 
+
 namespace JoeMath
 {
-    // Doesn't initialize
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix             ( )
-    {
-    }
 
-    // Initialize every value to s
+//
+// The detail namespace mostly contains functions to be called by tag-dispatch
+// and wierd template metaprogrammings
+// this shouldn't be accessed directly by users of JoeMath
+//
+namespace detail
+{
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar s )
+    auto Determinant( const Matrix<Scalar, Rows, Columns>& m,
+                      std::integral_constant<u32, 1> ) ->
+                     decltype( std::declval<Scalar>() * std::declval<Scalar>() )
     {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = s;
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix
-                            ( const std::initializer_list<Scalar>& elements )
-    {
-        assert( elements.size() == Rows * Columns &&
-                "Incorrect number of elements in initizlizer" );
-        u32 c = 0;
-        for( auto i = elements.begin();
-             i < elements.end();
-             ++i, ++c)
-        {
-            *(m_elements[0]+c) = *i;
-        }
+        return m.m_elements[0][0];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>::Matrix
-                            ( const Matrix<Scalar2, Rows, Columns> m)
+    auto Determinant( const Matrix<Scalar, Rows, Columns>& m,
+                      std::integral_constant<u32, 2> ) ->
+                     decltype( std::declval<Scalar>() * std::declval<Scalar>() )
     {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = m.m_elements[i][j];
+       return m.m_elements[0][0] * m.m_elements[1][1] -
+              m.m_elements[0][1] * m.m_elements[1][0];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>&
-    Matrix<Scalar, Rows, Columns>::operator =
-                            ( const Matrix<Scalar2, Rows, Columns>& m )
+    auto Determinant( const Matrix<Scalar, Rows, Columns>& m,
+                      std::integral_constant<u32, 3> ) ->
+                     decltype( std::declval<Scalar>() * std::declval<Scalar>() )
     {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                m_elements[i][j] = m.m_elements[i][j];
-
-        return *this;
-    }
-
-    //
-    // Setters
-    //
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
-              bool Fits>
-    inline  typename std::enable_if<Fits, void>::type
-                                                Matrix<Scalar, Rows, Columns>::SetSubMatrix    ( const Matrix<Scalar, Rows2, Columns2>& m )
-    {
-        static_assert(Rows2 + i <= Rows,
-                      "The target Matrix doesn't have enough rows to set the "
-                      "submatrix");
-        static_assert(Columns2 + j <= Columns,
-                      "The target Matrix doesn't have enough columns to set "
-                      "the submatrix");
-
-        for( u32 row = 0; row < Rows2; ++row )
-            for( u32 column = 0; column < Columns2; ++column )
-                m_elements[row+i][column+j] = m.m_elements[row][column];
-    }
-
-    //
-    // Getters
-    //
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
-              bool Fits,
-              bool HasSameDimensions>
-    inline  typename std::enable_if<Fits && !HasSameDimensions, Matrix<Scalar, Rows2, Columns2>>::type
-                                                Matrix<Scalar, Rows, Columns>::GetSubMatrix    ( ) const
-    {
-        static_assert(Rows2 + i <= Rows, "The source Matrix doesn't have enough rows to contain this submatrix");
-        static_assert(Columns2 + j <= Columns, "The source Matrix doesn't have enough columns to contain this submatrix");
-
-        Matrix<Scalar, Rows2, Columns2> ret;
-
-        for( u32 row = 0; row < Rows2; ++row )
-            for( u32 column = 0; column < Columns2; ++column )
-                ret.m_elements[row][column] = m_elements[row+i][column+j];
-
-        return ret;
+        return m.m_elements[0][0] * (m.m_elements[1][1]*m.m_elements[2][2] -
+                                     m.m_elements[1][2]*m.m_elements[2][1])
+             - m.m_elements[1][0] * (m.m_elements[0][1]*m.m_elements[2][2] -
+                                     m.m_elements[0][2]*m.m_elements[2][1])
+             + m.m_elements[2][0] * (m.m_elements[0][1]*m.m_elements[1][2] -
+                                     m.m_elements[0][2]*m.m_elements[1][1]);
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    template <u32 Rows2, u32 Columns2, u32 i, u32 j,
-              bool Fits,
-              bool HasSameDimensions>
-    inline  typename std::enable_if<Fits && HasSameDimensions, const Matrix<Scalar, Rows2, Columns2>&>::type
-                                                Matrix<Scalar, Rows, Columns>::GetSubMatrix    ( ) const
+    auto Determinant( const Matrix<Scalar, Rows, Columns>& m,
+                      std::integral_constant<u32, 4> ) ->
+                     decltype( std::declval<Scalar>() * std::declval<Scalar>() )
     {
-        return *this;
+        return m.m_elements[0][3] * m.m_elements[1][2] *
+                m.m_elements[2][1] * m.m_elements[3][0]
+             - m.m_elements[0][2] * m.m_elements[1][3] *
+                m.m_elements[2][1] * m.m_elements[3][0]
+             - m.m_elements[0][3] * m.m_elements[1][1] *
+                m.m_elements[2][2] * m.m_elements[3][0]
+             + m.m_elements[0][1] * m.m_elements[1][3] *
+                m.m_elements[2][2] * m.m_elements[3][0]
+             + m.m_elements[0][2] * m.m_elements[1][1] *
+                m.m_elements[2][3] * m.m_elements[3][0]
+             - m.m_elements[0][1] * m.m_elements[1][2] *
+                m.m_elements[2][3] * m.m_elements[3][0]
+             - m.m_elements[0][3] * m.m_elements[1][2] *
+                m.m_elements[2][0] * m.m_elements[3][1]
+             + m.m_elements[0][2] * m.m_elements[1][3] *
+                m.m_elements[2][0] * m.m_elements[3][1]
+             + m.m_elements[0][3] * m.m_elements[1][0] *
+                m.m_elements[2][2] * m.m_elements[3][1]
+             - m.m_elements[0][0] * m.m_elements[1][3] *
+                m.m_elements[2][2] * m.m_elements[3][1]
+             - m.m_elements[0][2] * m.m_elements[1][0] *
+                m.m_elements[2][3] * m.m_elements[3][1]
+             + m.m_elements[0][0] * m.m_elements[1][2] *
+                m.m_elements[2][3] * m.m_elements[3][1]
+             + m.m_elements[0][3] * m.m_elements[1][1] *
+                m.m_elements[2][0] * m.m_elements[3][2]
+             - m.m_elements[0][1] * m.m_elements[1][3] *
+                m.m_elements[2][0] * m.m_elements[3][2]
+             - m.m_elements[0][3] * m.m_elements[1][0] *
+                m.m_elements[2][1] * m.m_elements[3][2]
+             + m.m_elements[0][0] * m.m_elements[1][3] *
+                m.m_elements[2][1] * m.m_elements[3][2]
+             + m.m_elements[0][1] * m.m_elements[1][0] *
+                m.m_elements[2][3] * m.m_elements[3][2]
+             - m.m_elements[0][0] * m.m_elements[1][1] *
+                m.m_elements[2][3] * m.m_elements[3][2]
+             - m.m_elements[0][2] * m.m_elements[1][1] *
+                m.m_elements[2][0] * m.m_elements[3][3]
+             + m.m_elements[0][1] * m.m_elements[1][2] *
+                m.m_elements[2][0] * m.m_elements[3][3]
+             + m.m_elements[0][2] * m.m_elements[1][0] *
+                m.m_elements[2][1] * m.m_elements[3][3]
+             - m.m_elements[0][0] * m.m_elements[1][2] *
+                m.m_elements[2][1] * m.m_elements[3][3]
+             - m.m_elements[0][1] * m.m_elements[1][0] *
+                m.m_elements[2][2] * m.m_elements[3][3]
+             + m.m_elements[0][0] * m.m_elements[1][1] *
+                m.m_elements[2][2] * m.m_elements[3][3];
     }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  const Matrix<Scalar, 1, Columns>&  Matrix<Scalar, Rows, Columns>::GetRow          ( u32 row ) const
+    auto Determinant( const Matrix<Scalar, Rows, Columns>& m,
+                      std::integral_constant<u32, 0> ) ->
+                     decltype( std::declval<Scalar>() * std::declval<Scalar>() )
     {
-        return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(m_elements[row]);
-    }
+        using ReturnScalar = decltype( std::declval<Scalar>() *
+                                       std::declval<Scalar>() );
 
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline        Matrix<Scalar, 1, Columns>&  Matrix<Scalar, Rows, Columns>::GetRow          ( u32 row )
-    {
-        return *reinterpret_cast<Matrix<Scalar, 1, Columns>*>(m_elements[row]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline        Matrix<Scalar, Rows, 1>      Matrix<Scalar, Rows, Columns>::GetColumn       ( u32 column ) const
-    {
-        Matrix<Scalar, Rows, 1> ret;
+        ReturnScalar det = ReturnScalar{0};
 
         for( u32 i = 0; i < Rows; ++i )
-            ret.m_elements[i][0] = m_elements[i][column];
-
-        return ret;
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetRight        ( )  const
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Right' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Right' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetRight        ( )
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Right' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Right' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void                Matrix<Scalar, Rows, Columns>::SetRight        ( const Vector<Scalar, 3>& m )
-    {
-        static_assert( !is_vector,
-                       "Trying to set the 'Right' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to set the 'Right' vector of a matrix which "
-                       "isn't at least 3x3" );
-        SetSubMatrix<1, 3, 0, 0>( m );
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetForward        ( )  const
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Forward' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Forward' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[2][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetForward        ( )
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Forward' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Forward' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[2][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void                Matrix<Scalar, Rows, Columns>::SetForward        ( const Vector<Scalar, 3>& m )
-    {
-        static_assert( !is_vector,
-                       "Trying to set the 'Forward' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to set the 'Forward' vector of a matrix which "
-                       "isn't at least 3x3" );
-        SetSubMatrix<1, 3, 2, 0>( m );
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetUp        ( )  const
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Up' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Up' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<const Vector<Scalar, 3>*>(&m_elements[0][1]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 3>&  Matrix<Scalar, Rows, Columns>::GetUp        ( )
-    {
-        static_assert( !is_vector,
-                       "Trying to get the 'Up' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to get the 'Up' vector of a matrix which "
-                       "isn't at least 3x3" );
-        return *reinterpret_cast<Vector<Scalar, 3>*>(&m_elements[0][1]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void                Matrix<Scalar, Rows, Columns>::SetUp        ( const Vector<Scalar, 3>& m )
-    {
-        static_assert( !is_vector,
-                       "Trying to set the 'Up' vector of a vector" );
-        static_assert( min_dimension_size >= 3,
-                       "Trying to set the 'Up' vector of a matrix which "
-                       "isn't at least 3x3" );
-        SetSubMatrix<1, 3, 1, 0>( m );
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  const Vector<Scalar, Columns-1>&
-                                        Matrix<Scalar, Rows, Columns>::GetPosition     ( )             const
-    {
-        static_assert( is_square,
-                       "Trying to get the 'Position' vector of a non-square "
-                       "matrix" );
-        static_assert( min_dimension_size != 1,
-                       "Trying to get the position vector of a 1x1 matrix" );
-        return *reinterpret_cast<const Vector<Scalar, Columns-1>*>(&m_elements[Rows-1][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Vector<Scalar, Columns-1>&  Matrix<Scalar, Rows, Columns>::GetPosition     ( )
-    {
-        static_assert( is_square,
-                       "Trying to get the 'Position' vector of a non-square "
-                       "matrix" );
-        static_assert( min_dimension_size != 1,
-                       "Trying to get the position vector of a 1x1 matrix" );
-        return *reinterpret_cast<Vector<Scalar, Columns-1>*>(&m_elements[Rows-1][0]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void                        Matrix<Scalar, Rows, Columns>::SetPosition     ( const Vector<Scalar, Columns-1>& m )
-    {
-        static_assert( is_square,
-                       "Trying to set the 'Position' vector of a non-square "
-                       "matrix" );
-        static_assert( min_dimension_size != 1,
-                       "Trying to set the position vector of a 1x1 matrix" );
-        SetSubMatrix<1, Columns-1, Rows-1, 0>( m );
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<IsVector,  const Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
-    {
-        return *(m_elements[0]+i);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<IsVector,  Scalar&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
-    {
-        return *(m_elements[0]+i);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<!IsVector, const Vector<Scalar, Columns>&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )       const
-    {
-        return *reinterpret_cast<const Vector<Scalar, Columns>*>(&m_elements[i]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsVector>
-    inline  typename std::enable_if<!IsVector, Vector<Scalar, Columns>&>::type
-                                                Matrix<Scalar, Rows, Columns>::operator    []  ( u32 i )
-    {
-        return *reinterpret_cast<Vector<Scalar, Columns>*>(&m_elements[i]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::x               ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the x component of a non-vector");
-        return m_elements[0][0];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Scalar&                              Matrix<Scalar, Rows, Columns>::x               ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the x component of a non-vector");
-        return m_elements[0][0];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::y               ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the y component of a non-vector");
-        static_assert( vector_size >= 2,
-                       "Trying to get the y component of a vector of size < 2");
-        return m_elements[0][1];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Scalar&                              Matrix<Scalar, Rows, Columns>::y               ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the y component of a non-vector");
-        static_assert( vector_size >= 2,
-                       "Trying to get the y component of a vector of size < 2");
-        return m_elements[0][1];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::z               ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the z component of a non-vector");
-        static_assert( vector_size >= 3,
-                       "Trying to get the z component of a vector of size < 3");
-        return m_elements[0][2];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Scalar&                              Matrix<Scalar, Rows, Columns>::z               ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the z component of a non-vector");
-        static_assert( vector_size >= 3,
-                       "Trying to get the z component of a vector of size < 3");
-        return m_elements[0][2];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline const Scalar&                        Matrix<Scalar, Rows, Columns>::w               ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the w component of a non-vector");
-        static_assert( vector_size >= 4,
-                       "Trying to get the w component of a vector of size < 4");
-        return m_elements[0][3];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Scalar&                              Matrix<Scalar, Rows, Columns>::w               ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the w component of a non-vector");
-        static_assert( vector_size >= 4,
-                       "Trying to get the w component of a vector of size < 4");
-        return m_elements[0][3];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    const inline Vector<Scalar, 2>&             Matrix<Scalar, Rows, Columns>::xy              ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the xy components of a non-vector");
-        static_assert( vector_size >= 2,
-                       "Trying to get the xy components of a vector of size < "
-                       "2" );
-        return *reinterpret_cast<const Vector<Scalar, 2>*>(this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 2>&                   Matrix<Scalar, Rows, Columns>::xy              ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the xy components of a non-vector");
-        static_assert( vector_size >= 2,
-                       "Trying to get the xy components of a vector of size < "
-                       "2" );
-        return *reinterpret_cast<Vector<Scalar, 2>*>(this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    const inline Vector<Scalar, 3>&             Matrix<Scalar, Rows, Columns>::xyz             ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the xyx components of a non-vector");
-        static_assert( vector_size >= 3,
-                       "Trying to get the xyz components of a vector of size < "
-                       "3" );
-        return *reinterpret_cast<const Vector<Scalar, 3>*>(this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 3>&                   Matrix<Scalar, Rows, Columns>::xyz             ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the xyx components of a non-vector");
-        static_assert( vector_size >= 3,
-                       "Trying to get the xyz components of a vector of size < "
-                       "3" );
-        return *reinterpret_cast<Vector<Scalar, 3>*>(this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    const inline Vector<Scalar, 4>&             Matrix<Scalar, Rows, Columns>::xyzw            ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the xyxw components of a non-vector");
-        static_assert( vector_size >= 4,
-                       "Trying to get the xyzw components of a vector of size "
-                       "< 4" );
-        return *reinterpret_cast<const Vector<Scalar, 4>*>(this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Vector<Scalar, 4>&                   Matrix<Scalar, Rows, Columns>::xyzw            ( )
-    {
-        static_assert( is_vector,
-                       "Trying to get the xyxw components of a non-vector");
-        static_assert( vector_size >= 4,
-                       "Trying to get the xyzw components of a vector of size <"
-                       "4" );
-        return *reinterpret_cast<Vector<Scalar, 4>*>(this);
-    }
-
-    //
-    // Unary Operators
-    //
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>      Matrix<Scalar, Rows, Columns>::operator +     ( ) const
-    {
-        return *this;
-    }
-
-    // the negated vertion of this vector
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Rows, Columns>      Matrix<Scalar, Rows, Columns>::operator -     ( ) const
-    {
-        Matrix<Scalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = -m_elements[i][j];
-
-        return ret;
-    }
-
-    //
-    // Assignment operators
-    //
-
-    // Scalar addition
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator +=     ( const Scalar2 s )
-    {
-        *this = *this + s;
-        return *this;
-    }
-
-    // Scalar subtraction
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator -=     ( const Scalar2 s )
-    {
-        *this = *this - s;
-        return *this;
-    }
-
-    // Scalar multiplication
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator *=     ( const Scalar2 s )
-    {
-        *this = *this * s;
-        return *this;
-    }
-
-    // Scalar division
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator /=     ( const Scalar2 s )
-    {
-        *this = *this / s;
-        return *this;
-    }
-
-    // Component wise addition
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator +=     ( const Matrix<Scalar2, Rows, Columns>& m )
-    {
-        *this = *this + m;
-        return *this;
-    }
-
-    // Component wise subtraction
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator -=     ( const Matrix<Scalar2, Rows, Columns>& m )
-    {
-        *this = *this - m;
-        return *this;
-    }
-
-    // Component wise multiplication
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              bool IsVector,
-              bool IsSizeGreaterThan1>
-    inline  typename std::enable_if<IsVector && IsSizeGreaterThan1, Matrix<Scalar, Rows, Columns>&>::type
-                         Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Rows, Columns>& m )
-    {
-        static_assert( is_vector,
-                       "Trying to perform a component wise multiply between two"
-                       " non-vectors" );
-        *this = *this * m;
-        return *this;
-    }
-
-    // Component wise division
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              bool IsVector>
-    inline typename std::enable_if<IsVector, Matrix<Scalar, Rows, Columns>&>::type
-        Matrix<Scalar, Rows, Columns>::operator /=     ( const Matrix<Scalar2, Rows, Columns>& m )
-    {
-        static_assert( is_vector,
-                       "Trying to perform a component wise divide between two "
-                       "non-vectors" );
-        *this = *this / m;
-        return *this;
-    }
-
-    // Matrix multiplication
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    inline  Matrix<Scalar, Rows, Columns>& Matrix<Scalar, Rows, Columns>::operator *=     ( const Matrix<Scalar2, Columns, Columns>& m )
-    {
-        *this = *this * m;
-        return *this;
-    }
-
-
-    //
-    // Binary Operators
-    //
-
-    //
-    // Comparison
-    //
-
-    /**
-      * Returns true iff all the elements compare equal
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    bool    Matrix<Scalar, Rows, Columns>::operator ==
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                if ( m_elements[i][j] != m.m_elements[i][j] )
-                    return false;
-        return true;
-    }
-
-    /**
-      * Returns false iff all the elements compare equal
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2>
-    bool    Matrix<Scalar, Rows, Columns>::operator !=
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        return !( *this == m );
-    }
-
-    //
-    // Arithmetic
-    //
-
-    /**
-      * Increment all elements of the matrix by a scalar value
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator +
-                            ( const Scalar2 s ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] + s;
-
-        return ret;
-    }
-
-    /**
-      * Decrement all elements of the matrix by a scalar value
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator -
-                            ( const Scalar2 s ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] - s;
-
-        return ret;
-    }
-
-    /**
-      * Multiply all elements of the matrix by a scalar value
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator *
-                            ( const Scalar2 s ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] * s;
-
-        return ret;
-    }
-
-    /**
-      * Mulitplies all elements of a matrix by a scalar value
-      */
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>    operator *
-                            ( const Scalar2 s,
-                              const Matrix<Scalar, Rows, Columns>& m )
-    {
-        return m * s;
-    }
-
-
-    /**
-      * Divides all elements of the matrix by a scalar value
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator /
-                            ( const Scalar2 s ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-        auto inv = Scalar{1} / s;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] * inv;
-
-        return ret;
-    }
-
-    /**
-      * Performs component wise addition between two matrices
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator +
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] + m.m_elements[i][j];
-
-        return ret;
-    }
-
-    /**
-      * Performs component wise subtraction between two matrices
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns>
-    Matrix<Scalar, Rows, Columns>::operator -
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        Matrix<Scalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] - m.m_elements[i][j];
-
-        return ret;
-    }
-
-    /**
-      * Performs component wise multiplication between two vectors
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar,
-              bool IsVector>
-    inline typename std::enable_if<IsVector,
-                                   Matrix<ReturnScalar, Rows, Columns>>::type
-    Matrix<Scalar, Rows, Columns>::operator *
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        static_assert( is_vector,
-                       "Trying to perform a component wise multiply between two"
-                       " non-vectors" );
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] * m.m_elements[i][j];
-
-        return ret;
-    }
-
-    /**
-      * Performs component wise division between two vectors
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2,
-              typename ReturnScalar,
-              bool IsVector>
-    inline typename std::enable_if<IsVector,
-                                   Matrix<ReturnScalar, Rows, Columns>>::type
-    Matrix<Scalar, Rows, Columns>::operator /
-                            ( const Matrix<Scalar2, Rows, Columns>& m ) const
-    {
-        static_assert( is_vector,
-                       "Trying to perform a component wise divide between two "
-                       "non-vectors" );
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[i][j] = m_elements[i][j] / m.m_elements[i][j];
-
-        return ret;
-    }
-
-    /**
-      * Performs matrix multiplication between two matrices
-      */
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename Scalar2, u32 Columns2,
-              typename ReturnScalar>
-    Matrix<ReturnScalar, Rows, Columns2>
-    Matrix<Scalar, Rows, Columns>::operator *
-                           ( const Matrix<Scalar2, Columns, Columns2>& m ) const
-    {
-        Matrix<ReturnScalar, Rows, Columns2> ret(0);
-
-        for(unsigned i = 0; i < Columns2; ++i)
-            for(unsigned j = 0; j < Rows; ++j)
-                for(unsigned k = 0; k < Columns; ++k)
-                    ret.m_elements[j][i] += m_elements[j][k] * m.m_elements[k][i];
-
-        return ret;
-    }
-
-    //
-    // Methods
-    //
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <bool IsSquare>
-    inline  typename std::enable_if<IsSquare, void>::type
-                            Matrix<Scalar, Rows, Columns>::Invert          ( )
-    {
-        *this = Inverted(*this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void            Matrix<Scalar, Rows, Columns>::Transpose       ( )
-    {
-        static_assert( is_square,
-                       "Trying to transpose a non-square matrix into itself" );
-        *this = Transposed(*this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 1), ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
-    {
-        static_assert( IsSquare,
-                       "Trying to take the determinant of a non-square matrix");
-        static_assert( SquareMatrixSize == 1,
-                       "This function is for square matrices of size 1 only" );
-        return m_elements[0][0];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 2), ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
-    {
-        static_assert( IsSquare,
-                       "Trying to take the determinant of a non-square matrix");
-        static_assert( SquareMatrixSize == 2,
-                       "This function is for square matrices of size 2 only" );
-       return m_elements[0][0]*m_elements[1][1] -
-              m_elements[0][1]*m_elements[1][0];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 3), ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
-    {
-        static_assert( IsSquare,
-                       "Trying to take the determinant of a non-square matrix");
-        static_assert( SquareMatrixSize == 3,
-                       "This function is for square matrices of size 3 only" );
-        return m_elements[0][0] * (m_elements[1][1]*m_elements[2][2] - m_elements[1][2]*m_elements[2][1])
-             - m_elements[1][0] * (m_elements[0][1]*m_elements[2][2] - m_elements[0][2]*m_elements[2][1])
-             + m_elements[2][0] * (m_elements[0][1]*m_elements[1][2] - m_elements[0][2]*m_elements[1][1]);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize == 4), ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
-    {
-        static_assert( IsSquare,
-                       "Trying to take the determinant of a non-square matrix");
-        static_assert( SquareMatrixSize == 4,
-                       "This function is for square matrices of size 4 only" );
-
-        return m_elements[0][3] * m_elements[1][2] * m_elements[2][1] * m_elements[3][0]
-             - m_elements[0][2] * m_elements[1][3] * m_elements[2][1] * m_elements[3][0]
-             - m_elements[0][3] * m_elements[1][1] * m_elements[2][2] * m_elements[3][0]
-             + m_elements[0][1] * m_elements[1][3] * m_elements[2][2] * m_elements[3][0]
-             + m_elements[0][2] * m_elements[1][1] * m_elements[2][3] * m_elements[3][0]
-             - m_elements[0][1] * m_elements[1][2] * m_elements[2][3] * m_elements[3][0]
-             - m_elements[0][3] * m_elements[1][2] * m_elements[2][0] * m_elements[3][1]
-             + m_elements[0][2] * m_elements[1][3] * m_elements[2][0] * m_elements[3][1]
-             + m_elements[0][3] * m_elements[1][0] * m_elements[2][2] * m_elements[3][1]
-             - m_elements[0][0] * m_elements[1][3] * m_elements[2][2] * m_elements[3][1]
-             - m_elements[0][2] * m_elements[1][0] * m_elements[2][3] * m_elements[3][1]
-             + m_elements[0][0] * m_elements[1][2] * m_elements[2][3] * m_elements[3][1]
-             + m_elements[0][3] * m_elements[1][1] * m_elements[2][0] * m_elements[3][2]
-             - m_elements[0][1] * m_elements[1][3] * m_elements[2][0] * m_elements[3][2]
-             - m_elements[0][3] * m_elements[1][0] * m_elements[2][1] * m_elements[3][2]
-             + m_elements[0][0] * m_elements[1][3] * m_elements[2][1] * m_elements[3][2]
-             + m_elements[0][1] * m_elements[1][0] * m_elements[2][3] * m_elements[3][2]
-             - m_elements[0][0] * m_elements[1][1] * m_elements[2][3] * m_elements[3][2]
-             - m_elements[0][2] * m_elements[1][1] * m_elements[2][0] * m_elements[3][3]
-             + m_elements[0][1] * m_elements[1][2] * m_elements[2][0] * m_elements[3][3]
-             + m_elements[0][2] * m_elements[1][0] * m_elements[2][1] * m_elements[3][3]
-             - m_elements[0][0] * m_elements[1][2] * m_elements[2][1] * m_elements[3][3]
-             - m_elements[0][1] * m_elements[1][0] * m_elements[2][2] * m_elements[3][3]
-             + m_elements[0][0] * m_elements[1][1] * m_elements[2][2] * m_elements[3][3];
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-              bool     IsSquare,
-              u32      SquareMatrixSize>
-    inline  typename std::enable_if<IsSquare && (SquareMatrixSize > 4), ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Determinant     ( )  const
-    {
-        static_assert( IsSquare,
-                       "Trying to take the determinant of a non-square matrix");
-
-        ReturnScalar det = ReturnScalar(0);
-
-        for( u32 i = 0; i < Columns; ++i )
-        {
-            det += ((i & 0x1) ? -1 : 1) * m_elements[0][i] * Minor(0, i);
-        }
+            det += ((i & 0x1) ? -1 : 1) * m.m_elements[0][i] * m.Minor(0, i);
 
         return det;
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar,
-                bool     IsSquare>
-    typename std::enable_if<IsSquare, ReturnScalar>::type
-                            Matrix<Scalar, Rows, Columns>::Minor           ( u32 row, u32 column ) const
-    {
-        Matrix<Scalar, Rows-1, Columns-1> minor_matrix;
-
-        for( u32 x = 0; x < Rows-1; ++x )
-            for( u32 y = 0; y < Columns-1; ++y )
-                    minor_matrix[x][y] =
-                            m_elements[x < row ? x : x+1][y < column ? y : y+1];
-
-        return minor_matrix.Determinant();
-    }
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline  void            Matrix<Scalar, Rows, Columns>::Normalize       ( )
-    {
-        static_assert( is_vector, "Trying to normalize a non-vector" );
-        *this = Normalized(*this);
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar>
-    inline ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
-    {
-        static_assert( is_vector,
-                       "Trying to get the squared length of a non-vector" );
-        ReturnScalar ret = 0;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret += m_elements[i][j] * m_elements[i][j];
-
-        return ret;
-    }
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    template <typename ReturnScalar>
-    inline  ReturnScalar    Matrix<Scalar, Rows, Columns>::Length          ( ) const
-    {
-        static_assert( is_vector, "Trying to get the length of a non-vector" );
-        return std::sqrt( LengthSq() );
-    }
-
-    //
-    // Misc
-    //
-
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline  Matrix<Scalar, Columns, Rows>                  Transposed      ( const Matrix<Scalar, Rows, Columns>& m )
-    {
-        Matrix<Scalar, Columns, Rows> ret;
-
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[j][i] = m.m_elements[i][j];
-
-        return ret;
-    }
-
-    template <typename Scalar>
-    inline Matrix<Scalar, 1, 1> Inverted    ( const Matrix<Scalar, 1, 1>& m )
+    Matrix<Scalar, 1, 1> Inverted( const Matrix<Scalar, Rows, Columns>& m,
+                                   std::integral_constant<u32, 1> )
     {
         return Matrix<Scalar, 1, 1>(Scalar{1}/m.m_elements[0][0]);
     }
 
-    template <typename Scalar>
-    inline Matrix<Scalar, 2, 2> Inverted    ( const Matrix<Scalar, 2, 2>& m )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    Matrix<Scalar, 2, 2> Inverted( const Matrix<Scalar, Rows, Columns>& m,
+                                   std::integral_constant<u32, 2> )
     {
-        return Matrix<Scalar, 2, 2>( m.m_elements[1][1], -m.m_elements[0][1],
-                                     -m.m_elements[1][0],  m.m_elements[0][0] ) / m.Determinant();
+        return Matrix<Scalar, 2, 2>(m.m_elements[1][1], -m.m_elements[0][1],
+                                   -m.m_elements[1][0],  m.m_elements[0][0] ) /
+                m.Determinant();
     }
 
-    /*
-    template <typename Scalar>
-    inline Matrix<ReturnScalar, 3, 3> Inverted ( const Matrix<Scalar, 3, 3>& m )
+    template <typename Scalar, u32 Rows, u32 Columns>
+    Matrix<Scalar, 3, 3> Inverted( const Matrix<Scalar, Rows, Columns>& m,
+                                   std::integral_constant<u32, 3> )
     {
-        Matrix<ReturnScalar, Rows, Columns> ret;
-        ret.m_elements[0][0] = m.m_elements[1][1] * m.m_elements[2][2] - m.m_elements[2][1] * m.m_elements[1][2];
-        ret.m_elements[0][1] = m.m_elements[1][2] * m.m_elements[2][0] - m.m_elements[2][2] * m.m_elements[1][0];
-        ret.m_elements[0][2] = m.m_elements[1][0] * m.m_elements[2][1] - m.m_elements[2][0] * m.m_elements[1][1];
-        ret.m_elements[1][0] = m.m_elements[0][2] * m.m_elements[2][1] - m.m_elements[0][1] * m.m_elements[2][2];
-        ret.m_elements[1][1] = m.m_elements[0][0] * m.m_elements[2][2] - m.m_elements[0][2] * m.m_elements[2][0];
-        ret.m_elements[1][2] = m.m_elements[0][1] * m.m_elements[2][0] - m.m_elements[0][0] * m.m_elements[2][1];
-        ret.m_elements[2][0] = m.m_elements[1][2] * m.m_elements[0][1] - m.m_elements[1][1] * m.m_elements[0][2];
-        ret.m_elements[2][1] = m.m_elements[1][0] * m.m_elements[0][2] - m.m_elements[1][2] * m.m_elements[0][0];
-        ret.m_elements[2][2] = m.m_elements[1][1] * m.m_elements[0][0] - m.m_elements[1][0] * m.m_elements[0][1];
+        Matrix<Scalar, Rows, Columns> ret
+        {
+            m.m_elements[1][1] * m.m_elements[2][2] -
+                    m.m_elements[2][1] * m.m_elements[1][2],
+            m.m_elements[0][2] * m.m_elements[2][1] -
+                    m.m_elements[0][1] * m.m_elements[2][2],
+            m.m_elements[1][2] * m.m_elements[0][1] -
+                    m.m_elements[1][1] * m.m_elements[0][2],
 
-        ReturnScalar det = m.m_elements[0][0] * ret.m_elements[0][0]
-                         - m.m_elements[0][1] * ret.m_elements[0][1]
-                         + m.m_elements[0][2] * ret.m_elements[0][2];
+            m.m_elements[1][2] * m.m_elements[2][0] -
+                    m.m_elements[2][2] * m.m_elements[1][0],
+            m.m_elements[0][0] * m.m_elements[2][2] -
+                    m.m_elements[0][2] * m.m_elements[2][0],
+            m.m_elements[1][0] * m.m_elements[0][2] -
+                    m.m_elements[1][2] * m.m_elements[0][0],
+
+            m.m_elements[1][0] * m.m_elements[2][1] -
+                    m.m_elements[2][0] * m.m_elements[1][1],
+            m.m_elements[0][1] * m.m_elements[2][0] -
+                    m.m_elements[0][0] * m.m_elements[2][1],
+            m.m_elements[1][1] * m.m_elements[0][0] -
+                    m.m_elements[1][0] * m.m_elements[0][1]
+        };
+
+        Scalar det = m.m_elements[0][0] * ret.m_elements[0][0]
+                   + m.m_elements[1][0] * ret.m_elements[0][1]
+                   + m.m_elements[2][0] * ret.m_elements[0][2];
 
         return ret / det;
     }
-    */
 
     template <typename Scalar, u32 Rows, u32 Columns>
-    inline Matrix<Scalar, Rows, Columns>    Inverted    (
-                                        const Matrix<Scalar, Rows, Columns>& m )
+    Matrix<Scalar, 4, 4> Inverted( const Matrix<Scalar, Rows, Columns>& m,
+                                   std::integral_constant<u32, 4> )
     {
-        static_assert( Matrix<Scalar, Rows, Columns>::is_square,
-                       "Trying to invert a non-square matrix" );
+        Scalar f[19] =
+        {
+            m.m_elements[2][2] * m.m_elements[3][3] -
+            m.m_elements[3][2] * m.m_elements[2][3],
+            m.m_elements[2][1] * m.m_elements[3][3] -
+            m.m_elements[3][1] * m.m_elements[2][3],
+            m.m_elements[2][1] * m.m_elements[3][2] -
+            m.m_elements[3][1] * m.m_elements[2][2],
+            m.m_elements[2][0] * m.m_elements[3][3] -
+            m.m_elements[3][0] * m.m_elements[2][3],
+            m.m_elements[2][0] * m.m_elements[3][2] -
+            m.m_elements[3][0] * m.m_elements[2][2],
+            m.m_elements[2][0] * m.m_elements[3][1] -
+            m.m_elements[3][0] * m.m_elements[2][1],
+            m.m_elements[1][2] * m.m_elements[3][3] -
+            m.m_elements[3][2] * m.m_elements[1][3],
+            m.m_elements[1][1] * m.m_elements[3][3] -
+            m.m_elements[3][1] * m.m_elements[1][3],
+            m.m_elements[1][1] * m.m_elements[3][2] -
+            m.m_elements[3][1] * m.m_elements[1][2],
+            m.m_elements[1][0] * m.m_elements[3][3] -
+            m.m_elements[3][0] * m.m_elements[1][3],
+            m.m_elements[1][0] * m.m_elements[3][2] -
+            m.m_elements[3][0] * m.m_elements[1][2],
+            m.m_elements[1][1] * m.m_elements[3][3] -
+            m.m_elements[3][1] * m.m_elements[1][3],
+            m.m_elements[1][0] * m.m_elements[3][1] -
+            m.m_elements[3][0] * m.m_elements[1][1],
+            m.m_elements[1][2] * m.m_elements[2][3] -
+            m.m_elements[2][2] * m.m_elements[1][3],
+            m.m_elements[1][1] * m.m_elements[2][3] -
+            m.m_elements[2][1] * m.m_elements[1][3],
+            m.m_elements[1][1] * m.m_elements[2][2] -
+            m.m_elements[2][1] * m.m_elements[1][2],
+            m.m_elements[1][0] * m.m_elements[2][3] -
+            m.m_elements[2][0] * m.m_elements[1][3],
+            m.m_elements[1][0] * m.m_elements[2][2] -
+            m.m_elements[2][0] * m.m_elements[1][2],
+            m.m_elements[1][0] * m.m_elements[2][1] -
+            m.m_elements[2][0] * m.m_elements[1][1]
+        };
 
+        Matrix<Scalar, Rows, Columns> ret
+        {
+              m.m_elements[1][1] * f[0]  - m.m_elements[1][2] * f[1]  +
+                      m.m_elements[1][3] * f[2],
+            - m.m_elements[0][1] * f[0]  + m.m_elements[0][2] * f[1]  -
+                      m.m_elements[0][3] * f[2],
+              m.m_elements[0][1] * f[6]  - m.m_elements[0][2] * f[7]  +
+                      m.m_elements[0][3] * f[8],
+            - m.m_elements[0][1] * f[13] + m.m_elements[0][2] * f[14] -
+                      m.m_elements[0][3] * f[15],
+
+            - m.m_elements[1][0] * f[0]  + m.m_elements[1][2] * f[3]  -
+                      m.m_elements[1][3] * f[4],
+              m.m_elements[0][0] * f[0]  - m.m_elements[0][2] * f[3]  +
+                      m.m_elements[0][3] * f[4],
+            - m.m_elements[0][0] * f[6]  + m.m_elements[0][2] * f[9]  -
+                      m.m_elements[0][3] * f[10],
+              m.m_elements[0][0] * f[13] - m.m_elements[0][2] * f[16] +
+                      m.m_elements[0][3] * f[17],
+
+              m.m_elements[1][0] * f[01] - m.m_elements[1][1] * f[3]  +
+                      m.m_elements[1][3] * f[5],
+            - m.m_elements[0][0] * f[1]  + m.m_elements[0][1] * f[3]  -
+                      m.m_elements[0][3] * f[5],
+              m.m_elements[0][0] * f[11] - m.m_elements[0][1] * f[9]  +
+                      m.m_elements[0][3] * f[12],
+            - m.m_elements[0][0] * f[14] + m.m_elements[0][1] * f[16] -
+                      m.m_elements[0][3] * f[18],
+
+            - m.m_elements[1][0] * f[02] + m.m_elements[1][1] * f[4]  -
+                      m.m_elements[1][2] * f[5],
+              m.m_elements[0][0] * f[2]  - m.m_elements[0][1] * f[4]  +
+                      m.m_elements[0][2] * f[5],
+            - m.m_elements[0][0] * f[8]  + m.m_elements[0][1] * f[10] -
+                      m.m_elements[0][2] * f[12],
+              m.m_elements[0][0] * f[15] - m.m_elements[0][1] * f[17] +
+                      m.m_elements[0][2] * f[18]
+        };
+
+        Scalar det = m.m_elements[0][0] * ret[0][0]
+                   + m.m_elements[0][1] * ret[1][0]
+                   + m.m_elements[0][2] * ret[2][0]
+                   + m.m_elements[0][3] * ret[3][0];
+
+        return ret / det;
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    Matrix<Scalar, Rows, Columns> Inverted(
+                                     const Matrix<Scalar, Rows, Columns>& m,
+                                     std::integral_constant<u32, 0> )
+    {
         Matrix<Scalar, Columns, Rows> ret;
 
         //
         // Compute the cofactors
         //
 
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret.m_elements[j][i] = (((i + j) & 0x1) ? -1 : 1) * m.Minor(i,j);
+        for( u32 i = 0; i < Columns; ++i )
+            for( u32 j = 0; j < Rows; ++j )
+                ret.m_elements[i][j] = (((i + j) & 0x1)? -1 : 1) * m.Minor(i,j);
 
-        Scalar det = Scalar(0);
+        Scalar det = Scalar{0};
 
         for( u32 i = 0; i < Columns; ++i )
             det += m.m_elements[0][i] * ret.m_elements[i][0];
@@ -1076,266 +316,1230 @@ namespace JoeMath
         return ret / det;
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns>
-    inline Matrix<Scalar, Rows, Columns>    Normalized      (
-                                    const Matrix<Scalar, Rows, Columns>& m )
+    ////////////////////////////////////////////////////////////////////////////
+    // Template metaprogramming gubbins
+    ////////////////////////////////////////////////////////////////////////////
+
+    template<size_t... Indexes> struct index_tuple {};
+
+    template<typename T, size_t Size> struct index_tuple_helper;
+
+    template<size_t... Indexes, size_t Size>
+    struct index_tuple_helper<index_tuple<Indexes...>, Size>
     {
-        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
-                      "Trying to normalize a non-vector" );
-        return m / m.Length();
+       using type = index_tuple<Indexes..., Size>;
+    };
+
+    template<size_t Size> struct make_index_tuple
+    {
+       using type =
+        typename index_tuple_helper<
+            typename make_index_tuple<Size-1>::type, Size-1>::type;
+    };
+
+    template<>
+    struct make_index_tuple<0>
+    {
+       using type = index_tuple<>;
+    };
+
+    template< typename Scalar, std::size_t A, std::size_t B,
+              std::size_t... IndicesA, template <std::size_t...> class T,
+              std::size_t... IndicesB, template <std::size_t...> class V>
+    constexpr std::array<Scalar, A+B> Conc( const std::array<Scalar, A>& a,
+                                            const std::array<Scalar, B>& b,
+                                            T<IndicesA...> t,
+                                            V<IndicesB...> v )
+    {
+      return std::array<Scalar, A+B>{{ a[IndicesA]..., b[IndicesB]... }};
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar>
-    inline ReturnScalar Dot ( const Matrix<Scalar, Rows, Columns>& m0,
-                              const Matrix<Scalar2, Rows, Columns>& m1 )
+    template<typename...>
+    struct sum_size;
+
+    template<typename First, typename... Rest>
+    struct sum_size_helper
     {
-        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
-                       "Trying to take the dot product of non-vectors" );
+        const static std::size_t value =
+                       std::tuple_size<First>::value + sum_size<Rest...>::value;
+    };
 
-        ReturnScalar ret{0};
+    template<typename... Types>
+    struct sum_size
+    {
+        const static std::size_t value = sum_size_helper<Types...>::value;
+    };
 
-        for( u32 i = 0; i < Rows; ++i )
-            for( u32 j = 0; j < Columns; ++j )
-                ret += m0.m_elements[i][j] * m1.m_elements[i][j];
+    template<>
+    struct sum_size<>
+    {
+        const static std::size_t value = 0;
+    };
 
-        return ret;
+
+    template<typename Scalar, std::size_t N>
+    constexpr std::array<Scalar, 0> Concatenate( const std::array<Scalar, N>& a )
+    {
+        return a;
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2,
-              typename ReturnScalar>
-    inline  Matrix<ReturnScalar, Rows, Columns> Cross   (
-                                const Matrix<Scalar, Rows, Columns>& m0,
-                                const Matrix<Scalar2, Rows, Columns>& m1 )
+    template<typename Scalar, std::size_t A, std::size_t B>
+    constexpr std::array<Scalar, A+B> Concatenate( const std::array<Scalar, A>& a,
+                                                   const std::array<Scalar, B>& b )
     {
-        static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
-                       "Trying to take the Cross Product between non-vectors" );
-        static_assert( Matrix<Scalar, Rows, Columns>::vector_size == 3,
-                       "Trying to take the Cross Product between vectors of "
-                       "size != 3" );
-
-        Matrix<ReturnScalar, Rows, Columns> ret;
-
-        ret.x() = m0.y() * m1.z() - m0.z() * m1.y();
-        ret.y() = m0.z() * m1.x() - m0.x() * m1.z();
-        ret.z() = m0.x() * m1.y() - m0.y() * m1.x();
-
-        return ret;
+        return Conc( a, b, typename make_index_tuple<A>::type{},
+                           typename make_index_tuple<B>::type{});
     }
 
-    template <typename Scalar, u32 Rows, u32 Columns,
-              typename Scalar2, u32 Rows2, u32 Columns2,
-              typename ReturnScalar>
-    inline Matrix<ReturnScalar, Matrix<Scalar, Rows, Columns>::vector_size,
-                                Matrix<Scalar2, Rows2, Columns2>::vector_size>
-                                            Outer           (
+    template<typename Scalar,
+             std::size_t N1,
+             std::size_t N2,
+             std::size_t N3,
+             typename... Arrays>
+    constexpr auto Concatenate( const std::array<Scalar, N1>& first,
+                                const std::array<Scalar, N2>& second,
+                                const std::array<Scalar, N3>& third,
+                                const Arrays&... rest ) ->
+                  std::array<Scalar, N1 + N2 + N3 + sum_size<Arrays...>::value>
+    {
+        return Concatenate( first, Concatenate( second, third, rest... ) );
+    }
+
+    template<typename Scalar, u32 Rows, u32 Columns>
+    constexpr std::array<Scalar, Rows*Columns> Expand( const Matrix<Scalar, Rows, Columns>& m )
+    {
+        static_assert( is_vector<Matrix<Scalar, Rows, Columns>>::value,
+                       "Can only expand vectors" );
+        return *reinterpret_cast<const std::array<Scalar, Rows*Columns>*>(&m.m_elements[0][0]);
+    }
+
+    template<typename Scalar>
+    constexpr std::array<Scalar, 1> Expand( Scalar s )
+    {
+        return {{s}};
+    }
+
+    template< u32 N, typename Scalar, std::size_t A,
+              std::size_t... Indices, template <std::size_t...> class T>
+    constexpr std::array<Scalar, N> Taker( const std::array<Scalar, A>& a,
+                                             T<Indices...> t)
+    {
+        return std::array<Scalar, N>{{ a[Indices]... }};
+    }
+
+    template<u32 N, typename Scalar, std::size_t M>
+    constexpr std::array<Scalar, N> Take( const std::array<Scalar, M>& a )
+    {
+        static_assert( N <= M, "Tryng to drop too many elements from array" );
+        return Taker<N>(a, typename make_index_tuple<N>::type{});
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Members of Matrix
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Constructors
+//
+
+// Doesn't initialize
+template <typename Scalar, u32 Rows, u32 Columns>
+Matrix<Scalar, Rows, Columns>::Matrix             ( )
+{
+}
+
+// Initialize every value to s
+template <typename Scalar, u32 Rows, u32 Columns>
+Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar s )
+{
+    for( u32 i = 0; i < rows*columns; ++i )
+        m_elements[0][i] = s;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <std::size_t N>
+Matrix<Scalar, Rows, Columns>::Matrix
+                                  ( const std::array<scalar_type, N>& elements )
+{
+    static_assert( N == rows*columns,
+                   "Wrong number of elements passed to Matrix constructor" );
+    for( u32 i = 0; i < rows*columns; ++i )
+        m_elements[0][i] = elements[i];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename First, typename Second, typename... Rest>
+Matrix<Scalar, Rows, Columns>::Matrix( First first,
+                                       Second second,
+                                       Rest... rest )
+    :Matrix(detail::Concatenate(detail::Expand<Scalar>(first),
+                                detail::Expand<Scalar>(second),
+                                detail::Expand<Scalar>(rest)...))
+{
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename Scalar2>
+Matrix<Scalar, Rows, Columns>::Matrix
+                        ( const Matrix<Scalar2, Rows, Columns> m)
+{
+    for( u32 i = 0; i < rows*columns; ++i )
+        m_elements[0][i] = m.m_elements[0][i];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename Scalar2>
+Matrix<Scalar, Rows, Columns>&
+Matrix<Scalar, Rows, Columns>::operator =
+                        ( const Matrix<Scalar2, Rows, Columns>& m )
+{
+    for( u32 i = 0; i < rows*columns; ++i )
+        m_elements[0][i] = m.m_elements[0][i];
+
+    return *this;
+}
+
+//
+// Setters and Getters
+//
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <u32 Rows2, u32 Columns2, u32 i, u32 j>
+void Matrix<Scalar, Rows, Columns>::SetSubMatrix(
+                                      const Matrix<Scalar, Rows2, Columns2>& m )
+{
+    static_assert(Columns2 + j <= Columns,
+                  "The target Matrix doesn't have enough columns to set "
+                  "the submatrix");
+    static_assert(Rows2 + i <= Rows,
+                  "The target Matrix doesn't have enough rows to set the "
+                  "submatrix");
+
+    for( u32 column = 0; column < Columns2; ++column )
+        for( u32 row = 0; row < Rows2; ++row )
+            m_elements[column+i][row+j] = m.m_elements[column][row];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <u32 Rows2, u32 Columns2, u32 i, u32 j>
+Matrix<Scalar, Rows2, Columns2> Matrix<Scalar, Rows, Columns>::GetSubMatrix()
+                                                                           const
+{
+    static_assert(Columns2 + j <= Columns,
+                  "The source Matrix doesn't have enough columns to "
+                  "contain this submatrix");
+    static_assert(Rows2 + i <= Rows,
+                  "The source Matrix doesn't have enough rows to contain "
+                  " this submatrix");
+
+    Matrix<Scalar, Rows2, Columns2> ret;
+
+    for( u32 column = 0; column < Columns2; ++column )
+        for( u32 row = 0; row < Rows2; ++row )
+            ret.m_elements[column][row] = m_elements[column+i][row+j];
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetRow( u32 row ) const -> row_type
+{
+    assert( row < rows && "Trying to get an out of bounds row" );
+
+    row_type ret;
+    for( u32 i = 0; i < columns; ++i )
+        ret[i] = m_elements[i][row];
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto  Matrix<Scalar, Rows, Columns>::GetColumn( u32 column ) -> column_type&
+{
+    assert( column < columns && "Trying to get an out of bounds column" );
+    return *reinterpret_cast<column_type*>( m_elements[column] );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetColumn( u32 column ) const ->
+                                                              const column_type&
+{
+    assert( column < columns && "Trying to get an out of bounds column" );
+    return *reinterpret_cast<const column_type*>( &m_elements[column] );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Matrix<Scalar, Rows, Columns>::SetColumn( u32 column,
+                                               const column_type& c )
+{
+    assert( column < columns && "Trying to get an out of bounds column" );
+    GetColumn( column ) = c;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetRight( ) const -> const column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the right vector of a non 4x4 matrix" );
+    return GetColumn(0);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetRight( ) -> column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the right vector of a non 4x4 matrix" );
+    return GetColumn(0);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Matrix<Scalar, Rows, Columns>::SetRight( const column_type& m )
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to set the right vector of a non 4x4 matrix" );
+    SetColumn(0, m);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetForward( )  const -> const column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the forward vector of a non 4x4 matrix" );
+    return GetColumn(1);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetForward( ) -> column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the forward vector of a non 4x4 matrix" );
+    return GetColumn(1);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Matrix<Scalar, Rows, Columns>::SetForward( const column_type& m )
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to set the forward vector of a non 4x4 matrix" );
+    SetColumn(1, m);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetUp( )  const -> const column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the up vector of a non 4x4 matrix" );
+    return GetColumn(2);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetUp( ) -> column_type&
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to get the up vector of a non 4x4 matrix" );
+    return GetColumn(2);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Matrix<Scalar, Rows, Columns>::SetUp( const column_type& m )
+{
+    static_assert( is_square && rows == 4,
+                   "Trying to set the up vector of a non 4x4 matrix" );
+    SetColumn(2, m);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetTranslation() const -> const column_type&
+{
+    static_assert( is_square,
+                   "Trying to get the translation vector of a non-square "
+                   "matrix" );
+    return GetColumn( columns-1 );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Matrix<Scalar, Rows, Columns>::GetTranslation( ) -> column_type&
+{
+    static_assert( is_square,
+                   "Trying to get the translation vector of a non-square "
+                   "matrix" );
+    return GetColumn( columns-1 );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Matrix<Scalar, Rows, Columns>::SetTranslation( const column_type& m )
+{
+    static_assert( is_square,
+                   "Trying to set the translation vector of a non-square "
+                   "matrix" );
+    SetColumn( columns-1, m );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename>
+const Scalar& Matrix<Scalar, Rows, Columns>::operator []  ( u32 i ) const
+{
+    return m_elements[0][i];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename>
+Scalar& Matrix<Scalar, Rows, Columns>::operator [] ( u32 i )
+{
+    return m_elements[0][i];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename>
+auto Matrix<Scalar, Rows, Columns>::operator [] ( u32 i ) const ->
+                                                              const column_type&
+{
+    return GetColumn(i);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename>
+auto Matrix<Scalar, Rows, Columns>::operator [] ( u32 i ) -> column_type&
+{
+    return GetColumn(i);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Scalar& Matrix<Scalar, Rows, Columns>::x() const
+{
+    static_assert( is_vector,
+                   "Trying to get the x component of a non-vector");
+    return m_elements[0][0];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Scalar& Matrix<Scalar, Rows, Columns>::x()
+{
+    static_assert( is_vector,
+                   "Trying to get the x component of a non-vector");
+    return m_elements[0][0];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Scalar& Matrix<Scalar, Rows, Columns>::y() const
+{
+    static_assert( is_vector,
+                   "Trying to get the y component of a non-vector");
+    static_assert( vector_size >= 2,
+                   "Trying to get the y component of a vector of size < 2");
+    return m_elements[0][1];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Scalar& Matrix<Scalar, Rows, Columns>::y()
+{
+    static_assert( is_vector,
+                   "Trying to get the y component of a non-vector");
+    static_assert( vector_size >= 2,
+                   "Trying to get the y component of a vector of size < 2");
+    return m_elements[0][1];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Scalar& Matrix<Scalar, Rows, Columns>::z() const
+{
+    static_assert( is_vector,
+                   "Trying to get the z component of a non-vector");
+    static_assert( vector_size >= 3,
+                   "Trying to get the z component of a vector of size < 3");
+    return m_elements[0][2];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Scalar& Matrix<Scalar, Rows, Columns>::z()
+{
+    static_assert( is_vector,
+                   "Trying to get the z component of a non-vector");
+    static_assert( vector_size >= 3,
+                   "Trying to get the z component of a vector of size < 3");
+    return m_elements[0][2];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Scalar& Matrix<Scalar, Rows, Columns>::w() const
+{
+    static_assert( is_vector,
+                   "Trying to get the w component of a non-vector");
+    static_assert( vector_size >= 4,
+                   "Trying to get the w component of a vector of size < 4");
+    return m_elements[0][3];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Scalar& Matrix<Scalar, Rows, Columns>::w()
+{
+    static_assert( is_vector,
+                   "Trying to get the w component of a non-vector");
+    static_assert( vector_size >= 4,
+                   "Trying to get the w component of a vector of size < 4");
+    return m_elements[0][3];
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Vector<Scalar, 2>& Matrix<Scalar, Rows, Columns>::xy() const
+{
+    static_assert( is_vector,
+                   "Trying to get the xy components of a non-vector");
+    static_assert( vector_size >= 2,
+                   "Trying to get the xy components of a vector of size < "
+                   "2" );
+    return *reinterpret_cast<const Vector<Scalar, 2>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Vector<Scalar, 2>& Matrix<Scalar, Rows, Columns>::xy()
+{
+    static_assert( is_vector,
+                   "Trying to get the xy components of a non-vector");
+    static_assert( vector_size >= 2,
+                   "Trying to get the xy components of a vector of size < "
+                   "2" );
+    return *reinterpret_cast<Vector<Scalar, 2>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Vector<Scalar, 3>& Matrix<Scalar, Rows, Columns>::xyz() const
+{
+    static_assert( is_vector,
+                   "Trying to get the xyx components of a non-vector");
+    static_assert( vector_size >= 3,
+                   "Trying to get the xyz components of a vector of size < "
+                   "3" );
+    return *reinterpret_cast<const Vector<Scalar, 3>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Vector<Scalar, 3>& Matrix<Scalar, Rows, Columns>::xyz()
+{
+    static_assert( is_vector,
+                   "Trying to get the xyx components of a non-vector");
+    static_assert( vector_size >= 3,
+                   "Trying to get the xyz components of a vector of size < "
+                   "3" );
+    return *reinterpret_cast<Vector<Scalar, 3>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+const Vector<Scalar, 4>& Matrix<Scalar, Rows, Columns>::xyzw() const
+{
+    static_assert( is_vector,
+                   "Trying to get the xyxw components of a non-vector");
+    static_assert( vector_size >= 4,
+                   "Trying to get the xyzw components of a vector of size "
+                   "< 4" );
+    return *reinterpret_cast<const Vector<Scalar, 4>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Vector<Scalar, 4>& Matrix<Scalar, Rows, Columns>::xyzw()
+{
+    static_assert( is_vector,
+                   "Trying to get the xyxw components of a non-vector");
+    static_assert( vector_size >= 4,
+                   "Trying to get the xyzw components of a vector of size <"
+                   "4" );
+    return *reinterpret_cast<Vector<Scalar, 4>*>(this);
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename ReturnScalar>
+ReturnScalar Matrix<Scalar, Rows, Columns>::Determinant()  const
+{
+    return JoeMath::Determinant( *this );
+}
+
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename ReturnScalar>
+ReturnScalar Matrix<Scalar, Rows, Columns>::Minor( u32 row, u32 column ) const
+{
+    static_assert( Rows == Columns,
+                   "Can't get the minor of a non-square matrix" );
+    assert( row < Rows && "Trying to get an out of bounds minor" );
+    assert( column < Columns && "Trying to get an out of bounds minor" );
+
+    Matrix<Scalar, Rows-1, Columns-1> minor_matrix;
+
+    for( s32 i = 0; i < Columns-1; ++i )
+        for( s32 j = 0; j < Rows-1; ++j )
+            minor_matrix.m_elements[i][j] =
+                m_elements[i < column ? i : i+1][j < row ? j : j+1];
+
+    return minor_matrix.Determinant();
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename ReturnScalar>
+ReturnScalar     Matrix<Scalar, Rows, Columns>::LengthSq        ( ) const
+{
+    return JoeMath::LengthSq( *this );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+template <typename ReturnScalar>
+ReturnScalar    Matrix<Scalar, Rows, Columns>::Length          ( ) const
+{
+    return JoeMath::Length( *this );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Non-members of Matrix
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Unary Operators
+//
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Matrix<Scalar, Rows, Columns> operator + (
+                                        const Matrix<Scalar, Rows, Columns>& m )
+{
+    return m;
+}
+
+// the negated vertion of this vector
+template <typename Scalar, u32 Rows, u32 Columns>
+Matrix<Scalar, Rows, Columns> operator - (
+                                        const Matrix<Scalar, Rows, Columns>& m )
+{
+    Matrix<Scalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns; ++i )
+        for( u32 j = 0; j < Rows; ++j )
+            ret.m_elements[i][j] = -m.m_elements[i][j];
+
+    return ret;
+}
+
+//
+// Assignment operators
+//
+
+// Scalar addition
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator += ( Matrix<Scalar, Rows, Columns>& m,
+                                              const Scalar2 s )
+{
+    m = m + s;
+    return m;
+}
+
+// Scalar subtraction
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator -= ( Matrix<Scalar, Rows, Columns>& m,
+                                              const Scalar2 s )
+{
+    m = m - s;
+    return m;
+}
+
+// Scalar multiplication
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator *= ( Matrix<Scalar, Rows, Columns>& m,
+                                              const Scalar2 s )
+{
+    m = m * s;
+    return m;
+}
+
+// Scalar division
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator /= ( Matrix<Scalar, Rows, Columns>& m,
+                                              const Scalar2 s )
+{
+    m = m / s;
+    return m;
+}
+
+// Component wise addition
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator += (
+                                Matrix<Scalar, Rows, Columns>& m1,
+                                const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    m1 = m1 + m2;
+    return m1;
+}
+
+// Component wise subtraction
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator -= (
+                                Matrix<Scalar, Rows, Columns>& m1,
+                                const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    m1 = m1 - m2;
+    return m1;
+}
+
+// Component wise multiplication
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator *= (
+                                Matrix<Scalar, Rows, Columns>& m1,
+                                const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    m1 = m1 * m2;
+    return m1;
+}
+
+// Component wise division
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+Matrix<Scalar, Rows, Columns>&  operator /= (
+                                Matrix<Scalar, Rows, Columns>& m1,
+                                const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    m1 = m1 / m2;
+    return m1;
+}
+
+
+//
+// Binary Operators
+//
+
+//
+// Comparison
+//
+
+/**
+  * Returns true iff all the elements compare equal
+  */
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+bool    operator == ( const Matrix<Scalar, Rows, Columns>& m1,
+                      const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    for( u32 i = 0; i < Columns * Rows; ++i )
+        if ( m1.m_elements[0][i] != m2.m_elements[0][i] )
+            return false;
+    return true;
+}
+
+/**
+  * Returns false iff all the elements compare equal
+  */
+template <typename Scalar, u32 Rows, u32 Columns, typename Scalar2>
+bool    operator != ( const Matrix<Scalar, Rows, Columns>& m1,
+                      const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    return !(m1 == m2);
+}
+
+//
+// Arithmetic
+//
+
+/**
+  * Increment all elements of the matrix by a scalar value
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator + (
+                                         const Matrix<Scalar, Rows, Columns>& m,
+                                         const Scalar2 s )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m.m_elements[0][i] + s;
+
+    return ret;
+}
+
+/**
+  * Decrement all elements of the matrix by a scalar value
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator - (
+                                         const Matrix<Scalar, Rows, Columns>& m,
+                                         const Scalar2 s )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m.m_elements[0][i] - s;
+
+    return ret;
+}
+
+/**
+  * Multiply all elements of the matrix by a scalar value
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator * (
+                                       const Scalar2 s,
+                                       const Matrix<Scalar, Rows, Columns>& m )
+{
+    return m * s;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator * (
+                                         const Matrix<Scalar, Rows, Columns>& m,
+                                         const Scalar2 s )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m.m_elements[0][i] * s;
+
+    return ret;
+}
+
+/**
+  * Divides all elements of the matrix by a scalar value
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator / (
+                                         const Matrix<Scalar, Rows, Columns>& m,
+                                         const Scalar2 s )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+    auto inv = Scalar{1} / s;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m.m_elements[0][i] * inv;
+
+    return ret;
+}
+
+/**
+  * Performs component wise addition between two matrices
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator + (
+                                     const Matrix<Scalar, Rows, Columns>& m1,
+                                     const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m1.m_elements[0][i] + m2.m_elements[0][i];
+
+    return ret;
+}
+
+/**
+  * Performs component wise subtraction between two matrices
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator - (
+                                     const Matrix<Scalar, Rows, Columns>& m1,
+                                     const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m1.m_elements[0][i] - m2.m_elements[0][i];
+
+    return ret;
+}
+
+/**
+  * Performs component wise multiplication between two matrices
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator * (
+                                     const Matrix<Scalar, Rows, Columns>& m1,
+                                     const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m1.m_elements[0][i] * m2.m_elements[0][i];
+
+    return ret;
+}
+
+/**
+  * Performs component wise division between two matrices
+  */
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> operator / (
+                                     const Matrix<Scalar, Rows, Columns>& m1,
+                                     const Matrix<Scalar2, Rows, Columns>& m2 )
+{
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    for( u32 i = 0; i < Columns*Rows; ++i )
+            ret.m_elements[0][i] = m1.m_elements[0][i] / m2.m_elements[0][i];
+
+    return ret;
+}
+
+//
+// Other things
+//
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2, u32 Columns2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns2> Mul(
+                              const Matrix<Scalar, Rows, Columns>& m1,
+                              const Matrix<Scalar2, Columns, Columns2>& m2 )
+{
+    Matrix<ReturnScalar, Rows, Columns2> ret{0};
+
+    for( u32 i = 0; i < Columns2; ++i )
+        for( u32 j = 0; j < Rows; ++j )
+            for( u32 k = 0; k < Columns; ++k )
+                ret.m_elements[i][j] += m1.m_elements[k][j] *
+                                        m2.m_elements[i][k];
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+auto Determinant( const Matrix<Scalar, Rows, Columns>& m ) ->
+                 decltype( std::declval<Scalar>() * std::declval<Scalar>() )
+{
+    static_assert( Rows == Columns,
+                   "Trying to take the determinant of a non-square matrix");
+    return detail::Determinant(
+                         m,
+                         std::integral_constant<u32, (Rows > 4) ? 0 : Rows>() );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+Matrix<Scalar, Columns, Rows> Transposed (
+                                        const Matrix<Scalar, Rows, Columns>& m )
+{
+    Matrix<Scalar, Columns, Rows> ret;
+
+    for( u32 i = 0; i < Rows; ++i )
+        for( u32 j = 0; j < Columns; ++j )
+            ret.m_elements[j][i] = m.m_elements[i][j];
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Transpose( Matrix<Scalar, Rows, Columns>& m )
+{
+    m = Transposed( m );
+}
+
+template< typename Scalar, u32 Rows, u32 Columns >
+Matrix<Scalar, Rows, Columns> Inverted (
+                                        const Matrix<Scalar, Rows, Columns>& m )
+{
+    static_assert( Rows == Columns,
+                   "Trying to calculate the inverse of a non-square matrix");
+    return detail::Inverted(
+                         m,
+                         std::integral_constant<u32, (Rows > 4) ? 0 : Rows>() );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Invert( Matrix<Scalar, Rows, Columns>& m )
+{
+    m = Inverted( m );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+inline Matrix<Scalar, Rows, Columns> Normalized (
+                                        const Matrix<Scalar, Rows, Columns>& m )
+{
+    static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                  "Trying to normalize a non-vector" );
+    return m / m.Length();
+}
+
+template <typename Scalar, u32 Rows, u32 Columns>
+void Normalize( Matrix<Scalar, Rows, Columns>& m )
+{
+    m = Normalized( m );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename ReturnScalar>
+ReturnScalar LengthSq        ( const Matrix<Scalar, Rows, Columns>& m )
+{
+    static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                   "Trying to get the squared length of a non-vector" );
+    return Dot( m, m );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename ReturnScalar>
+ReturnScalar Length          ( const Matrix<Scalar, Rows, Columns>& m )
+{
+    static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                   "Trying to get the length of a non-vector" );
+    return std::sqrt( LengthSq( m ) );
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+ReturnScalar Dot ( const Matrix<Scalar, Rows, Columns>& m0,
+                    const Matrix<Scalar2, Rows, Columns>& m1 )
+{
+    static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                   "Trying to take the dot product of non-vectors" );
+
+    ReturnScalar ret{0};
+
+    for( u32 i = 0; i < Rows*Columns; ++i )
+        ret += m0.m_elements[0][i] * m1.m_elements[0][i];
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Rows, Columns> Cross   (
+                            const Matrix<Scalar, Rows, Columns>& m0,
+                            const Matrix<Scalar2, Rows, Columns>& m1 )
+{
+    static_assert( Matrix<Scalar, Rows, Columns>::is_vector,
+                   "Trying to take the Cross Product between non-vectors" );
+    static_assert( Matrix<Scalar, Rows, Columns>::vector_size == 3,
+                   "Trying to take the Cross Product between vectors of "
+                   "size != 3" );
+
+    Matrix<ReturnScalar, Rows, Columns> ret;
+
+    ret.x() = m0.y() * m1.z() - m0.z() * m1.y();
+    ret.y() = m0.z() * m1.x() - m0.x() * m1.z();
+    ret.z() = m0.x() * m1.y() - m0.y() * m1.x();
+
+    return ret;
+}
+
+template <typename Scalar, u32 Rows, u32 Columns,
+          typename Scalar2, u32 Rows2, u32 Columns2,
+          typename ReturnScalar>
+Matrix<ReturnScalar, Matrix<Scalar, Rows, Columns>::vector_size,
+                     Matrix<Scalar2, Rows2, Columns2>::vector_size> Outer (
                                     const Matrix<Scalar, Rows, Columns>& m0,
                                     const Matrix<Scalar2, Rows2, Columns2>& m1 )
-    {
-        static_assert( Matrix<Scalar,Rows,Columns>::is_vector &&
-                       Matrix<Scalar2,Rows2,Columns2>::is_vector,
-                       "Trying to take the outer product between one or more "
-                       "non-vectors" );
-        Matrix<ReturnScalar,
-               Matrix<Scalar,Rows,Columns>::vector_size,
-               Matrix<Scalar2,Rows2,Columns2>::vector_size> ret;
+{
+    static_assert( Matrix<Scalar,Rows,Columns>::is_vector &&
+                   Matrix<Scalar2,Rows2,Columns2>::is_vector,
+                   "Trying to take the outer product between one or more "
+                   "non-vectors" );
+    Matrix<ReturnScalar,
+           Matrix<Scalar,Rows,Columns>::vector_size,
+           Matrix<Scalar2,Rows2,Columns2>::vector_size> ret;
 
+    for( u32 j = 0; j < m1.vector_size; ++j )
         for( u32 i = 0; i < m0.vector_size; ++i )
-            for( u32 j = 0; j < m1.vector_size; ++j )
-                ret.m_elements[i][j] = m0[i] * m1[j];
+            ret.m_elements[j][i] = m0[i] * m1[j];
 
-        return ret;
-    }
+    return ret;
+}
 
-    //
-    // Utility functions
-    //
+////////////////////////////////////////////////////////////////////////////////
+// Useful matrices
+////////////////////////////////////////////////////////////////////////////////
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Identity        ( )
-    {
-        Matrix<Scalar, Size, Size> ret( Scalar(0) );
-        for( u32 i = 0; i < Size; ++i )
-                ret.m_elements[i][i] = Scalar(1);
-        return ret;
-    }
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size> Identity()
+{
+    Matrix<Scalar, Size, Size> ret( Scalar{0} );
+    for( u32 i = 0; i < Size; ++i )
+        ret.m_elements[i][i] = Scalar(1);
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Scale           ( const Matrix<Scalar, 1, Size>& s )
-    {
-        Matrix<Scalar, Size, Size> ret( Scalar{0} );
-        for( u32 i = 0; i < Size; ++i )
-            ret.m_elements[i][i] = s[i];
-        return ret;
-    }
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size> Scale( const Matrix<Scalar, 1, Size>& s )
+{
+    Matrix<Scalar, Size, Size> ret( Scalar{0} );
+    for( u32 i = 0; i < Size; ++i )
+        ret.m_elements[i][i] = s[i];
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle )
-    {
-        static_assert( Size >= 2,
-                       "Trying to construct a 2d rotation matrix of size 1" );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size>             Rotate2D        ( Scalar angle )
+{
+    static_assert( Size >= 2,
+                   "Trying to construct a 2d rotation matrix of size 1" );
 
-        Scalar sin = std::sin( angle );
-        Scalar cos = std::cos( angle );
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.m_elements[0][0] = cos;
-        ret.m_elements[0][1] = -sin;
-        ret.m_elements[1][0] = sin;
-        ret.m_elements[1][1] = cos;
+    auto sin = std::sin( angle );
+    auto cos = std::cos( angle );
+    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+    ret.m_elements[0][0] = cos;
+    ret.m_elements[1][0] = -sin;
+    ret.m_elements[0][1] = sin;
+    ret.m_elements[1][1] = cos;
 
-        return ret;
-    }
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             RotateX         ( Scalar angle )
-    {
-        static_assert( Size >= 3,
-                       "Trying to construct an x axis rotation matrix of size <"
-                       " 3" );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size>             RotateX         ( Scalar angle )
+{
+    static_assert( Size >= 3,
+                   "Trying to construct an x axis rotation matrix of size <"
+                   " 3" );
 
-        Scalar sin = std::sin( angle );
-        Scalar cos = std::cos( angle );
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.m_elements[1][1] = cos;
-        ret.m_elements[1][2] = -sin;
-        ret.m_elements[2][1] = sin;
-        ret.m_elements[2][2] = cos;
+    auto sin = std::sin( angle );
+    auto cos = std::cos( angle );
+    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+    ret.m_elements[1][1] = cos;
+    ret.m_elements[2][1] = -sin;
+    ret.m_elements[1][2] = sin;
+    ret.m_elements[2][2] = cos;
 
-        return ret;
-    }
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             RotateY         ( Scalar angle )
-    {
-        static_assert( Size >= 3,
-                       "Trying to construct an y axis rotation matrix of size <"
-                       " 3" );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size>             RotateY         ( Scalar angle )
+{
+    static_assert( Size >= 3,
+                   "Trying to construct an y axis rotation matrix of size <"
+                   " 3" );
 
-        Scalar sin = std::sin( angle );
-        Scalar cos = std::cos( angle );
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.m_elements[0][0] = cos;
-        ret.m_elements[0][2] = sin;
-        ret.m_elements[2][0] = -sin;
-        ret.m_elements[2][2] = cos;
+    auto sin = std::sin( angle );
+    auto cos = std::cos( angle );
+    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+    ret.m_elements[0][0] = cos;
+    ret.m_elements[2][0] = sin;
+    ret.m_elements[0][2] = -sin;
+    ret.m_elements[2][2] = cos;
 
-        return ret;
-    }
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
-    {
-        static_assert( Size >= 3,
-                       "Trying to construct an z axis rotation matrix of size <"
-                       " 2" );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
+{
+    static_assert( Size >= 3,
+                   "Trying to construct an z axis rotation matrix of size <"
+                   " 2" );
 
-        Scalar sin = std::sin( angle );
-        Scalar cos = std::cos( angle );
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.m_elements[0][0] = cos;
-        ret.m_elements[0][1] = -sin;
-        ret.m_elements[1][0] = sin;
-        ret.m_elements[1][1] = cos;
+    Scalar sin = std::sin( angle );
+    Scalar cos = std::cos( angle );
+    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+    ret.m_elements[0][0] = cos;
+    ret.m_elements[1][0] = -sin;
+    ret.m_elements[0][1] = sin;
+    ret.m_elements[1][1] = cos;
 
-        return ret;
-    }
+    return ret;
+}
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             RotateZXY       ( Scalar x, Scalar y, Scalar z )
-    {
-        static_assert( Size >= 3,
-                       "Trying to construct an zxy axis rotation matrix of size"
-                        "< 3" );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size, Size> RotateAxisAngle( const Vector<Scalar, 3>& axis,
+                                            Scalar angle )
+{
+    static_assert( Size >= 3,
+                   "Trying to construct a angle axis rotation matrix of "
+                   "size < 3" );
 
-        Matrix<Scalar, 3, 3> rotation = RotateZ( z ) * RotateX( x ) * RotateY( y );
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
-        ret.template SetSubMatrix<3,3>(rotation);
-        return ret;
-    }
+    auto cos = std::cos( angle );
+    auto sin = std::sin( angle );
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size, Size>             Rotate3D        ( const Matrix<Scalar, 1, 3>& axis, Scalar angle )
-    {
-        static_assert( Size >= 3,
-                       "Trying to construct a angle axis rotation matrix of "
-                       "size < 3" );
-        Scalar cos = std::cos( Scalar( angle ) );
-        Scalar sin = std::sin( Scalar( angle ) );
+    Matrix<Scalar, 3, 3> rotation{ Scalar{0}, axis.z(), -axis.y(),
+                                   -axis.z(), Scalar{0}, axis.x(),
+                                    axis.y(), -axis.x(), Scalar{0} };
+    rotation *= sin;
+    rotation += cos * Identity<Scalar, 3>();
+    rotation += (Scalar{1} - cos) * Outer(axis, axis);
 
-        //
-        // Set the rotation to the cross product matrix * sin
-        //
-        Matrix<Scalar, 3, 3> rotation ( Scalar(0),      -axis[2], axis[1],
-                                         axis[2], Scalar(0),      -axis[0],
-                                        -axis[1], axis[0], Scalar(0) );
-        rotation *= sin;
+    auto ret = Identity<Scalar, Size>( );
+    ret.SetSubMatrix(rotation);
 
-        rotation += cos * Identity<Scalar, 3>( );
+    return ret;
+}
 
-        rotation += ( Scalar( 1 ) - cos ) * Outer( axis, axis );
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size+1, Size+1> Translate( const Vector<Scalar, Size>& position )
+{
+    Matrix<Scalar, Size+1, Size+1> ret = Identity<Scalar, Size+1>();
 
-        Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>( );
+    ret.SetSubMatrix<Size, 1,   // Size of the vector to insert
+                     Size, 0> // Position to insert
+                                (position);
+    return ret;
+}
 
-        ret.template SetSubMatrix(rotation);
+template <typename Scalar>
+Matrix<Scalar, 4, 4> Reflect( const Vector<Scalar, 4>& plane )
+{
+    Normalize( plane );
 
-        return ret;
-    }
+    auto ret = Identity<Scalar, 4>();
+    ret -= 2 * Outer( plane, {plane.x(), plane.y(), plane.z(), 0} );
 
-    template <typename Scalar, u32 Size>
-    Matrix<Scalar, Size+1, Size+1>         Translate       ( const Matrix<Scalar, 1, Size>& position )
-    {
-        Matrix<Scalar, Size+1, Size+1> ret = Identity<Scalar, Size+1>( );
+    return ret;
+}
 
-        ret.template SetSubMatrix<1, Size, Size, 0>( position );
+template <typename Scalar>
+Matrix<Scalar, 4, 4> Projection( Scalar vertical_fov,
+                                 Scalar aspect_ratio,
+                                 Scalar near_plane,
+                                 Scalar far_plane )
+{
+    auto top = std::tan( Scalar{0.5} * vertical_fov ) * near_plane;
+    auto right = aspect_ratio * top;
 
-        return ret;
-    }
+    auto y_scale = Scalar{1} / std::tan( Scalar{0.5} * vertical_fov );
+    auto x_scale = y_scale / aspect_ratio;
+    auto z_scale = -(far_plane + near_plane) / (far_plane - near_plane);
+    auto focus   = -Scalar{2} * far_plane * near_plane /
+                                                       (far_plane - near_plane);
 
-    template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Reflect         ( const Matrix<Scalar, 1, 4>& plane )
-    {
-        Matrix<Scalar, 4, 4> ret = Identity<Scalar, 4>( );
-        ret -= 2 * Outer(plane, plane);
-        return ret;
-    }
+    return Matrix<Scalar, 4, 4>
+    { x_scale,   Scalar{0}, Scalar{0}, Scalar{0},
+      Scalar{0}, y_scale,   Scalar{0}, Scalar{0},
+      Scalar{0}, Scalar{0}, z_scale,   Scalar{-1},
+      Scalar{0}, Scalar{0}, focus,     Scalar{0} };
+}
 
-    template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Projection      ( Scalar vertical_fov, Scalar aspect_ratio, Scalar near_plane, Scalar far_plane )
-    {
-        const Scalar y_scale = Scalar( 1 ) / tan( Scalar( 0.5 ) * vertical_fov );
-        const Scalar x_scale = y_scale / aspect_ratio;
-        const Scalar z_dist  = far_plane / (far_plane - near_plane);
+template <typename Scalar>
+Matrix<Scalar, 4, 4> View( const Vector<Scalar, 3>& position,
+                           const Vector<Scalar, 3>& direction,
+                           const Vector<Scalar, 3>& up )
+{
+    Matrix<Scalar, 4, 4> ret;
+    ret.SetForward ( {Normalized(direction), 0} );
+    ret.SetRight   ( {Cross( ret.GetForward(), Normalized(up) ), 0} );
+    ret.SetUp      ( {Cross( ret.GetForward(), ret.GetRight() ), 0} );
+    ret.SetPosition( {position, 1} );
+    return ret;
+}
 
-        return Matrix<Scalar, 4, 4>(x_scale, Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
-                                     Scalar( 0 ), y_scale, Scalar( 0 ), Scalar( 0 ),
-                                     Scalar( 0 ), Scalar( 0 ), z_dist,  Scalar( 1 ),
-                                     Scalar( 0 ), Scalar( 0 ), -near_plane * z_dist, Scalar( 0 ));
-    }
-
-    template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   View            ( const Matrix<Scalar, 1, 3>& position, const Matrix<Scalar, 1, 3>& direction, const Matrix<Scalar, 1, 3>& up )
-    {
-        Matrix<Scalar, 4, 4> ret;
-        ret.SetPosition( position );
-        ret.SetForward ( Normalized(direction) );
-        ret.SetRight   ( Cross( ret.GetForward( ), Normalized(up) ) );
-        ret.SetUp      ( Cross( ret.GetForward( ), ret.GetRight( ) ) );
-        ret.m_elements[0][3] = 0.0f;
-        ret.m_elements[1][3] = 0.0f;
-        ret.m_elements[2][3] = 0.0f;
-        ret.m_elements[3][3] = 1.0f;
-        ret.Invert();
-        return ret;
-    }
-
-    template <typename Scalar>
-    Matrix<Scalar, 4, 4>                   Ortho           ( Scalar left, Scalar right, Scalar top, Scalar bottom, Scalar near_plane, Scalar far_plane )
-    {
-        return Matrix<Scalar, 4, 4>( Scalar( 2 ) / (right - left), Scalar( 0 ), Scalar( 0 ), Scalar( 0 ),
-                                     Scalar( 0 ), Scalar( 2 ) / (top - bottom), Scalar( 0 ), Scalar( 0 ),
-                                     Scalar( 0 ), Scalar( 0 ), Scalar( 1 ) / (near_plane - far_plane),  Scalar( 1 ),
-                                     Scalar( 0 ), Scalar( 0 ), near_plane * Scalar( 1 ) / (near_plane - far_plane), Scalar( 0 ));
-    }
+template <typename Scalar>
+Matrix<Scalar, 4, 4> Ortho( Scalar left, Scalar right,
+                            Scalar top, Scalar bottom,
+                            Scalar near_plane, Scalar far_plane )
+{
+    return Matrix<Scalar, 4, 4>( Scalar( 2 ) / (right - left), Scalar( 0 ),
+                                    Scalar( 0 ), Scalar( 0 ),
+                                 Scalar( 0 ), Scalar( 2 ) / (top - bottom),
+                                    Scalar( 0 ), Scalar( 0 ),
+                                 Scalar( 0 ), Scalar( 0 ),
+                                    Scalar( 1 ) / (near_plane - far_plane),
+                                        Scalar( 1 ),
+                                 Scalar( 0 ), Scalar( 0 ),
+                                    near_plane*Scalar(1)/(near_plane-far_plane),
+                                        Scalar( 0 ));
+}
 }

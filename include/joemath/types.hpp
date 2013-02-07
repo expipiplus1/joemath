@@ -51,18 +51,6 @@ namespace JoeMath
     template <typename Scalar, u32 Rows, u32 Columns>
     class Matrix;
 
-    typedef Matrix<s32, 1, 2>   int2;
-    typedef Matrix<s32, 1, 3>   int3;
-    typedef Matrix<s32, 1, 4>   int4;
-
-    typedef Matrix<u32, 1, 2>   uint2;
-    typedef Matrix<u32, 1, 3>   uint3;
-    typedef Matrix<u32, 1, 4>   uint4;
-
-    typedef Matrix<float, 1, 2> float2;
-    typedef Matrix<float, 1, 3> float3;
-    typedef Matrix<float, 1, 4> float4;
-
     typedef Matrix<float, 2, 2> float2x2;
     typedef Matrix<float, 3, 3> float3x3;
     typedef Matrix<float, 4, 4> float4x4;
@@ -71,5 +59,17 @@ namespace JoeMath
     // Vector types
     //
     template <typename Scalar, u32 Size>
-    using Vector = Matrix<Scalar, 1, Size>;
+    using Vector = Matrix<Scalar, Size, 1>;
+
+    typedef Vector<s32, 2>   int2;
+    typedef Vector<s32, 3>   int3;
+    typedef Vector<s32, 4>   int4;
+
+    typedef Vector<u32, 2>   uint2;
+    typedef Vector<u32, 3>   uint3;
+    typedef Vector<u32, 4>   uint4;
+
+    typedef Vector<float, 2> float2;
+    typedef Vector<float, 3> float3;
+    typedef Vector<float, 4> float4;
 }

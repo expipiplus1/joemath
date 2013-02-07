@@ -193,8 +193,7 @@ TYPED_TEST(VectorTest, OuterWorks )
             v1.vector_size> m = Outer(v0,v1);
     for( u32 i = 0; i < v0.vector_size; ++i )
         for( u32 j = 0; j < v1.vector_size; ++j )
-            //Accessing m with elements for 1x1 matrixes
-            ASSERT_FLOAT_EQ( m.m_elements[i][j], v0[i] * v1[j] );
+            ASSERT_FLOAT_EQ( m.m_elements[j][i], v0[i] * v1[j] );
 }
 
 TYPED_TEST(VectorTest, ElementAccessX )
@@ -418,7 +417,7 @@ TYPED_TEST(VectorTest, Normalize )
 {
     auto v = GetRandomVector<TypeParam>();
     auto u = v;
-    u.Normalize();
+    Normalize(u);
     ASSERT_EQ( u, Normalized(v) );
 }
 

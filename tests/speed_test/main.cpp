@@ -64,6 +64,31 @@ void add1( std::vector<float4>& a, const std::vector<float4>& b )
         a[i].xyz() = Cross(b[i].xyz(), a[i].xyz());
 }
 
+template<typename Scalar, u32 Rows, u32 Columns>
+void Print( const Matrix<Scalar, Rows, Columns>& m )
+{
+    for( u32 i = 0; i < Rows; ++i )
+    {
+        for( u32 j = 0; j < Columns; ++j )
+            std::cout << m[j][i] << " ";
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+int4 bar(int a, int b, int c, int d)
+{
+    return int4(a,b,c,d);
+}
+
+void foo()
+{
+    float4 a{float2(1,2),4,5};
+    float2 b{8,9};
+    Matrix<float, 2, 4> m{ a,a };
+    Print( m );
+}
+
 int main()
 {
     ScalarTest();
@@ -81,6 +106,28 @@ int main()
 
     float4 v{1,2,3,4};
 
+    std::cout << Length(v) - v.Length() << std::endl;
+
+    std::cout << m.Determinant() << std::endl;
+
+    float4x4 inv{0.000, 1.000, 2.000, 3.000,
+                 5.000, 6.000, 2.000, 1.000,
+                 9.000, 2.000, 1.000, 5.000,
+                 3.000, 1.000, 4.000, 3.000};
+    std::cout << "inv\n";
+    std::cout << inv.Determinant() << std::endl;
+    Invert(inv);
+    for( int i = 0; i < inv.rows; ++i)
+    {
+        for( int j = 0; j < inv.columns; ++j )
+            std::cout << inv[j][i] << " ";
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    inv = -inv;
+
+
     for( int i = 0; i < 4; ++i)
     {
         for( int j = 0; j < 4; ++j )
@@ -88,9 +135,9 @@ int main()
         std::cout << std::endl;
     }
 
-    m.GetRight() = v.xyz();
+    m.GetRight() = v.xyzw();
 
-    m.SetPosition({1,2,3});
+    m.SetTranslation({1,2,3,1});
 
     auto m3 = Outer(v,v);
     m = m3;
@@ -98,7 +145,7 @@ int main()
     for( u32 i = 0; i < m9.rows; ++i)
     {
         for( u32 j = 0; j < m9.columns; ++j )
-            std::cout << m9[i][j] << " ";
+            std::cout << m9[j][i] << " ";
         std::cout << std::endl;
     }
 
