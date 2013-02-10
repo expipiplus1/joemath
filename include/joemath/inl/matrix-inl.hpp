@@ -376,16 +376,17 @@ namespace detail
         const static std::size_t value = 0;
     };
 
-
     template<typename Scalar, std::size_t N>
-    constexpr std::array<Scalar, 0> Concatenate( const std::array<Scalar, N>& a )
+    constexpr std::array<Scalar, 0> Concatenate(
+                                                const std::array<Scalar, N>& a )
     {
         return a;
     }
 
     template<typename Scalar, std::size_t A, std::size_t B>
-    constexpr std::array<Scalar, A+B> Concatenate( const std::array<Scalar, A>& a,
-                                                   const std::array<Scalar, B>& b )
+    constexpr std::array<Scalar, A+B> Concatenate(
+                                                const std::array<Scalar, A>& a,
+                                                const std::array<Scalar, B>& b )
     {
         return Conc( a, b, typename make_index_tuple<A>::type{},
                            typename make_index_tuple<B>::type{});
@@ -406,11 +407,13 @@ namespace detail
     }
 
     template<typename Scalar, u32 Rows, u32 Columns>
-    constexpr std::array<Scalar, Rows*Columns> Expand( const Matrix<Scalar, Rows, Columns>& m )
+    constexpr std::array<Scalar, Rows*Columns> Expand(
+                                        const Matrix<Scalar, Rows, Columns>& m )
     {
         static_assert( is_vector<Matrix<Scalar, Rows, Columns>>::value,
                        "Can only expand vectors" );
-        return *reinterpret_cast<const std::array<Scalar, Rows*Columns>*>(&m.m_elements[0][0]);
+        return *reinterpret_cast<const std::array<Scalar, Rows*Columns>*>(
+                                                          &m.m_elements[0][0] );
     }
 
     template<typename Scalar>
@@ -433,6 +436,58 @@ namespace detail
         static_assert( N <= M, "Tryng to drop too many elements from array" );
         return Taker<N>(a, typename make_index_tuple<N>::type{});
     }
+
+    constexpr u32 CountElements()
+    {
+        return 0;
+    }
+
+    template <typename Scalar2, typename... Rest>
+    constexpr u32 CountElements( const Scalar2&, const Rest&... rest );
+
+    template <typename Scalar,  u32 Rows, u32 Columns,
+              typename... Rest>
+    constexpr u32 CountElements( const JoeMath::Matrix<Scalar, Rows, Columns>&,
+                                 const Rest&... rest )
+    {
+        return Rows * Columns + CountElements( rest... );
+    }
+
+    template <typename Scalar2, typename... Rest>
+    constexpr u32 CountElements( const Scalar2&, const Rest&... rest )
+    {
+        return 1 + CountElements( rest... );
+    }
+
+    template <u32 Index = 0, typename Scalar, u32 Rows, u32 Columns>
+    void Fill( Matrix<Scalar, Rows, Columns>& m )
+    {
+    }
+
+    template <u32 Index = 0, typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2, typename... Rest>
+    void Fill( Matrix<Scalar, Rows, Columns>& m, Scalar2 first, Rest... rest );
+
+    template <u32 Index = 0,
+              typename Scalar,  u32 Rows, u32 Columns,
+              typename Scalar2, u32 Rows2, u32 Columns2,
+              typename... Rest>
+    void Fill( Matrix<Scalar, Rows, Columns>& m,
+               Matrix<Scalar2, Rows2, Columns2> first, Rest... rest )
+    {
+        for( u32 i = 0; i < Rows2 * Columns2; ++i )
+            m.m_elements[0][Index+i] = first.m_elements[0][i];
+        Fill<Index+Rows2*Columns2>( m, rest... );
+    }
+
+    template <u32 Index, typename Scalar, u32 Rows, u32 Columns,
+              typename Scalar2, typename... Rest>
+    void Fill( Matrix<Scalar, Rows, Columns>& m, Scalar2 first, Rest... rest )
+    {
+        m.m_elements[0][Index] = first;
+        Fill<Index+1>( m, rest... );
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -473,10 +528,11 @@ template <typename First, typename Second, typename... Rest>
 Matrix<Scalar, Rows, Columns>::Matrix( First first,
                                        Second second,
                                        Rest... rest )
-    :Matrix(detail::Concatenate(detail::Expand<Scalar>(first),
-                                detail::Expand<Scalar>(second),
-                                detail::Expand<Scalar>(rest)...))
 {
+    static_assert( detail::CountElements( first, second, rest... ) ==
+                                                                 Rows * Columns,
+                   "Incorrect number of elements in Matrix constructor" );
+    detail::Fill( *this, first, second, rest... );
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
@@ -558,7 +614,7 @@ template <typename Scalar, u32 Rows, u32 Columns>
 auto  Matrix<Scalar, Rows, Columns>::GetColumn( u32 column ) -> column_type&
 {
     assert( column < columns && "Trying to get an out of bounds column" );
-    return *reinterpret_cast<column_type*>( m_elements[column] );
+    return *reinterpret_cast<column_type*>( &m_elements[column] );
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
@@ -1519,27 +1575,26 @@ Matrix<Scalar, 4, 4> View( const Vector<Scalar, 3>& position,
                            const Vector<Scalar, 3>& up )
 {
     Matrix<Scalar, 4, 4> ret;
-    ret.SetForward ( {Normalized(direction), 0} );
-    ret.SetRight   ( {Cross( ret.GetForward(), Normalized(up) ), 0} );
-    ret.SetUp      ( {Cross( ret.GetForward(), ret.GetRight() ), 0} );
-    ret.SetPosition( {position, 1} );
+    ret.SetForward( {Normalized(direction), 0} );
+    ret.SetRight ( {Cross( ret.GetForward().xyz(), Normalized(up) ), 0} );
+    ret.SetUp    ( {Cross( ret.GetForward().xyz(), ret.GetRight().xyz() ), 0} );
+    ret.SetTranslation( {position, 1} );
     return ret;
 }
 
 template <typename Scalar>
 Matrix<Scalar, 4, 4> Ortho( Scalar left, Scalar right,
                             Scalar top, Scalar bottom,
-                            Scalar near_plane, Scalar far_plane )
+                            Scalar near_p, Scalar far_p)
 {
-    return Matrix<Scalar, 4, 4>( Scalar( 2 ) / (right - left), Scalar( 0 ),
-                                    Scalar( 0 ), Scalar( 0 ),
-                                 Scalar( 0 ), Scalar( 2 ) / (top - bottom),
-                                    Scalar( 0 ), Scalar( 0 ),
-                                 Scalar( 0 ), Scalar( 0 ),
-                                    Scalar( 1 ) / (near_plane - far_plane),
-                                        Scalar( 1 ),
-                                 Scalar( 0 ), Scalar( 0 ),
-                                    near_plane*Scalar(1)/(near_plane-far_plane),
-                                        Scalar( 0 ));
+    auto x_size = right - left;
+    auto y_size = top - bottom;
+    auto z_size = far_p- near_p;
+
+    return Matrix<Scalar, 4, 4>
+    { 2 / x_size, 0,          0,          0,
+      0,          2 / y_size, 0,          0,
+      0,          0,          2 / z_size, 0,
+      -(right+left)/x_size, -(top+bottom)/y_size, -(near_p+far_p)/z_size, 1 };
 }
 }

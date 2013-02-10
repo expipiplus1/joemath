@@ -20,6 +20,10 @@ int main (int argc, char **argv)
 	return 1;
     }
 
+    string extraArgs;
+    for( int i = 2; i < argc; ++i )
+        extraArgs += string(" ") + argv[i];
+
     map<string, vector<string> > testCases;
     string line;
     string currentTestCase;
@@ -55,7 +59,9 @@ int main (int argc, char **argv)
 		    string gTestFilter ("\"--gtest_filter=");
 		    string endParen ("\")");
 
-		    testfilecmake << addTest << *jt << testExec << gTestFilter << *jt << endParen << endl;
+            testfilecmake << addTest << *jt << testExec << gTestFilter << *jt <<
+                             " " << extraArgs <<
+                             endParen << endl;
 		}
 	    }
 	}

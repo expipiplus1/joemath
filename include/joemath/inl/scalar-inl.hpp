@@ -38,7 +38,7 @@ namespace JoeMath
     inline constexpr
     T Pi()
     {
-        return T{3.141592653589793238462643383279502884197169399375105};
+        return T(3.141592653589793238462643383279502884197169399375105);
     }
 
     template <typename T, typename U>
@@ -93,11 +93,18 @@ namespace JoeMath
         return Clamped( v, T{0}, T{1} );
     }
 
-    template <typename T>
-    inline T    Length          ( const T v )
+    template <typename T,  typename, typename>
+    T   Length          ( const T v )
     {
-        return v > T{0} ? v : -v;
-    }    
+        return v;
+    }
+
+    template <typename T, typename>
+    T   Length          ( const T v )
+    {
+        return v < 0 ? -v : v;
+        //return std::abs(v);
+    }
 
     template <typename T>
     inline T    Min             ( const T v0, const T v1 )
@@ -120,7 +127,7 @@ namespace JoeMath
     template <typename T>
     inline T    RadToDeg        ( const T radians )
     {
-        return radians * ( T{180.0} / Pi<T>() );
+        return radians * ( T{180} / Pi<T>() );
     }
 
     template <typename T>

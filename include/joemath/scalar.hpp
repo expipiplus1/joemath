@@ -185,7 +185,15 @@ namespace JoeMath
       * The value to get the length of
       * \returns Abs( v );
       */
-    template <typename T>
+    template <typename T,
+              typename =
+                 typename std::enable_if<std::is_unsigned<T>::value,void>::type,
+              typename = void>
+    T   Length          ( const T v );
+
+    template <typename T,
+              typename =
+                typename std::enable_if<!std::is_unsigned<T>::value,void>::type>
     T   Length          ( const T v );
 
     /**

@@ -10,6 +10,11 @@ add_subdirectory( googletest EXCLUDE_FROM_ALL)
 add_executable( tester EXCLUDE_FROM_ALL scalar.cpp vector.cpp vector_instantiation.cpp matrix.cpp )
 add_dependencies( tester googletest )
 
+add_executable( regression_tester EXCLUDE_FROM_ALL regression/regression.cpp
+                                                   regression/test_data.hpp
+                                                   regression/scalar.cpp )
+add_dependencies( regression_tester googletest )
+
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${joemath_CXX_FLAGS}" )
 
 include_directories( googletest/include )
@@ -17,12 +22,13 @@ include_directories( googletest )
 
 find_library( googletest_gtest gtest HINTS ${binary_dir} NO_DEFAULT_PATH )
 find_library( googletest_gtest_main gtest_main HINTS ${binary_dir} NO_DEFAULT_PATH )
-target_link_libraries( tester gtest gtest_main )
 
-#add_test( all_tests tester )
+target_link_libraries( tester            gtest gtest_main )
+target_link_libraries( regression_tester gtest )
 
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-                  DEPENDS tester)
+add_custom_target( check
+                   COMMAND ${CMAKE_CTEST_COMMAND}
+                   DEPENDS tester regression_tester)
 
 #
 # The code for discovering tests is from the compiz_discover_tests branch of
@@ -40,7 +46,7 @@ function( joemath_discover_tests EXECUTABLE )
 
     add_custom_command( TARGET ${EXECUTABLE}
         POST_BUILD
-        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE} --gtest_list_tests | ${CMAKE_BINARY_DIR}/joemath_gtest/joemath_discover_gtest_tests ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE} --gtest_list_tests | ${CMAKE_BINARY_DIR}/joemath_gtest/joemath_discover_gtest_tests ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE} ${ARGN}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Discovering Tests in ${EXECUTABLE}"
         DEPENDS
@@ -48,4 +54,5 @@ function( joemath_discover_tests EXECUTABLE )
 endfunction()
 
 joemath_discover_tests( tester )
+joemath_discover_tests( regression_tester ${CMAKE_SOURCE_DIR}/regression_test_data.txt )
 

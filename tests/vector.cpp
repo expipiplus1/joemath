@@ -71,35 +71,22 @@ typedef Types<// float Vectors
               Vector<float, 2>,
               Vector<float, 3>,
               Vector<float, 4>,
-              //Vector<float, 5>,
-              //Vector<float, 6>,
               Vector<float, 7>,
-              //Vector<float, 8>,
               // double Vectors
               Vector<double, 1>,
               Vector<double, 2>,
               Vector<double, 3>,
               Vector<double, 4>,
-              //Vector<double, 5>,
-              //Vector<double, 6>,
               Vector<double, 7>,
-              //Vector<double, 8>,
               // float transposed Vectors
-              Matrix<float, 2, 1>,
-              Matrix<float, 3, 1>,
-              Matrix<float, 4, 1>,
-              //Matrix<float, 5, 1>,
-              //Matrix<float, 6, 1>,
-              Matrix<float, 7, 1>,
-              //Matrix<float, 8, 1>,
+              Matrix<float, 1, 2>,
+              Matrix<float, 1, 3>,
+              Matrix<float, 1, 4>,
               // double transposed Vectors
-              Matrix<double, 2, 1>,
-              Matrix<double, 3, 1>,
-              Matrix<double, 4, 1>,
-              //Matrix<double, 5, 1>,
-              //Matrix<double, 6, 1>,
-              Matrix<double, 7, 1>
-              //Matrix<double, 8, 1>
+              Matrix<double, 1, 2>,
+              Matrix<double, 1, 3>,
+              Matrix<double, 1, 4>,
+              Matrix<double, 1, 7>
                                      > VectorTypes;
 
 typedef Types<Vector<float, 1>,
@@ -109,18 +96,18 @@ typedef Types<Vector<float, 1>,
 
 typedef Types<Vector<float, 2>,
               Vector<double, 2>,
-              Matrix<float, 2, 1>,
-              Matrix<double, 2, 1> > Vector2Types;
+              Matrix<float, 1, 2>,
+              Matrix<double, 1, 2> > Vector2Types;
 
 typedef Types<Vector<float, 3>,
               Vector<double, 3>,
-              Matrix<float, 3, 1>,
-              Matrix<double, 3, 1> > Vector3Types;
+              Matrix<float, 1, 3>,
+              Matrix<double, 1, 3> > Vector3Types;
 
 typedef Types<Vector<float, 4>,
               Vector<double, 4>,
-              Matrix<float, 4, 1>,
-              Matrix<double, 4, 1> > Vector4Types;
+              Matrix<float, 1, 4>,
+              Matrix<double, 1, 4> > Vector4Types;
 
 typedef Types<// float Vectors
               //Vector<float, 5>,
@@ -135,12 +122,12 @@ typedef Types<// float Vectors
               // float transposed Vectors
               //Matrix<float, 5, 1>,
               //Matrix<float, 6, 1>,
-              Matrix<float, 7, 1>,
+              Matrix<float, 1, 7>,
               //Matrix<float, 8, 1>,
               // double transposed Vectors
               //Matrix<double, 5, 1>,
               //Matrix<double, 6, 1>,
-              Matrix<double, 7, 1>
+              Matrix<double, 1, 7>
               //Matrix<double, 8, 1>
                                      > VectorManyTypes;
 
