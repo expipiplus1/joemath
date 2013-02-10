@@ -1,6 +1,6 @@
 *.kdev4
 *.kate-swp
 *~
-*.cmake.user
+*.txt.user
 build/
 include/joemath/config.hpp
