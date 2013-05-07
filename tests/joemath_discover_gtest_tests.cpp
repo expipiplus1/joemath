@@ -20,10 +20,6 @@ int main (int argc, char **argv)
 	return 1;
     }
 
-    string extraArgs;
-    for( int i = 2; i < argc; ++i )
-        extraArgs += string(" ") + argv[i];
-
     map<string, vector<string> > testCases;
     string line;
     string currentTestCase;
@@ -34,7 +30,7 @@ int main (int argc, char **argv)
 	if (line.find ("  ") == 0)
 	    testCases[currentTestCase].push_back (currentTestCase + line.substr (2));
 	else
-	    currentTestCase = line;
+	    currentTestCase = line.substr(0, line.find('.')+1);
 
     }
 
@@ -54,15 +50,19 @@ int main (int argc, char **argv)
 	    {
 		if (testfilecmake.good ())
 		{
-		    string addTest ("ADD_TEST (");
-		    string testExec (" \"" + string (argv[1]) + "\"");
+            string addTest ("ADD_TEST( ");
+            string testExec (" \"" + string (argv[1]) + "\" ");
 		    string gTestFilter ("\"--gtest_filter=");
-		    string endParen ("\")");
+            string endParen (" )");
 
             testfilecmake << addTest << *jt << testExec << gTestFilter << *jt <<
-                             " " << extraArgs <<
-                             endParen << endl;
-		}
+                             "\" ";
+
+            for( int i = 2; i < argc; ++i )
+                testfilecmake << "\"" << argv[i] << "\" ";
+
+            testfilecmake << endParen << endl;
+        }
 	    }
 	}
 
