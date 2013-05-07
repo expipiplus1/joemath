@@ -63,6 +63,11 @@ class VectorManyTest : public testing::Test
 {
 };
 
+template <typename T>
+class ColumnVectorTest : public testing::Test
+{
+};
+
 using testing::Types;
 
 // The list of types we want to test.
@@ -88,6 +93,20 @@ typedef Types<// float Vectors
               Matrix<double, 1, 4>,
               Matrix<double, 1, 7>
                                      > VectorTypes;
+
+// The list of types we want to test.
+typedef Types<// float Vectors
+              Vector<float, 1>,
+              Vector<float, 2>,
+              Vector<float, 3>,
+              Vector<float, 4>,
+              Vector<float, 7>,
+              // double Vectors
+              Vector<double, 1>,
+              Vector<double, 2>,
+              Vector<double, 3>,
+              Vector<double, 4>,
+              Vector<double, 7>  > ColumnVectorTypes;
 
 typedef Types<Vector<float, 1>,
               Vector<double, 1>,
@@ -137,11 +156,12 @@ TYPED_TEST_CASE(Vector2Test, Vector2Types);
 TYPED_TEST_CASE(Vector3Test, Vector3Types);
 TYPED_TEST_CASE(Vector4Test, Vector4Types);
 TYPED_TEST_CASE(VectorManyTest, VectorManyTypes);
+TYPED_TEST_CASE(ColumnVectorTest, ColumnVectorTypes);
 
 TYPED_TEST(VectorTest, NormalizedReturnsLength1Vector )
 {
     TypeParam v = GetRandomVector<TypeParam>();
-    ASSERT_FLOAT_EQ( Normalized(v).LengthSq(), 1 );
+    ASSERT_FLOAT_EQ( Normalized(v).Length(), 1 );
 }
 
 TYPED_TEST(VectorTest, DotWith0 )
@@ -408,6 +428,13 @@ TYPED_TEST(VectorTest, Normalize )
     ASSERT_EQ( u, Normalized(v) );
 }
 
+TYPED_TEST(VectorTest, NormalizedLength )
+{
+    auto v = GetRandomVector<TypeParam>();
+    Normalize(v);
+    ASSERT_FLOAT_EQ( 1, Length(v) );
+}
+
 TYPED_TEST(VectorTest, LengthIsNonNegative )
 {
     auto v = GetRandomVector<TypeParam>();
@@ -421,4 +448,21 @@ TYPED_TEST(VectorTest, LengthSq )
     auto l = v.Length();
     auto s = v.LengthSq();
     ASSERT_FLOAT_EQ( l*l, s );
+}
+
+TYPED_TEST( ColumnVectorTest, MulTranspose )
+{
+    auto v = GetRandomVector<TypeParam>();
+    auto x = GetRandomVector<TypeParam>();
+    auto w = Transposed(x);
+
+    ASSERT_EQ( Dot(v,x), Mul(w, v).m_elements[0][0] );
+}
+
+TYPED_TEST( ColumnVectorTest, TransposeMul )
+{
+    auto v = GetRandomVector<TypeParam>();
+    auto x = GetRandomVector<TypeParam>();
+    auto w = Transposed(x);
+    ASSERT_EQ( Outer(v,x), Mul(v, w) );
 }
