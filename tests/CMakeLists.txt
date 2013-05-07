@@ -12,7 +12,8 @@ add_dependencies( tester googletest )
 
 add_executable( regression_tester EXCLUDE_FROM_ALL regression/regression.cpp
                                                    regression/test_data.hpp
-                                                   regression/scalar.cpp )
+                                                   regression/scalar.cpp 
+                                                   regression/vector.cpp )
 add_dependencies( regression_tester googletest )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${joemath_CXX_FLAGS}" )

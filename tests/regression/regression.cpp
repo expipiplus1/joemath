@@ -39,6 +39,8 @@
 void PrintUsage()
 {
     std::cout << "Usage: ./regression_tester [-w -i] datafile" << std::endl;
+    std::cout << "-w updates the results in the datafile" << std::endl;
+    std::cout << "-i generates new input data (pointless to use without -w)" << std::endl;
 }
 
 
@@ -60,9 +62,7 @@ int main(int argc, char **argv)
         if( std::string( "-w" ) == argv[i] )
             g_UpdateResults = true;
         else if( std::string( "-i" ) == argv[i] )
-        {
             g_GenerateInputData = true;
-        }
         else
             filename = argv[i];
     }

@@ -88,8 +88,23 @@ namespace JoeMath
                                 Matrix<Scalar, Rows, Columns>& m )
     {
         for( u32 i = 0; i < Rows*Columns; ++i )
-            in >> m.m_elememts[0][i];
+            in >> m.m_elements[0][i];
         return in;
+    }
+
+    template <typename Scalar, u32 Rows, u32 Columns>
+    std::ostream& operator << ( std::ostream& out,
+                                const Matrix<Scalar, Rows, Columns>& m )
+    {
+        for( u32 i = 0; i < Columns; ++i )
+            for( u32 j = 0; j < Rows; ++j )
+            {
+                out << std::setprecision( std::numeric_limits<Scalar>::digits10 + 1) <<
+                       std::fixed << m.m_elements[i][j];
+                if( i != Columns - 1 || j != Rows - 1 )
+                    out << " " ;
+            }
+        return out;
     }
 }
 
@@ -154,16 +169,32 @@ namespace detail
         return d(g_RandGenerator);
     }
 
+    template <typename T,
+              typename =
+         typename std::enable_if<JoeMath::is_matrix<T>::value, void>::type,
+              typename = void, typename = void>
+    T Rand()
+    {
+        T ret;
+        for( u32 i = 0; i < T::columns; ++i )
+            for( u32 j = 0; j < T::rows; ++j )
+            {
+                ret.m_elements[i][j] = Rand<typename T::scalar_type>();
+            }
+        return ret;
+    }
+
     template <typename E, typename F>
     std::string GetElementString( const F& f )
     {
+        using G = typename std::remove_cv<typename std::remove_reference<E>::type>::type;
         std::stringstream ss;
-        E e;
+        G e;
 
         if( f )
-            e = E(f());
+            e = G(f());
         else
-            e = Rand<E>();
+            e = Rand<G>();
 
         ss << std::setprecision( std::numeric_limits<E>::digits10 + 1) <<
                   std::fixed << e;
@@ -226,7 +257,9 @@ namespace detail
             ADD_FAILURE() << "Too few arguments in test input";
 
         std::stringstream ss( input );
-        First p;
+        using G = typename std::remove_cv<
+                  typename std::remove_reference<First>::type>::type;
+        G p;
         ss >> p;
 
         std::string rest;
