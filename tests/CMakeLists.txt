@@ -5,7 +5,7 @@ enable_testing()
 #
 # Testing
 #
-add_subdirectory( googletest EXCLUDE_FROM_ALL)
+add_subdirectory( googletest EXCLUDE_FROM_ALL )
 
 add_executable( tester EXCLUDE_FROM_ALL scalar.cpp vector.cpp vector_instantiation.cpp matrix.cpp )
 add_dependencies( tester googletest )
@@ -20,8 +20,8 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${joemath_CXX_FLAGS}" )
 include_directories( googletest/include )
 include_directories( googletest )
 
-find_library( googletest_gtest gtest HINTS ${binary_dir} NO_DEFAULT_PATH )
-find_library( googletest_gtest_main gtest_main HINTS ${binary_dir} NO_DEFAULT_PATH )
+#find_library( googletest_gtest      gtest      HINTS ${binary_dir} NO_DEFAULT_PATH )
+#find_library( googletest_gtest_main gtest_main HINTS ${binary_dir} NO_DEFAULT_PATH )
 
 target_link_libraries( tester            gtest gtest_main )
 target_link_libraries( regression_tester gtest )
@@ -53,6 +53,6 @@ function( joemath_discover_tests EXECUTABLE )
         VERBATIM )
 endfunction()
 
-joemath_discover_tests( tester )
+joemath_discover_tests( tester "--gtest_repeat=1000" )
 joemath_discover_tests( regression_tester ${CMAKE_SOURCE_DIR}/regression_test_data.txt )
 
