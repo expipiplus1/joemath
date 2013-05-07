@@ -506,28 +506,28 @@ Matrix<Scalar, Size, Size>             Identity  ( );
 
 template <typename Scalar = float, u32 Size = 4>
 Matrix<Scalar, Size, Size>             Scale     (
-                                         const Matrix<Scalar, 1, Size>& s );
+                                         const Vector<Scalar, Size>& s );
 
-template <typename Scalar = float, u32 Size = 2>
+template <typename Scalar = float, u32 Size = 3>
 Matrix<Scalar, Size, Size>             Rotate2D  ( Scalar angle );
 
-template <typename Scalar = float, u32 Size = 3>
+template <typename Scalar = float, u32 Size = 4>
 Matrix<Scalar, Size, Size>             RotateX   ( Scalar angle );
 
-template <typename Scalar = float, u32 Size = 3>
+template <typename Scalar = float, u32 Size = 4>
 Matrix<Scalar, Size, Size>             RotateY   ( Scalar angle );
 
-template <typename Scalar = float, u32 Size = 3>
+template <typename Scalar = float, u32 Size = 4>
 Matrix<Scalar, Size, Size>             RotateZ   ( Scalar angle );
 
-template <typename Scalar = float, u32 Size = 3>
-Matrix<Scalar, Size, Size>             RotateAxisAngle  (
-                                              const Vector<Scalar, 3>& axis,
+template <typename Scalar = float>
+Matrix<Scalar, 4, 4>             RotateAxisAngle  (
+                                              const Vector<Scalar, 4>& axis,
                                               Scalar angle );
 
-template <typename Scalar, u32 Size = 3>
-Matrix<Scalar, Size+1, Size+1>         Translate (
-                                        const Vector<Scalar, 3>& position );
+template <typename Scalar, u32 Size = 4>
+Matrix<Scalar, Size, Size>             Translate (
+                                        const Vector<Scalar, Size>& position );
 
 //
 // Todo make this take a Plane object

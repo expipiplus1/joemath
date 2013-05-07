@@ -143,7 +143,7 @@ namespace detail
         ReturnScalar det = ReturnScalar{0};
 
         for( u32 i = 0; i < Rows; ++i )
-            det += ((i & 0x1) ? -1 : 1) * m.m_elements[0][i] * m.Minor(0, i);
+            det += ((i & 0x1) ? -1 : 1) * m.m_elements[0][i] * m.Minor(i, 0);
 
         return det;
     }
@@ -306,7 +306,7 @@ namespace detail
 
         for( u32 i = 0; i < Columns; ++i )
             for( u32 j = 0; j < Rows; ++j )
-                ret.m_elements[i][j] = (((i + j) & 0x1)? -1 : 1) * m.Minor(i,j);
+                ret.m_elements[i][j] = (((i + j) & 0x1)? -1 : 1) * m.Minor(j,i);
 
         Scalar det = Scalar{0};
 
@@ -917,13 +917,15 @@ ReturnScalar Matrix<Scalar, Rows, Columns>::Minor( u32 row, u32 column ) const
 {
     static_assert( Rows == Columns,
                    "Can't get the minor of a non-square matrix" );
+    static_assert( Rows != 1,
+                   "Can't get the minor of a matrix of size < 1");
     assert( row < Rows && "Trying to get an out of bounds minor" );
     assert( column < Columns && "Trying to get an out of bounds minor" );
 
     Matrix<Scalar, Rows-1, Columns-1> minor_matrix;
 
-    for( s32 i = 0; i < Columns-1; ++i )
-        for( s32 j = 0; j < Rows-1; ++j )
+    for( u32 i = 0; i < Columns-1; ++i )
+        for( u32 j = 0; j < Rows-1; ++j )
             minor_matrix.m_elements[i][j] =
                 m_elements[i < column ? i : i+1][j < row ? j : j+1];
 
@@ -1283,8 +1285,8 @@ Matrix<Scalar, Columns, Rows> Transposed (
 {
     Matrix<Scalar, Columns, Rows> ret;
 
-    for( u32 i = 0; i < Rows; ++i )
-        for( u32 j = 0; j < Columns; ++j )
+    for( u32 i = 0; i < Columns; ++i )
+        for( u32 j = 0; j < Rows; ++j )
             ret.m_elements[j][i] = m.m_elements[i][j];
 
     return ret;
@@ -1526,13 +1528,12 @@ Matrix<Scalar, Size, Size> RotateAxisAngle( const Vector<Scalar, 3>& axis,
 }
 
 template <typename Scalar, u32 Size>
-Matrix<Scalar, Size+1, Size+1> Translate( const Vector<Scalar, Size>& position )
+Matrix<Scalar, Size, Size> Translate( const Vector<Scalar, Size>& position )
 {
-    Matrix<Scalar, Size+1, Size+1> ret = Identity<Scalar, Size+1>();
+    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
 
-    ret.SetSubMatrix<Size, 1,   // Size of the vector to insert
-                     Size, 0> // Position to insert
-                                (position);
+    ret.SetTranslation(position);
+
     return ret;
 }
 
