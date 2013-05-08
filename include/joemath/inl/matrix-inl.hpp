@@ -1528,9 +1528,9 @@ Matrix<Scalar, Size, Size> RotateAxisAngle( const Vector<Scalar, 3>& axis,
 }
 
 template <typename Scalar, u32 Size>
-Matrix<Scalar, Size, Size> Translate( const Vector<Scalar, Size>& position )
+Matrix<Scalar, Size+1, Size+1> Translate( const Vector<Scalar, Size>& position )
 {
-    Matrix<Scalar, Size, Size> ret = Identity<Scalar, Size>();
+    Matrix<Scalar, Size+1, Size+1> ret = Identity<Scalar, Size+1>();
 
     ret.SetTranslation(position);
 

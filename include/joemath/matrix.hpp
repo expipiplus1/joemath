@@ -525,8 +525,8 @@ Matrix<Scalar, 4, 4>             RotateAxisAngle  (
                                               const Vector<Scalar, 4>& axis,
                                               Scalar angle );
 
-template <typename Scalar, u32 Size = 4>
-Matrix<Scalar, Size, Size>             Translate (
+template <typename Scalar, u32 Size>
+Matrix<Scalar, Size+1, Size+1>          Translate (
                                         const Vector<Scalar, Size>& position );
 
 //
