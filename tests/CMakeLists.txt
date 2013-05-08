@@ -27,7 +27,7 @@ include_directories( googletest )
 target_link_libraries( joemath_tester            gtest gtest_main )
 target_link_libraries( joemath_regression_tester gtest )
 
-add_custom_target( check
+add_custom_target( check_joemath
                    COMMAND ${CMAKE_CTEST_COMMAND}
                    DEPENDS joemath_tester joemath_regression_tester)
 
