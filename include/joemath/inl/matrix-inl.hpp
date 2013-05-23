@@ -512,6 +512,14 @@ Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar s )
         m_elements[0][i] = s;
 }
 
+// Initialize every value to s
+//template <typename Scalar, u32 Rows, u32 Columns>
+//Matrix<Scalar, Rows, Columns>::Matrix             ( Scalar ss[Rows*Columns] )
+//{
+    //for( u32 i = 0; i < rows*columns; ++i )
+        //m_elements[0][i] = ss[i];
+//}
+
 template <typename Scalar, u32 Rows, u32 Columns>
 template <std::size_t N>
 Matrix<Scalar, Rows, Columns>::Matrix

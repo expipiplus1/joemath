@@ -78,6 +78,8 @@ public:
       */
     explicit Matrix     ( Scalar s );
 
+    //explicit Matrix     ( Scalar ss[Rows * Columns] );
+
     /**
       * Initialize from initializer list of scalars
       */
