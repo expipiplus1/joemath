@@ -1303,6 +1303,8 @@ Matrix<Scalar, Columns, Rows> Transposed (
 template <typename Scalar, u32 Rows, u32 Columns>
 void Transpose( Matrix<Scalar, Rows, Columns>& m )
 {
+    static_assert( Rows == Columns,
+                   "Trying to transpose a non-square matrix in place" );
     m = Transposed( m );
 }
 
