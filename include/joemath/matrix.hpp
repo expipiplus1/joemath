@@ -153,16 +153,20 @@ public:
     column_type&                        GetTranslation( );
     void                                SetTranslation( const column_type& m );
 
-    template <typename = typename std::enable_if<is_vector, void>::type>
+    template <bool IsVector = is_vector,
+              typename = typename std::enable_if<IsVector, void>::type>
     const scalar_type& operator    []  ( u32 i )   const;
 
-    template <typename = typename std::enable_if<is_vector, void>::type>
+    template <bool IsVector = is_vector,
+              typename = typename std::enable_if<IsVector, void>::type>
     scalar_type&       operator    []  ( u32 i );
 
-    template <typename = typename std::enable_if<!is_vector, void>::type>
+    template <bool IsVector = is_vector,
+              typename = typename std::enable_if<!IsVector, void>::type>
     const column_type& operator    []  ( u32 i )   const;
 
-    template <typename = typename std::enable_if<!is_vector, void>::type>
+    template <bool IsVector = is_vector,
+              typename = typename std::enable_if<!IsVector, void>::type>
     column_type&       operator    []  ( u32 i );
 
 

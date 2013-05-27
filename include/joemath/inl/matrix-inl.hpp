@@ -741,21 +741,21 @@ void Matrix<Scalar, Rows, Columns>::SetTranslation( const column_type& m )
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
-template <typename>
+template <bool, typename>
 const Scalar& Matrix<Scalar, Rows, Columns>::operator []  ( u32 i ) const
 {
     return m_elements[0][i];
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
-template <typename>
+template <bool, typename>
 Scalar& Matrix<Scalar, Rows, Columns>::operator [] ( u32 i )
 {
     return m_elements[0][i];
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
-template <typename>
+template <bool, typename>
 auto Matrix<Scalar, Rows, Columns>::operator [] ( u32 i ) const ->
                                                               const column_type&
 {
@@ -763,7 +763,7 @@ auto Matrix<Scalar, Rows, Columns>::operator [] ( u32 i ) const ->
 }
 
 template <typename Scalar, u32 Rows, u32 Columns>
-template <typename>
+template <bool, typename>
 auto Matrix<Scalar, Rows, Columns>::operator [] ( u32 i ) -> column_type&
 {
     return GetColumn(i);
