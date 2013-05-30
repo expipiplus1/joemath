@@ -55,8 +55,8 @@ public:
     using scalar_type    = Scalar;
     using column_type    = Matrix<scalar_type, rows, 1>;
     using row_type       = Matrix<scalar_type, 1, columns>;
-    using type           = Matrix<scalar_type, rows, columns>;
     using transpose_type = Matrix<scalar_type, columns, rows>;
+    using type           = Matrix<scalar_type, rows, columns>;
 
     static const bool is_vector         = JoeMath::is_vector<type>::value;
     static const u32 vector_size        = JoeMath::vector_size<type>::value;
