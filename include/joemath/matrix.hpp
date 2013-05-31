@@ -28,14 +28,14 @@
 
 #pragma once
 
-#include <cmath>
 #include <array>
+#include <cmath>
 #include <initializer_list>
 #include <type_traits>
 
-#include <joemath/types.hpp>
 #include <joemath/matrix_traits.hpp>
 #include <joemath/scalar.hpp>
+#include <joemath/types.hpp>
 
 namespace JoeMath
 {

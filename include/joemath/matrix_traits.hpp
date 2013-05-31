@@ -30,6 +30,8 @@
 
 #include <type_traits>
 
+#include <joemath/types.hpp>
+
 namespace JoeMath
 {
     template <typename Scalar, u32 Rows, u32 Columns>

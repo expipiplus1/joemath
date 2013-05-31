@@ -1,12 +1,12 @@
-#include <map>
-#include <vector>
-#include <string>
-#include <istream>
-#include <ostream>
 #include <fstream>
-#include <iterator>
 #include <iostream>
+#include <istream>
+#include <iterator>
 #include <libgen.h>
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
