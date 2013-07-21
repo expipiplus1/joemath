@@ -121,12 +121,14 @@ namespace JoeMath
     template <typename T>
     inline T    DegToRad        ( const T degrees )
     {
+        static_assert( !std::is_integral<T>::value, "Are you sure you want to use this function with an integer?" );
         return degrees * ( Pi<T>() / T{180} );
     }
 
     template <typename T>
     inline T    RadToDeg        ( const T radians )
     {
+        static_assert( !std::is_integral<T>::value, "Are you sure you want to use this function with an integer?" );
         return radians * ( T{180} / Pi<T>() );
     }
 
