@@ -1513,14 +1513,10 @@ Matrix<Scalar, Size, Size>             RotateZ         ( Scalar angle )
     return ret;
 }
 
-template <typename Scalar, u32 Size>
-Matrix<Scalar, Size, Size> RotateAxisAngle( const Vector<Scalar, 3>& axis,
-                                            Scalar angle )
+template <typename Scalar>
+Matrix<Scalar, 4, 4> RotateAxisAngle( const Vector<Scalar, 3>& axis,
+                                      Scalar angle )
 {
-    static_assert( Size >= 3,
-                   "Trying to construct a angle axis rotation matrix of "
-                   "size < 3" );
-
     auto cos = std::cos( angle );
     auto sin = std::sin( angle );
 
@@ -1531,7 +1527,7 @@ Matrix<Scalar, Size, Size> RotateAxisAngle( const Vector<Scalar, 3>& axis,
     rotation += cos * Identity<Scalar, 3>();
     rotation += (Scalar{1} - cos) * Outer(axis, axis);
 
-    auto ret = Identity<Scalar, Size>( );
+    auto ret = Identity<Scalar, 4>( );
     ret.SetSubMatrix(rotation);
 
     return ret;

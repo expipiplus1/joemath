@@ -528,7 +528,7 @@ Matrix<Scalar, Size, Size>             RotateZ   ( Scalar angle );
 
 template <typename Scalar = float>
 Matrix<Scalar, 4, 4>             RotateAxisAngle  (
-                                              const Vector<Scalar, 4>& axis,
+                                              const Vector<Scalar, 3>& axis,
                                               Scalar angle );
 
 template <typename Scalar, u32 Size>
