@@ -1565,7 +1565,6 @@ Matrix<Scalar, 4, 4> Projection( Scalar vertical_fov,
                                  Scalar far_plane )
 {
     auto top = std::tan( Scalar{0.5} * vertical_fov ) * near_plane;
-    auto right = aspect_ratio * top;
 
     auto y_scale = Scalar{1} / std::tan( Scalar{0.5} * vertical_fov );
     auto x_scale = y_scale / aspect_ratio;
