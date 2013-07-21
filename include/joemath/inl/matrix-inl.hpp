@@ -1582,8 +1582,8 @@ Matrix<Scalar, 4, 4> View( const Vector<Scalar, 3>& position,
 {
     Matrix<Scalar, 4, 4> ret;
     ret.SetForward( {Normalized(direction), 0} );
-    ret.SetRight ( {Cross( ret.GetForward().xyz(), Normalized(up) ), 0} );
-    ret.SetUp    ( {Cross( ret.GetForward().xyz(), ret.GetRight().xyz() ), 0} );
+    ret.SetRight  ( {Cross( ret.GetForward().xyz(), Normalized(up) ), 0} );
+    ret.SetUp     ( {Cross( ret.GetForward().xyz(), ret.GetRight().xyz() ), 0} );
     ret.SetTranslation( {position, 1} );
     return ret;
 }
