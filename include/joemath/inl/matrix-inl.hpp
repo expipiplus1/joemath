@@ -1574,8 +1574,8 @@ Matrix<Scalar, 4, 4> Projection( Scalar vertical_fov,
 
     return Matrix<Scalar, 4, 4>
     { x_scale,   Scalar{0}, Scalar{0}, Scalar{0},
-      Scalar{0}, y_scale,   Scalar{0}, Scalar{0},
       Scalar{0}, Scalar{0}, z_scale,   Scalar{-1},
+      Scalar{0}, -y_scale,  Scalar{0}, Scalar{0},
       Scalar{0}, Scalar{0}, focus,     Scalar{0} };
 }
 
